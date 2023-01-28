@@ -1,5 +1,10 @@
 const Navbar: React.FC = () => {
-  return <div>Khung Trai</div>;
+  return (
+    <div>
+      <span className="material-symbols-outlined">light_mode</span>
+      <i className="fa-duotone fa-moon-stars"></i>
+    </div>
+  );
 };
 
 export default Navbar;
