@@ -7,16 +7,33 @@
   font-size: 16px;
   line-height: 24px;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  --primary-color: #f6f6f6;
+  --secondary-color: #fafafa;
+  --title-color: #37383a;
+  --light-title-color: #5b5d5e;
+  --lighter-text-color: #888a8b;
+  --border-color: #abacad42;
+  --third-color: #f0f0f0;
+  --transparent: #f0f0f000;
+  --active-song: #e0e0e0;
+}
+
+body.dark {
+  --primary-color: #1d2631;
+  --secondary-color: #212a35;
+  --title-color: #d7dade;
+  --light-title-color: #b0b4ba;
+  --lighter-text-color: #636a72;
+  --border-color: #636a7248;
+  --third-color: #262f39;
+  --transparent: #262f3900;
+  --active-song: #2f3944;
 }
 
 a {
@@ -31,9 +48,10 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
+
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--primary-color);
 }
 
 h1 {
