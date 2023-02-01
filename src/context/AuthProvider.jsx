@@ -20,7 +20,7 @@ export default function AuthProvider({ children }) {
       //reset user info
       setUser({});
       localStorage.clear();
-      navigate("/login");
+      // navigate("/login");
     });
 
     return () => {
