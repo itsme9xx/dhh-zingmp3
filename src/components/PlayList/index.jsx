@@ -1,6 +1,12 @@
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 const PlayList = () => {
+  axios
+    .get("https://full-music-app-server.vercel.app/")
+    .then((res) => console.log(res));
+
+  console.log(import.meta.env.REACT_APP_BASE_URL_API);
   return (
     <div className="m-8">
       <div className=" flex h-12 w-96 max-w-full items-center bg-third-color">
