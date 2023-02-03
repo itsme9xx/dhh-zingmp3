@@ -2,7 +2,9 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 
 const PlayList = () => {
-  axios.get("https://serverzingmp3.vercel.app").then((res) => console.log(res));
+  axios
+    .get("https://serverzingmp3.vercel.app/api/top100")
+    .then((res) => console.log(res.data.data));
 
   // console.log(import.meta.env.REACT_APP_BASE_URL_API);
   return (
