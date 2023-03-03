@@ -9,6 +9,8 @@ const Navbar = () => {
   const [theme, setTheme] = useState(JSON.parse(localStorage.theme || false));
   const dispatch = useDispatch();
   const a = useSelector((state) => state.navbar.theme);
+  console.log("a", a);
+  console.log("theme", theme);
 
   const handleMode = (x) => {
     setTheme(x);
@@ -26,7 +28,7 @@ const Navbar = () => {
     <div className=" flex flex-col p-4 bg-secondary-color  h-screen items-center border-r-[0.5px]  border-border-color gap-5 pt-12 fixed">
       <div
         className={`${
-          a ? "bg-light-title-color" : "bg-third-color"
+          theme ? "bg-light-title-color" : "bg-third-color"
         } rounded-full w-10 h-10 -color  flex justify-center items-center cursor-pointer  `}
         onClick={() => handleMode(true)}
         title="Dark Mode"
@@ -35,7 +37,7 @@ const Navbar = () => {
       </div>
       <div
         className={`${
-          a ? "bg-third-color" : "bg-light-title-color"
+          theme ? "bg-third-color" : "bg-light-title-color"
         } rounded-full w-10 h-10  flex justify-center items-center cursor-pointer `}
         onClick={() => handleMode(false)}
         title="Light Mode"
