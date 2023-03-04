@@ -23,7 +23,7 @@ const Player = () => {
         setIsLoading(false);
       });
   }, []);
-  console.log(musicToday);
+  // console.log(musicToday);
   const handleShuffleButton = () => {
     setShowSuffle(!showSuffle);
   };

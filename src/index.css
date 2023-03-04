@@ -12,7 +12,8 @@
   --third-color: #f0f0f0;
   --transparent: #f0f0f000;
   --active-song: #e0e0e0;
-  --marginCustom: 440px;
+  --marginRightCustom: 440px;
+  --marginLeftCustom: 110px;
 }
 
 body.dark {

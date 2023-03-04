@@ -7,7 +7,7 @@ const ListLoading = () => {
     .fill(0)
     .map((x, index) => (
       <div key={index}>
-        <div className="w-[calc(100vw-var(--marginCustom)-120px)]">
+        <div className="w-[calc(100vw-var(--marginRightCustom)-120px)]">
           <Skeleton
             width={170}
             height={30}

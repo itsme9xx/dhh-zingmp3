@@ -4,24 +4,26 @@ import Player from "../components/Player";
 import PlayList from "../components/PlayList";
 import Login from "../pages/Login";
 import AuthProvider from "../context/AuthProvider";
+import ListSong from "../components/ListSong";
 
 const RouterPage = () => {
   return (
     <AuthProvider>
+      <Navbar></Navbar>
       <Routes>
         <Route path="/login" element={<Login />}></Route>
         <Route
           path="/"
           element={
             <>
-              <Navbar></Navbar>
               <PlayList></PlayList>
-              <Player></Player>
             </>
           }
           xxxxxxxxxxxxxxxxxx
         ></Route>
+        <Route path="/playlist/:keyword" element={<ListSong />}></Route>
       </Routes>
+      <Player></Player>
     </AuthProvider>
   );
 };

@@ -6,11 +6,11 @@ import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const [theme, setTheme] = useState(JSON.parse(localStorage.theme || false));
+  const [theme, setTheme] = useState(JSON.parse(localStorage.theme || true));
   const dispatch = useDispatch();
   const a = useSelector((state) => state.navbar.theme);
-  console.log("a", a);
-  console.log("theme", theme);
+  // console.log("a", a);
+  // console.log("theme", theme);
 
   const handleMode = (x) => {
     setTheme(x);
@@ -47,6 +47,9 @@ const Navbar = () => {
       <div
         className="rounded-full w-10 h-10 bg-light-title-color flex justify-center items-center cursor-pointer  "
         title="Home"
+        onClick={() => {
+          navigate("/");
+        }}
       >
         <i className="fa-sharp fa-solid fa-house text-primary-color "></i>
       </div>

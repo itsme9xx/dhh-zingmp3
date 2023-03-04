@@ -2,14 +2,32 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { Result } from "postcss";
+import { useNavigate } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
 import ListLoading from "../ListLoading";
 import "react-loading-skeleton/dist/skeleton.css";
 
+export function Search() {
+  return (
+    <div className=" flex h-12 w-96 max-w-full items-center bg-third-color">
+      <i className="fa-sharp fa-solid fa-magnifying-glass text-light-title-color ml-4 mr-2"></i>
+      <input
+        placeholder="Nhập từ khóa tìm kiếm"
+        className="w-full bg-transparent text-light-title-color px-2 outline-none"
+        type="search"
+        name="musicsearch"
+      />
+    </div>
+  );
+}
+
 const PlayList = () => {
   const [top100, setTop100] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
+  const handleClickSong = (index) => {
+    navigate(`/playlist/${top100?.[4].items[index].encodeId}`);
+  };
   useEffect(() => {
     setIsLoading(true);
     axios.get("https://serverzingmp3.vercel.app/api/home").then((res) => {
@@ -22,8 +40,8 @@ const PlayList = () => {
   //   const fetchData = async () => {
   //     const data = await axios.get("https://serverzingmp3.vercel.app/api/home");
   //     setTop100(data.data.data.items);
-  //   };
   //   fetchData()
+  //   };
   //     .catch(console.error);
   // }, []);
   // console.log(top100);
@@ -31,18 +49,9 @@ const PlayList = () => {
   // console.log(import.meta.env.REACT_APP_BASE_URL_API);
 
   return (
-    <div className="m-8 ml-[110px] mr-[var(--marginCustom)]  ">
-      <div className=" flex h-12 w-96 max-w-full items-center bg-third-color">
-        <i className="fa-sharp fa-solid fa-magnifying-glass text-light-title-color ml-4 mr-2"></i>
-        <input
-          placeholder="Nhập từ khóa tìm kiếm"
-          className="w-full bg-transparent text-light-title-color px-2 outline-none"
-          type="search"
-          name="musicsearch"
-        />
-      </div>
+    <div className="m-8 ml-[var(--marginLeftCustom)] mr-[var(--marginRightCustom)]  ">
+      <Search />
       {isLoading && <ListLoading />}
-
       {/* Lựa chọn hôm nay */}
       <div>
         <p className="font-bold text-light-title-color text-2xl my-4">
@@ -51,8 +60,13 @@ const PlayList = () => {
         <div className=" grid grid-cols-5 gap-4 ">
           {top100[4]?.items.map((x, index) => {
             return (
-              <div className="" key={index}>
-                <div className="cursor-pointer overflow-hidden  ">
+              <div key={index}>
+                <div
+                  className="cursor-pointer overflow-hidden"
+                  onClick={() => {
+                    handleClickSong(index);
+                  }}
+                >
                   <img
                     className="w-full rounded-2xl transition-all duration-1000 hover:scale-125  "
                     src={x.thumbnailM}
