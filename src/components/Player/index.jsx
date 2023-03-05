@@ -4,6 +4,8 @@ import Skeleton from "react-loading-skeleton";
 import styled from "styled-components";
 import ModalLyrics from "../ModalLyrics";
 import { useSelector } from "react-redux";
+import { playerSlice } from "./playerSlice";
+import { useDispatch } from "react-redux";
 
 const Player = () => {
   const [showPopUp, setShowPopUp] = useState(false);
@@ -16,6 +18,7 @@ const Player = () => {
   const [showLyrics, setShowLyrics] = useState(false);
 
   const rendersongdefault = useSelector((state) => state.playlist.list);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setIsLoading(true);
@@ -30,6 +33,7 @@ const Player = () => {
       .then((res) => {
         // console.log(res);
         getMusicToday(res?.data?.data?.song);
+        dispatch(playerSlice.actions.showSongToday(res?.data?.data?.song));
         setIsLoading(false);
       });
   }, [rendersongdefault]);
@@ -50,6 +54,7 @@ const Player = () => {
         className="cursor-pointer absolute  -translate-x-[55px] -translate-y-16 w-28 hover:brightness-110 z-20 "
         onClick={() => {
           setShowLyrics(true);
+          dispatch(playerSlice.actions.modalChange(true));
         }}
       >
         <h2 className="bg-third-color py-2 px-4 rounded-lg  ">Lời bài hát</h2>

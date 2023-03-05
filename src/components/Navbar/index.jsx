@@ -3,15 +3,26 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { navbarSlice } from "./navbarSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
+import ModalLyrics from "../ModalLyrics";
 
 const Navbar = () => {
   const location = useLocation();
   // console.log(location);
   const navigate = useNavigate();
   const [theme, setTheme] = useState(JSON.parse(localStorage.theme || true));
+  const [showModal, setShowModal] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+  const handle = () => {
+    setShowModal(!showModal);
+    setIsActive(!isActive);
+  };
+
   const dispatch = useDispatch();
-  const a = useSelector((state) => state.navbar.theme);
-  // console.log("a", a);
+  const a = useSelector((state) => state.player.button);
+  const b = useSelector((state) => state.player.songtoday);
+
+  console.log("a", a);
+  console.log("b", b);
 
   const handleMode = (x) => {
     setTheme(x);
@@ -63,11 +74,17 @@ const Navbar = () => {
         <i className="fa-sharp fa-solid fa-play text-primary-color"></i>
       </div>
       <div
-        className="rounded-full w-10 h-10 bg-light-title-color flex justify-center items-center cursor-pointer  "
+        className={`${
+          a === true || isActive ? "bg-light-title-color" : "bg-third-color"
+        } rounded-full w-10 h-10  flex justify-center items-center cursor-pointer  `}
         title="Player"
+        onClick={() => {
+          handle();
+        }}
       >
         <i className="fa-sharp fa-solid fa-music text-primary-color"></i>
       </div>
+      {showModal && <ModalLyrics song={b} />}
       <div
         className="rounded-full w-10 h-10 bg-light-title-color flex justify-center items-center cursor-pointer "
         onClick={handleLogin}
