@@ -62,10 +62,10 @@ const SearchPage = () => {
       </div> */}
       <div className="mt-12">
         {isLoading ? (
-          <>
+          <div>
             <Skeleton width={200} height={40} />
             <div className="grid grid-cols-2 mt-6 gap-10">
-              <div className="flex items-center gap-4 border-b border-b-border-color pb-4 border-b border-b-border-color pb-4">
+              <div className="flex items-center gap-4  border-b border-b-border-color pb-4">
                 <i className="fa-sharp fa-solid fa-music text-lighter-text-color "></i>
                 <Skeleton height={60} width={60} />
                 <Skeleton
@@ -120,9 +120,9 @@ const SearchPage = () => {
                 />
               </div>
             </div>
-          </>
+          </div>
         ) : (
-          <>
+          <div>
             <p className="text-2xl font-semibold mb-4 text-light-title-color">
               Bài hát
             </p>
@@ -153,21 +153,21 @@ const SearchPage = () => {
                 </div>
               ))}
             </div>
-          </>
+          </div>
         )}
       </div>
       <div className="mt-12">
         {isLoading ? (
-          <>
+          <div>
             <Skeleton width={200} height={40} />
             <div className="grid grid-cols-5 gap-10 mt-4">
-              <Skeleton width={300} height={300} />
-              <Skeleton width={300} height={300} />
-              <Skeleton width={300} height={300} />
-              <Skeleton width={300} height={300} />
-              <Skeleton width={300} height={300} />
+              <Skeleton width={230} height={230} />
+              <Skeleton width={230} height={230} />
+              <Skeleton width={230} height={230} />
+              <Skeleton width={230} height={230} />
+              <Skeleton width={230} height={230} />
             </div>
-          </>
+          </div>
         ) : (
           <>
             <p className="text-2xl font-semibold mb-6 text-light-title-color ">
@@ -199,16 +199,16 @@ const SearchPage = () => {
       </div>
       <div className="mt-12">
         {isLoading ? (
-          <>
+          <div>
             <Skeleton width={200} height={40} />
             <div className="grid grid-cols-5 gap-10 mt-4">
-              <Skeleton width={300} height={300} />
-              <Skeleton width={300} height={300} />
-              <Skeleton width={300} height={300} />
-              <Skeleton width={300} height={300} />
-              <Skeleton width={300} height={300} />
+              <Skeleton width={230} height={230} />
+              <Skeleton width={230} height={230} />
+              <Skeleton width={230} height={230} />
+              <Skeleton width={230} height={230} />
+              <Skeleton width={230} height={230} />
             </div>
-          </>
+          </div>
         ) : (
           <>
             <p className="text-2xl font-semibold mb-6 text-light-title-color">
