@@ -6,7 +6,7 @@ import Skeleton from "react-loading-skeleton";
 import { ListLoading } from "../ListLoading";
 import "react-loading-skeleton/dist/skeleton.css";
 import { useDispatch } from "react-redux";
-import { playlistSlice } from "./playListSlice";
+import { playlistSlice } from "./playlistSlice";
 import { useSelector } from "react-redux";
 
 export function Search() {
