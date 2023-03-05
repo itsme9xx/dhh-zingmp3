@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { navbarSlice } from "../components/Navbar/navbarSlice";
-import { playlistSlice } from "../components/PlayList/playListSlice";
+import { playlistSlice } from "../components/PlayList/playlistSlice";
 
 const store = configureStore({
   reducer: {
