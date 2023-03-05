@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
 import styled from "styled-components";
 import ModalLyrics from "../ModalLyrics";
+import { useSelector } from "react-redux";
 
 const Player = () => {
   const [showPopUp, setShowPopUp] = useState(false);
@@ -14,16 +15,25 @@ const Player = () => {
   const [isShowList, setIsShowList] = useState(false);
   const [showLyrics, setShowLyrics] = useState(false);
 
+  const rendersongdefault = useSelector((state) => state.playlist.list);
+
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get("https://serverzingmp3.vercel.app/api/detailplaylist?id=60ZC6OZE")
+      .get(
+        `https://serverzingmp3.vercel.app/api/detailplaylist?id=${
+          rendersongdefault
+            ? rendersongdefault
+            : localStorage.getItem("defaultSong")
+        }`
+      )
       .then((res) => {
-        getMusicToday(res.data.data.song);
+        // console.log(res);
+        getMusicToday(res?.data?.data?.song);
         setIsLoading(false);
       });
-  }, []);
-  // console.log(musicToday);
+  }, [rendersongdefault]);
+
   const handleShuffleButton = () => {
     setShowSuffle(!showSuffle);
   };
@@ -33,6 +43,7 @@ const Player = () => {
   const handleRepeatButton = () => {
     setShowRepeat(!showRepeat);
   };
+
   const PopUp = () => {
     return (
       <div
@@ -88,9 +99,9 @@ const Player = () => {
           <div className=" w-8 h-8 hover:bg-third-color hover:rounded-full flex justify-center items-center cursor-pointer relative group z-20">
             <i className="fa-duotone fa-volume-low "></i>
             {/* Low volumn */}
-            {/* <i class="fa-solid fa-volume"></i> */}
-            {/* <i class="fa-solid fa-volume-high"></i> */}
-            {/* <i class="fa-solid fa-volume-xmark"></i> */} {/* Mute */}
+            {/* <i className="fa-solid fa-volume"></i> */}
+            {/* <i className="fa-solid fa-volume-high"></i> */}
+            {/* <i className="fa-solid fa-volume-xmark"></i> */} {/* Mute */}
             <input
               type="range"
               className="volumnButton absolute -translate-y-12 h-16 w-4 opacity-0 group-hover:opacity-100  "

@@ -1,13 +1,22 @@
-import { useSelector } from "react-redux";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { Result } from "postcss";
 import { useNavigate } from "react-router-dom";
 import Skeleton from "react-loading-skeleton";
-import ListLoading from "../ListLoading";
+import { ListLoading } from "../ListLoading";
 import "react-loading-skeleton/dist/skeleton.css";
+import { useDispatch } from "react-redux";
+import { playlistSlice } from "./playListSlice";
+import { useSelector } from "react-redux";
 
 export function Search() {
+  const navigate = useNavigate();
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      navigate(`/search/${e.target.value}`);
+    }
+  };
+  const [searchKey, setSearchKey] = useState();
   return (
     <div className=" flex h-12 w-96 max-w-full items-center bg-third-color">
       <i className="fa-sharp fa-solid fa-magnifying-glass text-light-title-color ml-4 mr-2"></i>
@@ -16,23 +25,40 @@ export function Search() {
         className="w-full bg-transparent text-light-title-color px-2 outline-none"
         type="search"
         name="musicsearch"
+        onChange={(e) => {
+          setSearchKey(e.target.value);
+        }}
+        onKeyUp={(e) => {
+          handleKeyPress(e);
+        }}
       />
     </div>
   );
 }
 
 const PlayList = () => {
+  const dispatch = useDispatch();
   const [top100, setTop100] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const handleClickSong = (index) => {
-    navigate(`/playlist/${top100?.[4].items[index].encodeId}`);
+  const handleClickSong = (encodeId) => {
+    navigate(`/playlist/${encodeId}`);
   };
+
   useEffect(() => {
     setIsLoading(true);
     axios.get("https://serverzingmp3.vercel.app/api/home").then((res) => {
       setTop100(res.data.data.items);
       setIsLoading(false);
+      dispatch(
+        playlistSlice.actions.listChange(
+          res.data.data.items[4].items[0].encodeId
+        )
+      );
+      localStorage.setItem(
+        "defaultSong",
+        res.data.data.items[4].items[0].encodeId
+      );
     });
   }, []);
 
@@ -64,7 +90,7 @@ const PlayList = () => {
                 <div
                   className="cursor-pointer overflow-hidden"
                   onClick={() => {
-                    handleClickSong(index);
+                    handleClickSong(x.encodeId);
                   }}
                 >
                   <img
@@ -93,7 +119,12 @@ const PlayList = () => {
           {top100[5]?.items.map((x, index) => {
             return (
               <div className="" key={index}>
-                <div className="cursor-pointer overflow-hidden  ">
+                <div
+                  className="cursor-pointer overflow-hidden"
+                  onClick={() => {
+                    handleClickSong(x.encodeId);
+                  }}
+                >
                   <img
                     className="w-full rounded-2xl transition-all duration-1000 hover:scale-125  "
                     src={x.thumbnailM}
@@ -121,7 +152,12 @@ const PlayList = () => {
           {top100[7]?.items.map((x, index) => {
             return (
               <div className="" key={index}>
-                <div className="cursor-pointer overflow-hidden  ">
+                <div
+                  className="cursor-pointer overflow-hidden  "
+                  onClick={() => {
+                    handleClickSong(x.encodeId);
+                  }}
+                >
                   <img
                     className="w-full rounded-2xl transition-all duration-1000 hover:scale-125  "
                     src={x.thumbnailM}
@@ -149,7 +185,12 @@ const PlayList = () => {
           {top100[11]?.items.map((x, index) => {
             return (
               <div className="" key={index}>
-                <div className="cursor-pointer overflow-hidden  ">
+                <div
+                  className="cursor-pointer overflow-hidden  "
+                  onClick={() => {
+                    handleClickSong(x.encodeId);
+                  }}
+                >
                   <img
                     className=" w-full rounded-2xl transition-all duration-1000 hover:scale-125  "
                     src={x.thumbnailM}
@@ -177,7 +218,12 @@ const PlayList = () => {
           {top100[14]?.items.map((x, index) => {
             return (
               <div className="cursor-pointer" key={index}>
-                <div className=" overflow-hidden  ">
+                <div
+                  className=" overflow-hidden  "
+                  onClick={() => {
+                    handleClickSong(x.encodeId);
+                  }}
+                >
                   <img
                     className="w-full rounded-2xl transition-all duration-1000 hover:scale-125  "
                     src={x.thumbnailM}

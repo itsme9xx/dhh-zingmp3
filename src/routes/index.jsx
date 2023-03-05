@@ -5,6 +5,7 @@ import PlayList from "../components/PlayList";
 import Login from "../pages/Login";
 import AuthProvider from "../context/AuthProvider";
 import ListSong from "../components/ListSong";
+import SearchPage from "../components/Search";
 
 const RouterPage = () => {
   return (
@@ -19,9 +20,9 @@ const RouterPage = () => {
               <PlayList></PlayList>
             </>
           }
-          xxxxxxxxxxxxxxxxxx
         ></Route>
         <Route path="/playlist/:keyword" element={<ListSong />}></Route>
+        <Route path="/search/:keyword" element={<SearchPage />} />
       </Routes>
       <Player></Player>
     </AuthProvider>

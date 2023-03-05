@@ -1,16 +1,17 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { navbarSlice } from "./navbarSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 
 const Navbar = () => {
+  const location = useLocation();
+  // console.log(location);
   const navigate = useNavigate();
   const [theme, setTheme] = useState(JSON.parse(localStorage.theme || true));
   const dispatch = useDispatch();
   const a = useSelector((state) => state.navbar.theme);
   // console.log("a", a);
-  // console.log("theme", theme);
 
   const handleMode = (x) => {
     setTheme(x);
@@ -45,7 +46,9 @@ const Navbar = () => {
         <i className="fa-solid fa-brightness text-primary-color  "></i>
       </div>
       <div
-        className="rounded-full w-10 h-10 bg-light-title-color flex justify-center items-center cursor-pointer  "
+        className={`rounded-full w-10 h-10  flex justify-center items-center cursor-pointer   ${
+          location.pathname === "/" ? "bg-light-title-color " : "bg-third-color"
+        }`}
         title="Home"
         onClick={() => {
           navigate("/");
