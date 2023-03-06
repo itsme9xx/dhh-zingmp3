@@ -6,8 +6,8 @@ const ModalLyrics = (props) => {
   const dispatch = useDispatch();
   console.log("modal", props);
   return (
-    <div className="bg-third-color fixed top-10 left-[73px] right-[396px] bottom-0 ">
-      <div className="m-8 p-4 border-2 border-third-color flex flex-col translate-y-60 overflow-hidden translate-x-[330px] border-none">
+    <div className="bg-third-color fixed top-10 left-[73px] xl:right-[396px] bottom-0 right-0 ">
+      <div className="m-8 p-4 border-2 border-third-color flex flex-col xl:translate-y-60 overflow-hidden xl:translate-x-[330px] border-none">
         <div>
           <img src={props?.song?.items?.[0]?.thumbnailM} alt="" />
         </div>

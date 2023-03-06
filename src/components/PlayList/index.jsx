@@ -18,7 +18,7 @@ export function Search() {
   };
   const [searchKey, setSearchKey] = useState();
   return (
-    <div className=" flex h-12 w-96 max-w-full items-center bg-third-color">
+    <div className=" flex h-12 w-96 items-center bg-third-color">
       <i className="fa-sharp fa-solid fa-magnifying-glass text-light-title-color ml-4 mr-2"></i>
       <input
         placeholder="Nhập từ khóa tìm kiếm"
@@ -75,7 +75,7 @@ const PlayList = () => {
   // console.log(import.meta.env.REACT_APP_BASE_URL_API);
 
   return (
-    <div className="m-8 ml-[var(--marginLeftCustom)] mr-[var(--marginRightCustom)]  ">
+    <div className="m-8 ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0 ">
       <Search />
       {isLoading && <ListLoading />}
       {/* Lựa chọn hôm nay */}
@@ -83,7 +83,7 @@ const PlayList = () => {
         <p className="font-bold text-light-title-color text-2xl my-4">
           {top100[4]?.title}
         </p>
-        <div className=" grid grid-cols-5 gap-4 ">
+        <div className=" grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-4 ">
           {top100[4]?.items.map((x, index) => {
             return (
               <div key={index}>
@@ -115,7 +115,7 @@ const PlayList = () => {
         <p className="font-bold text-light-title-color text-2xl my-4">
           {top100[5]?.title}
         </p>
-        <div className=" grid grid-cols-5 gap-4 ">
+        <div className=" grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-4 ">
           {top100[5]?.items.map((x, index) => {
             return (
               <div className="" key={index}>
@@ -148,7 +148,7 @@ const PlayList = () => {
         <p className="font-bold text-light-title-color text-2xl my-4">
           {top100[7]?.title}
         </p>
-        <div className=" grid grid-cols-5 gap-4 ">
+        <div className=" grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-4 ">
           {top100[7]?.items.map((x, index) => {
             return (
               <div className="" key={index}>
@@ -181,7 +181,7 @@ const PlayList = () => {
         <p className="font-bold text-light-title-color text-2xl my-4">
           {top100[11]?.title}
         </p>
-        <div className=" grid grid-cols-5 gap-4 ">
+        <div className=" grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-4 ">
           {top100[11]?.items.map((x, index) => {
             return (
               <div className="" key={index}>
@@ -211,10 +211,13 @@ const PlayList = () => {
       </div>
       {/* Album */}
       <div>
-        <p className="font-bold text-light-title-color text-2xl my-4">
-          {top100[14]?.title || "Album"}
-        </p>
-        <div className=" grid grid-cols-5 gap-4 ">
+        {!isLoading && (
+          <p className="font-bold text-light-title-color text-2xl my-4">
+            {top100[14]?.title || "Album"}
+          </p>
+        )}
+
+        <div className=" grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-4 ">
           {top100[14]?.items.map((x, index) => {
             return (
               <div className="cursor-pointer" key={index}>

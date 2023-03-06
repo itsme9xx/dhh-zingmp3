@@ -37,14 +37,17 @@ const ListSong = () => {
   // console.log(listSong);
 
   return (
-    <div className="m-8 ml-[var(--marginLeftCustom)]  w-[72vw]  mr-[var(--marginRightCustom)]">
+    <div className="m-8 ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0">
       <Search />
-      <div className="mt-12 flex gap-10 flex-grow ">
+      <div className="mt-12 flex gap-10 lg:gap-[5.5rem] flex-grow flex-col lg:flex-row ">
         {/* Left */}
-        <div className="cursor-pointer w-[400px]    ">
+        <div className="cursor-pointer lg:w-[400px]  w-full flex justify-center items-center  lg:block gap-10 ">
           <div className="overflow-hidden">
             {isLoading ? (
-              <Skeleton height={300} style={{ marginBottom: 10 }} />
+              <Skeleton
+                style={{ marginBottom: 10 }}
+                className="h-[200px] w-[200px] md:h-[300px] md:w-[300px]"
+              />
             ) : (
               <img
                 src={listSong?.thumbnailM}
@@ -54,7 +57,9 @@ const ListSong = () => {
             )}
           </div>
           {isLoading ? (
-            <Skeleton count={4} style={{ marginTop: 10 }} />
+            <div className="mt-4 px-10 ">
+              <Skeleton height={40} className="w-[100px] md:w-[220px]" />
+            </div>
           ) : (
             <div className="flex flex-col justify-center items-center  ">
               <p className="line-clamp-2 mt-3 text-center text-2xl font-bold text-title-color">
@@ -73,7 +78,7 @@ const ListSong = () => {
           )}
         </div>
         {/* Right */}
-        <div className="w-full ">
+        <div className="w-full flex-grow ">
           <div className="text-title-color text-base font-medium">
             <span className="pr-2 mr-2 font-medium border-r-[0.5px] border-r-border-color text-base text-lighter-text-color ">
               Lời tựa :
@@ -96,7 +101,7 @@ const ListSong = () => {
           <div className="h-[calc(100vh-308px)] overflow-y-auto overflow-x-hidden">
             {listSong?.song?.items.map((x, index) => (
               <div
-                className="  px-1 py-2  flex items-center gap-4 border-b-[0.1px] border-b-border-color text-lighter-text-color text-base font-semibold cursor-pointer  "
+                className="  px-1 py-2  hover:bg-third-color flex items-center gap-4 border-b-[0.1px] border-b-border-color text-lighter-text-color text-base font-semibold cursor-pointer  "
                 key={index}
               >
                 <div className="flex gap-4 items-center  w-[42%] ">
@@ -110,7 +115,9 @@ const ListSong = () => {
                     <p className="line-clamp-1 text-light-title-color">
                       {x?.title}
                     </p>
-                    <p className="font-medium text-[14px]">{x?.artistsNames}</p>
+                    <p className="font-medium line-clamp-2 text-[14px]">
+                      {x?.artistsNames}
+                    </p>
                   </div>
                 </div>
                 <div className=" w-[49%] ">
@@ -126,19 +133,23 @@ const ListSong = () => {
               </div>
             ))}
           </div>
-          <div className="mt-4">
-            <span className="pr-2 border-r border-r-border-color text-sm text-light-title-color">
-              {listSong?.song?.total} bài hát
-            </span>
-            <span className="pl-2 text-sm text-light-title-color">
-              {secondsToHms(listSong?.song.totalDuration)}
-            </span>
-          </div>
+          {isLoading ? (
+            <Skeleton width={150} height={40} />
+          ) : (
+            <div className="mt-4">
+              <span className="pr-2 border-r border-r-border-color text-sm text-light-title-color">
+                {listSong?.song?.total} bài hát
+              </span>
+              <span className="pl-2 text-sm text-light-title-color">
+                {secondsToHms(listSong?.song.totalDuration)}
+              </span>
+            </div>
+          )}
         </div>
       </div>
-      <div>
+      <div className="mt-6">
         <span className="text-title-color text-2xl font-semibold ">
-          Nghệ Sĩ Tham Gia
+          {!isLoading && "Nghệ Sĩ Tham Gia "}
         </span>
         <div className="flex gap-10 mt-10">
           {listSong?.artists.map((x, index) => (

@@ -67,6 +67,7 @@ const Player = () => {
     width: 40px;
     height: 40px;
     display: flex;
+    flex-grow: 1;
     justify-content: center;
     align-item: center;
     &:hover {
@@ -76,8 +77,8 @@ const Player = () => {
     }
   `;
   return (
-    <div className="fixed top-0 right-0 bottom-0 border-l-2  text-light-title-color flex flex-col justify-between border-border-color">
-      <div className="m-8 p-4 border-2 border-third-color">
+    <div className=" fixed xl:top-0 xl:right-0 bottom-0 xl:border-l-2  text-light-title-color xl:flex flex-col justify-between border-border-color w-full xl:w-fit bg-secondary-color xl:bg-transparent  border-t z-50 ">
+      <div className="m-8 p-4 border-2 border-third-color hidden xl:block">
         {isLoading ? (
           <Skeleton height={290} />
         ) : (
@@ -100,7 +101,7 @@ const Player = () => {
         </div>
       </div>
       <div className="m-8">
-        <div className=" mt-[50%] flex justify-between items-center mx-4 mb-8">
+        <div className=" mt-[50%] xl:flex justify-between items-center mx-4 mb-8 hidden ">
           <div className=" w-8 h-8 hover:bg-third-color hover:rounded-full flex justify-center items-center cursor-pointer relative group z-20">
             <i className="fa-duotone fa-volume-low "></i>
             {/* Low volumn */}
@@ -163,42 +164,42 @@ const Player = () => {
           </div>
         </div>
         {/* slider music  */}
-        <div className="flex gap-5 justify-between">
+        <div className="flex gap-5 justify-between items-center">
           <p>00:00</p>
-          <div>
+          <div className=" flex-grow">
             <input
               type="range"
               min="0"
               max="10"
               defaultValue="0"
-              className="slider w-[200px] "
+              className="slider "
             />
           </div>
           <p>04:30</p>
         </div>
         {/* Control button */}
-        <div className="flex gap-8 mt-6 ">
+        <div className="flex gap-8 mt-6">
           <ButtonIcon
             onClick={() => {
               handleShuffleButton();
             }}
           >
             <i
-              className="fa-solid fa-shuffle"
+              className="fa-solid fa-shuffle "
               style={{ color: showSuffle ? "#1976d2" : "" }}
             ></i>
           </ButtonIcon>
-          <button className="bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center">
+          <button className="xl:bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center bg-transparent  flex-grow  ">
             <i className="fa-solid fa-backward-step"></i>
           </button>
-          <button className="bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center">
+          <button className="xl:bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center  bg-transparent  flex-grow ">
             <i className="fa-duotone fa-play"></i>
           </button>
-          <button className="bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center">
+          <button className="xl:bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center  bg-transparent  flex-grow ">
             <i className="fa-solid fa-forward-step"></i>
           </button>
           <button
-            className="bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center"
+            className="bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center  flex-grow   "
             onClick={() => {
               handleRepeatButton();
             }}
@@ -209,7 +210,9 @@ const Player = () => {
             ></i>
           </button>
         </div>
-        <div className="flex justify-center mt-12 select-none ">128kbps</div>
+        <div className="xl:flex justify-center mt-12 select-none hidden  ">
+          128kbps
+        </div>
       </div>
     </div>
   );

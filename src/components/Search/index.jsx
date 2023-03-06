@@ -42,7 +42,7 @@ const SearchPage = () => {
   }, [param]);
   console.log(searchSong);
   return (
-    <div className="m-8 ml-[var(--marginLeftCustom)]  w-[72vw]  mr-[var(--marginRightCustom)] ">
+    <div className="m-8 ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0 ">
       <Search />
       {/* {isLoading && <ListSongLoading />} */}
       {/* <div className="flex gap-10">
@@ -64,7 +64,7 @@ const SearchPage = () => {
         {isLoading ? (
           <div>
             <Skeleton width={200} height={40} />
-            <div className="grid grid-cols-2 mt-6 gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 mt-6 gap-10">
               <div className="flex items-center gap-4  border-b border-b-border-color pb-4">
                 <i className="fa-sharp fa-solid fa-music text-lighter-text-color "></i>
                 <Skeleton height={60} width={60} />
@@ -126,7 +126,7 @@ const SearchPage = () => {
             <p className="text-2xl font-semibold mb-4 text-light-title-color">
               Bài hát
             </p>
-            <div className="grid grid-cols-2 gap-4 cursor-pointer">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 cursor-pointer">
               {searchSong?.songs.map((x, index) => (
                 <div
                   key={index}
@@ -160,7 +160,7 @@ const SearchPage = () => {
         {isLoading ? (
           <div>
             <Skeleton width={200} height={40} />
-            <div className="grid grid-cols-5 gap-10 mt-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-4 3xl:grid-cols-5 gap-10 mt-4 overflow-hidden">
               <Skeleton width={230} height={230} />
               <Skeleton width={230} height={230} />
               <Skeleton width={230} height={230} />
@@ -173,7 +173,7 @@ const SearchPage = () => {
             <p className="text-2xl font-semibold mb-6 text-light-title-color ">
               Playlists
             </p>
-            <div className="grid grid-cols-5 gap-4  cursor-pointer">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4  cursor-pointer">
               {searchSong?.playlists.map((x, index) => (
                 <div key={index} className="flex mb-10">
                   <div className=" ">
@@ -201,7 +201,7 @@ const SearchPage = () => {
         {isLoading ? (
           <div>
             <Skeleton width={200} height={40} />
-            <div className="grid grid-cols-5 gap-10 mt-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4  3xl:grid-cols-5 gap-10 mt-4 overflow-hidden">
               <Skeleton width={230} height={230} />
               <Skeleton width={230} height={230} />
               <Skeleton width={230} height={230} />
@@ -214,7 +214,7 @@ const SearchPage = () => {
             <p className="text-2xl font-semibold mb-6 text-light-title-color">
               Top MV
             </p>
-            <div className="grid grid-cols-4 gap-4 cursor-pointer  ">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-4 cursor-pointer  ">
               {searchSong?.videos.map((x, index) => (
                 <div key={index} className="flex mb-10 overflow-hidden ">
                   <div className=" ">
