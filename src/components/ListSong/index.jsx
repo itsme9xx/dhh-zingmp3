@@ -34,7 +34,11 @@ const ListSong = () => {
         setIsLoading(false);
       });
   }, []);
-  // console.log(listSong);
+  console.log({ listSong });
+  // console.log(listSong.songs[2].encodeId);
+  const handleToast = () => {
+    alert("abc");
+  };
 
   return (
     <div className="m-8 ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0">
@@ -97,20 +101,28 @@ const ListSong = () => {
               <p>THỜI GIAN</p>
             </div>
           </div>
+
           {isLoading && <ListSongLoading />}
           <div className="h-[calc(100vh-308px)] overflow-y-auto overflow-x-hidden">
             {listSong?.song?.items.map((x, index) => (
               <div
                 className="  px-1 py-2  hover:bg-third-color flex items-center gap-4 border-b-[0.1px] border-b-border-color text-lighter-text-color text-base font-semibold cursor-pointer  "
                 key={index}
+                onClick={() => {
+                  x.streamingStatus == 2 && handleToast();
+                }}
               >
                 <div className="flex gap-4 items-center  w-[42%] ">
                   <i className="fa-sharp fa-solid fa-music text-[14px]"></i>
-                  <img
-                    src={x?.thumbnail}
-                    className="w-[15%] rounded-lg"
-                    alt=""
-                  />
+                  <div className="w-[15%] rounded-lg relative">
+                    <img src={x?.thumbnail} className="" alt="" />
+                    {x?.streamingStatus == 2 && (
+                      <span className="text-gray-600 absolute tracking-widest right-0 top-0 -translate-y-1/2 translate-x-2 bg-[#f4e570] text-[10px] leading-3 py-[2px] px-1 rounded-sm">
+                        VIP
+                      </span>
+                    )}
+                  </div>
+
                   <div>
                     <p className="line-clamp-1 text-light-title-color">
                       {x?.title}
