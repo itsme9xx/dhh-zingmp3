@@ -21,8 +21,8 @@ const Navbar = () => {
   const a = useSelector((state) => state.player.button);
   const b = useSelector((state) => state.player.songtoday);
 
-  console.log("a", a);
-  console.log("b", b);
+  // console.log("a", a);
+  // console.log("b", b);
 
   const handleMode = (x) => {
     setTheme(x);

@@ -6,8 +6,10 @@ import ModalLyrics from "../ModalLyrics";
 import { useSelector } from "react-redux";
 import { playerSlice } from "./playerSlice";
 import { useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
 
 const Player = () => {
+  const dispatch = useDispatch();
   const [showPopUp, setShowPopUp] = useState(false);
   const [showVolume, setShowVolume] = useState(false);
   const [showSuffle, setShowSuffle] = useState(false);
@@ -17,8 +19,11 @@ const Player = () => {
   const [isShowList, setIsShowList] = useState(false);
   const [showLyrics, setShowLyrics] = useState(false);
 
+  const toggleListSong = useSelector((state) => state.listsong.listsongmenu);
+  console.log({ toggleListSong });
   const rendersongdefault = useSelector((state) => state.playlist.list);
-  const dispatch = useDispatch();
+  const pickSong = useSelector((state) => state.listsong.song);
+  console.log({ pickSong });
 
   useEffect(() => {
     setIsLoading(true);
@@ -83,7 +88,7 @@ const Player = () => {
           <Skeleton height={290} />
         ) : (
           <img
-            src={musicToday?.items[0]?.thumbnailM}
+            src={pickSong?.thumbnailM || musicToday?.items[0]?.thumbnailM}
             className="w-full"
             alt=""
           />
@@ -91,12 +96,14 @@ const Player = () => {
 
         <div className="mt-4">
           <p className="font-bold">
-            {musicToday?.items[0]?.title || (
+            {pickSong?.title || musicToday?.items[0]?.title || (
               <Skeleton height={20} style={{ marginBottom: 10 }} />
             )}
           </p>
           <p className="text-[13px]">
-            {musicToday?.items[0]?.artistsNames || <Skeleton height={20} />}
+            {pickSong?.artistsNames || musicToday?.items[0]?.artistsNames || (
+              <Skeleton height={20} />
+            )}
           </p>
         </div>
       </div>
@@ -122,27 +129,29 @@ const Player = () => {
           </div>
           {isShowList && (
             <div className="absolute bottom-[280px] top-0 left-0 right-0 bg-secondary-color  overflow-y-scroll scrollbar-hide z-10    ">
-              {musicToday.items.map((x, index) => (
-                <div
-                  className="flex p-4 border-b border-border-color items-center"
-                  key={index}
-                >
-                  <div>
-                    <img
-                      src={x?.thumbnail}
-                      width={60}
-                      style={{ marginRight: 10 }}
-                      alt=""
-                    />
+              {(pickSong ? toggleListSong : musicToday).items.map(
+                (x, index) => (
+                  <div
+                    className="flex p-4 border-b border-border-color items-center"
+                    key={index}
+                  >
+                    <div>
+                      <img
+                        src={x?.thumbnail}
+                        width={60}
+                        style={{ marginRight: 10 }}
+                        alt=""
+                      />
+                    </div>
+                    <div>
+                      <p className="font-bold line-clamp-1"> {x?.title}</p>
+                      <p className="text-[13px] line-clamp-1 font-medium">
+                        {x?.artistsNames}/
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-bold line-clamp-1"> {x?.title}</p>
-                    <p className="text-[13px] line-clamp-1 font-medium">
-                      {x?.artistsNames}/
-                    </p>
-                  </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           )}
           <button

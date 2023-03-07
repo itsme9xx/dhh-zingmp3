@@ -75,6 +75,20 @@ const PlayList = () => {
 
   // console.log(import.meta.env.REACT_APP_BASE_URL_API);
 
+  let data1 = {};
+  let data2 = {};
+  let data3 = {};
+  let data4 = {};
+  let data5 = {};
+
+  if (top100.length > 0) {
+    data1 = top100.find((x) => x.sectionId === "hAutoTheme1");
+    data2 = top100.find((x) => x.sectionId === "hArtistTheme");
+    data3 = top100.find((x) => x.sectionId === "hAutoTheme2");
+    data4 = top100.find((x) => x.sectionId === "h100");
+    data5 = top100.find((x) => x.sectionId === "hAlbum");
+  }
+  // console.log({ data });
   return (
     <div className="m-8 ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0 ">
       <Search />
@@ -82,10 +96,10 @@ const PlayList = () => {
       {/* Lựa chọn hôm nay */}
       <div>
         <p className="font-bold text-light-title-color text-2xl my-4">
-          {top100[5]?.title}
+          {data1?.title}
         </p>
         <div className=" grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-4 ">
-          {top100[5]?.items.map((x, index) => {
+          {data1?.items?.map((x, index) => {
             return (
               <div key={index}>
                 <div
@@ -114,10 +128,10 @@ const PlayList = () => {
       {/* Nữ nghệ sĩ Việt nổi bật  */}
       <div>
         <p className="font-bold text-light-title-color text-2xl my-4">
-          {top100[6]?.title}
+          {data2?.title}
         </p>
         <div className=" grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-4 ">
-          {top100[6]?.items.map((x, index) => {
+          {data2?.items?.map((x, index) => {
             return (
               <div className="" key={index}>
                 <div
@@ -147,10 +161,10 @@ const PlayList = () => {
       {/* Nhạc mới mỗi ngày */}
       <div>
         <p className="font-bold text-light-title-color text-2xl my-4">
-          {top100[8]?.title}
+          {data3?.title}
         </p>
         <div className=" grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-4 ">
-          {top100[8]?.items.map((x, index) => {
+          {data3?.items?.map((x, index) => {
             return (
               <div className="" key={index}>
                 <div
@@ -180,10 +194,10 @@ const PlayList = () => {
       {/* Top100 */}
       <div>
         <p className="font-bold text-light-title-color text-2xl my-4">
-          {top100[12]?.title}
+          {data4?.title}
         </p>
         <div className=" grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-4 ">
-          {top100[12]?.items.map((x, index) => {
+          {data4?.items?.map((x, index) => {
             return (
               <div className="" key={index}>
                 <div
@@ -214,12 +228,12 @@ const PlayList = () => {
       <div>
         {!isLoading && (
           <p className="font-bold text-light-title-color text-2xl my-4">
-            {top100[15]?.title || "Album"}
+            {data5?.title || "Album"}
           </p>
         )}
 
         <div className=" grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-4 ">
-          {top100[15]?.items.map((x, index) => {
+          {data5?.items?.map((x, index) => {
             return (
               <div className="cursor-pointer" key={index}>
                 <div

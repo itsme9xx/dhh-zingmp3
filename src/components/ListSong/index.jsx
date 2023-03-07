@@ -8,8 +8,13 @@ import { formatTime } from "../../utils/FormatTime";
 import secondsToHms from "../../utils/FormatTimeToHour";
 import Skeleton from "react-loading-skeleton";
 import { ListSongLoading } from "../ListLoading";
+import { message } from "antd";
+import { useDispatch } from "react-redux";
+import { listsongSlice } from "./listsongSlice";
 
 const ListSong = () => {
+  const dispatch = useDispatch();
+  // const [activeSong, setActiveSong] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -32,20 +37,31 @@ const ListSong = () => {
       .then((res) => {
         setListSong(res.data.data);
         setIsLoading(false);
+        dispatch(listsongSlice.actions.listsongChange(res.data.data.song));
+        // dispatch(listsongChange(res.data.data));
       });
   }, []);
   console.log({ listSong });
   // console.log(listSong.songs[2].encodeId);
-  const handleToast = () => {
-    alert("abc");
+
+  const info = () => {
+    message.warning("Bài hát này chỉ dành cho tài khoản VIP!", 2);
+  };
+  const handleClickSong = (x) => {
+    if (x.streamingStatus == 2) {
+      info();
+      return;
+    }
+    // setActiveSong(true);
+    dispatch(listsongSlice.actions.songChange(x));
   };
 
   return (
-    <div className="m-8 ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0">
+    <div className="m-8 ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0   ">
       <Search />
-      <div className="mt-12 flex gap-10 lg:gap-[5.5rem] flex-grow flex-col lg:flex-row ">
+      <div className="mt-12 flex gap-10 lg:gap-[5.5rem] flex-grow flex-col lg:flex-row">
         {/* Left */}
-        <div className="cursor-pointer lg:w-[400px]  w-full flex justify-center items-center  lg:block gap-10 ">
+        <div className="cursor-pointer lg:w-[400px]  w-full flex justify-center items-center  lg:block gap-10  ">
           <div className="overflow-hidden">
             {isLoading ? (
               <Skeleton
@@ -82,7 +98,7 @@ const ListSong = () => {
           )}
         </div>
         {/* Right */}
-        <div className="w-full flex-grow ">
+        <div className="w-full flex-grow  ">
           <div className="text-title-color text-base font-medium">
             <span className="pr-2 mr-2 font-medium border-r-[0.5px] border-r-border-color text-base text-lighter-text-color ">
               Lời tựa :
@@ -101,18 +117,19 @@ const ListSong = () => {
               <p>THỜI GIAN</p>
             </div>
           </div>
-
           {isLoading && <ListSongLoading />}
           <div className="h-[calc(100vh-308px)] overflow-y-auto overflow-x-hidden">
             {listSong?.song?.items.map((x, index) => (
               <div
-                className="  px-1 py-2  hover:bg-third-color flex items-center gap-4 border-b-[0.1px] border-b-border-color text-lighter-text-color text-base font-semibold cursor-pointer  "
+                className={`list-song px-1 py-2  hover:bg-third-color flex items-center gap-4 border-b-[0.1px] border-b-border-color text-lighter-text-color text-base font-semibold cursor-pointer `}
+                id={index}
                 key={index}
                 onClick={() => {
-                  x.streamingStatus == 2 && handleToast();
+                  document.getElementById(index).classList.add("activeSong");
+                  handleClickSong(x);
                 }}
               >
-                <div className="flex gap-4 items-center  w-[42%] ">
+                <div className="flex gap-4 items-center  w-[42%]  ">
                   <i className="fa-sharp fa-solid fa-music text-[14px]"></i>
                   <div className="w-[15%] rounded-lg relative">
                     <img src={x?.thumbnail} className="" alt="" />

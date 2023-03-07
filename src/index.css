@@ -260,3 +260,7 @@ input.slider:focus::-ms-fill-upper {
     transform: rotate(360deg);
   }
 }
+
+.activeSong {
+  background-color: var(--active-song) !important;
+}
