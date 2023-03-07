@@ -82,17 +82,17 @@ button {
 }
 
 /* Input range */
-input[type="range"] {
+input.slider {
   height: 25px;
   -webkit-appearance: none;
   margin: 10px 0;
   width: 100%;
   background-color: var(--transparent);
 }
-input[type="range"]:focus {
+input.slider:focus {
   outline: none;
 }
-input[type="range"]::-webkit-slider-runnable-track {
+input.slider::-webkit-slider-runnable-track {
   width: 100%;
   height: 1px;
   cursor: pointer;
@@ -103,7 +103,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   border-radius: 1px;
   border: 0px solid #000000;
 }
-input[type="range"]::-webkit-slider-thumb {
+input.slider::-webkit-slider-thumb {
   box-shadow: 0px 0px 0px #000000;
   border: 1px solid #2497e3;
   height: 18px;
@@ -114,10 +114,10 @@ input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   margin-top: -9px;
 }
-input[type="range"]:focus::-webkit-slider-runnable-track {
+input.slider:focus::-webkit-slider-runnable-track {
   background: #2497e3;
 }
-input[type="range"]::-moz-range-track {
+input.slider::-moz-range-track {
   width: 100%;
   height: 1px;
   cursor: pointer;
@@ -127,7 +127,7 @@ input[type="range"]::-moz-range-track {
   border-radius: 1px;
   border: 0px solid #000000;
 }
-input[type="range"]::-moz-range-thumb {
+input.slider::-moz-range-thumb {
   box-shadow: 0px 0px 0px #000000;
   border: 1px solid #2497e3;
   height: 18px;
@@ -136,7 +136,7 @@ input[type="range"]::-moz-range-thumb {
   background: #a1d0ff;
   cursor: pointer;
 }
-input[type="range"]::-ms-track {
+input.slider::-ms-track {
   width: 100%;
   height: 1px;
   cursor: pointer;
@@ -145,19 +145,19 @@ input[type="range"]::-ms-track {
   border-color: transparent;
   color: transparent;
 }
-input[type="range"]::-ms-fill-lower {
+input.slider::-ms-fill-lower {
   background: #2497e3;
   border: 0px solid #000000;
   border-radius: 2px;
   box-shadow: 0px 0px 6px #000000;
 }
-input[type="range"]::-ms-fill-upper {
+input.slider::-ms-fill-upper {
   background: #2497e3;
   border: 0px solid #000000;
   border-radius: 2px;
   box-shadow: 0px 0px 6px #000000;
 }
-input[type="range"]::-ms-thumb {
+input.slider::-ms-thumb {
   margin-top: 1px;
   box-shadow: 0px 0px 0px #000000;
   border: 1px solid #2497e3;
@@ -167,9 +167,96 @@ input[type="range"]::-ms-thumb {
   background: #a1d0ff;
   cursor: pointer;
 }
-input[type="range"]:focus::-ms-fill-lower {
+input.slider:focus::-ms-fill-lower {
   background: #2497e3;
 }
-input[type="range"]:focus::-ms-fill-upper {
+input.slider:focus::-ms-fill-upper {
   background: #2497e3;
+}
+
+/* CSS spinner */
+.lds-roller {
+  display: inline-block;
+  position: relative;
+  width: 40px;
+  height: 40px;
+  transform: scale(0.3);
+}
+.lds-roller div {
+  /* animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite; */
+  animation: lds-roller 1.2s linear infinite;
+  transform-origin: 40px 40px;
+}
+.lds-roller div:after {
+  content: " ";
+  display: block;
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 20%;
+  background: var(--primary-color);
+}
+.lds-roller div:nth-child(1) {
+  animation-delay: -0.036s;
+}
+.lds-roller div:nth-child(1):after {
+  top: 63px;
+  left: 63px;
+}
+.lds-roller div:nth-child(2) {
+  animation-delay: -0.072s;
+}
+.lds-roller div:nth-child(2):after {
+  top: 68px;
+  left: 56px;
+}
+.lds-roller div:nth-child(3) {
+  animation-delay: -0.108s;
+}
+.lds-roller div:nth-child(3):after {
+  top: 71px;
+  left: 48px;
+}
+.lds-roller div:nth-child(4) {
+  animation-delay: -0.144s;
+}
+.lds-roller div:nth-child(4):after {
+  top: 72px;
+  left: 40px;
+}
+.lds-roller div:nth-child(5) {
+  animation-delay: -0.18s;
+}
+.lds-roller div:nth-child(5):after {
+  top: 71px;
+  left: 32px;
+}
+.lds-roller div:nth-child(6) {
+  animation-delay: -0.216s;
+}
+.lds-roller div:nth-child(6):after {
+  top: 68px;
+  left: 24px;
+}
+.lds-roller div:nth-child(7) {
+  animation-delay: -0.252s;
+}
+.lds-roller div:nth-child(7):after {
+  top: 63px;
+  left: 17px;
+}
+.lds-roller div:nth-child(8) {
+  animation-delay: -0.288s;
+}
+.lds-roller div:nth-child(8):after {
+  top: 56px;
+  left: 12px;
+}
+@keyframes lds-roller {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

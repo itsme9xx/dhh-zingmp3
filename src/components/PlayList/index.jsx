@@ -48,16 +48,17 @@ const PlayList = () => {
   useEffect(() => {
     setIsLoading(true);
     axios.get("https://serverzingmp3.vercel.app/api/home").then((res) => {
+      // console.log(res);
       setTop100(res.data.data.items);
       setIsLoading(false);
       dispatch(
         playlistSlice.actions.listChange(
-          res.data.data.items[4].items[0].encodeId
+          res.data.data.items[5].items[0]?.encodeId
         )
       );
       localStorage.setItem(
         "defaultSong",
-        res.data.data.items[4].items[0].encodeId
+        res.data.data.items[5].items[0]?.encodeId
       );
     });
   }, []);
@@ -81,10 +82,10 @@ const PlayList = () => {
       {/* Lựa chọn hôm nay */}
       <div>
         <p className="font-bold text-light-title-color text-2xl my-4">
-          {top100[4]?.title}
+          {top100[5]?.title}
         </p>
         <div className=" grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-4 ">
-          {top100[4]?.items.map((x, index) => {
+          {top100[5]?.items.map((x, index) => {
             return (
               <div key={index}>
                 <div
@@ -113,10 +114,10 @@ const PlayList = () => {
       {/* Nữ nghệ sĩ Việt nổi bật  */}
       <div>
         <p className="font-bold text-light-title-color text-2xl my-4">
-          {top100[5]?.title}
+          {top100[6]?.title}
         </p>
         <div className=" grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-4 ">
-          {top100[5]?.items.map((x, index) => {
+          {top100[6]?.items.map((x, index) => {
             return (
               <div className="" key={index}>
                 <div
@@ -146,10 +147,10 @@ const PlayList = () => {
       {/* Nhạc mới mỗi ngày */}
       <div>
         <p className="font-bold text-light-title-color text-2xl my-4">
-          {top100[7]?.title}
+          {top100[8]?.title}
         </p>
         <div className=" grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-4 ">
-          {top100[7]?.items.map((x, index) => {
+          {top100[8]?.items.map((x, index) => {
             return (
               <div className="" key={index}>
                 <div
@@ -179,10 +180,10 @@ const PlayList = () => {
       {/* Top100 */}
       <div>
         <p className="font-bold text-light-title-color text-2xl my-4">
-          {top100[11]?.title}
+          {top100[12]?.title}
         </p>
         <div className=" grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-4 ">
-          {top100[11]?.items.map((x, index) => {
+          {top100[12]?.items.map((x, index) => {
             return (
               <div className="" key={index}>
                 <div
@@ -213,12 +214,12 @@ const PlayList = () => {
       <div>
         {!isLoading && (
           <p className="font-bold text-light-title-color text-2xl my-4">
-            {top100[14]?.title || "Album"}
+            {top100[15]?.title || "Album"}
           </p>
         )}
 
         <div className=" grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 gap-4 ">
-          {top100[14]?.items.map((x, index) => {
+          {top100[15]?.items.map((x, index) => {
             return (
               <div className="cursor-pointer" key={index}>
                 <div

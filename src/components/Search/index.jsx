@@ -220,7 +220,7 @@ const SearchPage = () => {
                   <div className=" ">
                     <div className=" relative hover:scale-110 duration-1000 transition-all overflow-hidden hover:brightness-50  ">
                       <div className="absolute w-[40px] h-[40px] flex justify-center items-center border-2 border-white  rounded-full top-[42%] left-[42%] z-10 ">
-                        <i class="fa-duotone fa-play text-white"></i>
+                        <i className="fa-duotone fa-play text-white"></i>
                       </div>
                       <img src={x.thumbnailM} className="" alt="" />
                     </div>

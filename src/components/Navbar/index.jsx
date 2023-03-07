@@ -71,7 +71,20 @@ const Navbar = () => {
         className="rounded-full w-10 h-10 bg-light-title-color flex justify-center items-center cursor-pointer "
         title="Play"
       >
-        <i className="fa-sharp fa-solid fa-play text-primary-color"></i>
+        {b ? (
+          <i className="fa-sharp fa-solid fa-play text-primary-color "></i>
+        ) : (
+          <div className="lds-roller -top-[6px] -left-[6px]">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        )}
       </div>
       <div
         className={`${

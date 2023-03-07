@@ -47,7 +47,7 @@ const Player = () => {
   const handleRepeatButton = () => {
     setShowRepeat(!showRepeat);
   };
-
+  console.log({ musicToday });
   const PopUp = () => {
     return (
       <div
@@ -110,8 +110,15 @@ const Player = () => {
             {/* <i className="fa-solid fa-volume-xmark"></i> */} {/* Mute */}
             <input
               type="range"
-              className="volumnButton absolute -translate-y-12 h-16 w-4 opacity-0 group-hover:opacity-100  "
+              className="volumnButton absolute -translate-y-12 h-16 w-10  opacity-0 group-hover:opacity-100  "
             />
+            {/* <input
+              type="range"
+              min="0"
+              max="10"
+              defaultValue="0"
+              className="slider volumnButton absolute -translate-y-12 opacity-0 group-hover:opacity-100 "
+            /> */}
           </div>
           {isShowList && (
             <div className="absolute bottom-[280px] top-0 left-0 right-0 bg-secondary-color  overflow-y-scroll scrollbar-hide z-10    ">
@@ -193,7 +200,20 @@ const Player = () => {
             <i className="fa-solid fa-backward-step"></i>
           </button>
           <button className="xl:bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center  bg-transparent  flex-grow ">
-            <i className="fa-duotone fa-play"></i>
+            {musicToday ? (
+              <i className="fa-duotone fa-play"></i>
+            ) : (
+              <div className="lds-roller -top-[6px] -left-[12px] after:[&>div]:bg-light-title-color ">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            )}
           </button>
           <button className="xl:bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center  bg-transparent  flex-grow ">
             <i className="fa-solid fa-forward-step"></i>
