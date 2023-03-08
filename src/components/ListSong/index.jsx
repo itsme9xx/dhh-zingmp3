@@ -14,7 +14,7 @@ import { listsongSlice } from "./listsongSlice";
 
 const ListSong = () => {
   const dispatch = useDispatch();
-  // const [activeSong, setActiveSong] = useState(false);
+  const [activeSong, setActiveSong] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -37,12 +37,9 @@ const ListSong = () => {
       .then((res) => {
         setListSong(res.data.data);
         setIsLoading(false);
-        dispatch(listsongSlice.actions.listsongChange(res.data.data.song));
-        // dispatch(listsongChange(res.data.data));
       });
   }, []);
   console.log({ listSong });
-  // console.log(listSong.songs[2].encodeId);
 
   const info = () => {
     message.warning("Bài hát này chỉ dành cho tài khoản VIP!", 2);
@@ -53,11 +50,15 @@ const ListSong = () => {
       return;
     }
     // setActiveSong(true);
+
+    setActiveSong(x);
+
+    dispatch(listsongSlice.actions.listsongChange(listSong.song));
     dispatch(listsongSlice.actions.songChange(x));
   };
 
   return (
-    <div className="m-8 ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0   ">
+    <div className="py-8 ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0   ">
       <Search />
       <div className="mt-12 flex gap-10 lg:gap-[5.5rem] flex-grow flex-col lg:flex-row">
         {/* Left */}
@@ -121,11 +122,12 @@ const ListSong = () => {
           <div className="h-[calc(100vh-308px)] overflow-y-auto overflow-x-hidden">
             {listSong?.song?.items.map((x, index) => (
               <div
-                className={`list-song px-1 py-2  hover:bg-third-color flex items-center gap-4 border-b-[0.1px] border-b-border-color text-lighter-text-color text-base font-semibold cursor-pointer `}
+                className={`${
+                  activeSong.encodeId === x.encodeId && "activeSong"
+                } list-song px-1 py-2  hover:bg-third-color flex items-center gap-4 border-b-[0.1px] border-b-border-color text-lighter-text-color text-base font-semibold cursor-pointer `}
                 id={index}
                 key={index}
                 onClick={() => {
-                  document.getElementById(index).classList.add("activeSong");
                   handleClickSong(x);
                 }}
               >

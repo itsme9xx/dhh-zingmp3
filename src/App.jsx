@@ -7,7 +7,7 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
 const App = () => {
   return (
-    <div className="flex ">
+    <div className="">
       <SkeletonTheme baseColor="#374A57" highlightColor="#525252">
         <RouterPage></RouterPage>
       </SkeletonTheme>

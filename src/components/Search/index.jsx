@@ -14,7 +14,7 @@ const SearchPage = () => {
   const param = useParams();
   const [searchSong, setSearchSong] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  // let video = {};
+  let video = {};
   const navigate = useNavigate();
   const handleVideo = (x) => {
     axios
@@ -59,7 +59,7 @@ const SearchPage = () => {
   }, [param]);
   // console.log(searchSong);
   return (
-    <div className="m-8 ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0 ">
+    <div className="py-8 ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0 ">
       <Search />
       {/* {isLoading && <ListSongLoading />} */}
       {/* <div className="flex gap-10">

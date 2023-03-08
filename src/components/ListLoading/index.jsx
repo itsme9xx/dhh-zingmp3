@@ -45,13 +45,13 @@ export const ListSongLoading = () => {
             className=" flex  px-1 py-2 items-center gap-4 w-[480px] md:w-[620px] lg:w-[510px] 2xl:w-[1000px] "
             key={index}
           >
-            <div className="flex gap-4 items-center w-[46%]  ">
+            <div className="flex gap-4 items-center w-[43%]  ">
               <i className="fa-sharp fa-solid fa-music text-lighter-text-color "></i>
 
               <Skeleton width={40} height={40} />
               <Skeleton className="w-[80px] xl:w-[100px] h-[20px]" />
             </div>
-            <div className="w-[45%] ">
+            <div className="w-[43%] ">
               <Skeleton className="w-[80px] xl:w-[100px] h-[20px]" />
             </div>
             <div className="flex-grow">
