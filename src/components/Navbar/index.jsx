@@ -4,9 +4,11 @@ import { navbarSlice } from "./navbarSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import ModalLyrics from "../ModalLyrics";
+import { listsongSlice } from "../ListSong/listsongSlice";
 
 const Navbar = () => {
   const location = useLocation();
+
   // console.log(location);
   const navigate = useNavigate();
   const [theme, setTheme] = useState(JSON.parse(localStorage.theme || true));
@@ -18,12 +20,21 @@ const Navbar = () => {
   };
 
   const dispatch = useDispatch();
+  const isPlay = useSelector((state) => state.navbar.isPlay);
+  console.log({ isPlay });
   const a = useSelector((state) => state.player.button);
   const b = useSelector((state) => state.player.songtoday);
+  const checkLoading = useSelector((state) => state.listsong.checkloading);
 
   // console.log("a", a);
   // console.log("b", b);
 
+  const handleClickPlay = () => {
+    isPlay
+      ? dispatch(navbarSlice.actions.iconPlayChange(false))
+      : dispatch(navbarSlice.actions.iconPlayChange(true));
+    // dispatch(listsongSlice.actions.checkLoading(false));
+  };
   const handleMode = (x) => {
     setTheme(x);
     localStorage.setItem("theme", x);
@@ -70,9 +81,16 @@ const Navbar = () => {
       <div
         className="rounded-full w-10 h-10 bg-light-title-color flex justify-center items-center cursor-pointer "
         title="Play"
+        onClick={() => {
+          handleClickPlay();
+        }}
       >
-        {b ? (
-          <i className="fa-sharp fa-solid fa-play text-primary-color "></i>
+        {!checkLoading && b ? (
+          isPlay ? (
+            <i className="fa-sharp fa-solid fa-play text-primary-color "></i>
+          ) : (
+            <i className="fa-duotone fa-pause"></i>
+          )
         ) : (
           <div className="lds-roller -top-[6px] -left-[6px]">
             <div></div>

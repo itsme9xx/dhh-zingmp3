@@ -5,6 +5,7 @@ export const playerSlice = createSlice({
   initialState: {
     button: "",
     songtoday: "",
+    songplay: "",
   },
   reducers: {
     modalChange: (state, action) => {
@@ -12,6 +13,9 @@ export const playerSlice = createSlice({
     },
     showSongToday: (state, action) => {
       state.songtoday = action.payload;
+    },
+    songPlay: (state, action) => {
+      state.songplay = action.payload;
     },
   },
 });

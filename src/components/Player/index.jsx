@@ -8,6 +8,9 @@ import { playerSlice } from "./playerSlice";
 import { useDispatch } from "react-redux";
 import { useParams, useLocation } from "react-router-dom";
 import { listsongSlice } from "../ListSong/listsongSlice";
+import { useRef } from "react";
+import { message } from "antd";
+import { navbarSlice } from "../Navbar/navbarSlice";
 
 const Player = () => {
   const dispatch = useDispatch();
@@ -15,15 +18,34 @@ const Player = () => {
   const [showVolume, setShowVolume] = useState(false);
   const [showSuffle, setShowSuffle] = useState(false);
   const [showRepeat, setShowRepeat] = useState(false);
-
+  // const [isPlay, setIsPlay] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isShowList, setIsShowList] = useState(false);
   const [showLyrics, setShowLyrics] = useState(false);
+  const [playSong, setPlaySong] = useState();
 
+  const [src, setSrc] = useState("");
+  const audioRef = useRef(null);
   const toggleListSong = useSelector((state) => state.listsong.listsongmenu);
   const rendersongdefault = useSelector((state) => state.playlist.list);
   const pickSong = useSelector((state) => state.listsong.song);
+  const isPlay1 = useSelector((state) => state.listsong.click);
+  const src1 = useSelector((state) => state.listsong.src);
+  const checkLoading = useSelector((state) => state.listsong.checkloading);
+  const isPlay = useSelector((state) => state.navbar.isPlay);
+  const activeSong = useSelector((state) => state.listsong.activesong);
+
+  console.log({ isPlay1 });
   console.log({ pickSong });
+  // console.log({ src1 });
+  console.log({ checkLoading });
+
+  useEffect(() => {
+    checkLoading === false &&
+      (audioRef.current?.load(),
+      audioRef.current?.play(),
+      dispatch(navbarSlice.actions.iconPlayChange(false)));
+  }, [checkLoading]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -44,6 +66,23 @@ const Player = () => {
       });
   }, [rendersongdefault]);
 
+  useEffect(() => {
+    isPlay === false ? audioRef.current.play() : audioRef.current.pause();
+  }, [isPlay]);
+
+  useEffect(() => {
+    axios
+      .get(
+        `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[0]?.encodeId}`
+      )
+      .then((res) => {
+        console.log("abcd", res);
+        // audioRef.current.src(setSrc(src1 ? src1 : res?.data?.data?.[128]));
+        setPlaySong(res.data);
+        // dispatch(playerSlice.actions.songPlay(res.data));
+      });
+  }, [toggleListSong]);
+
   const handleShuffleButton = () => {
     setShowSuffle(!showSuffle);
   };
@@ -53,6 +92,11 @@ const Player = () => {
   const handleRepeatButton = () => {
     setShowRepeat(!showRepeat);
   };
+
+  const info = () => {
+    message.warning("Bài hát này chỉ dành cho tài khoản VIP!", 2);
+  };
+  console.log({ playSong });
   console.log({ toggleListSong });
   const PopUp = () => {
     return (
@@ -133,11 +177,43 @@ const Player = () => {
             <div className="absolute bottom-[310px] top-0 left-0 right-0 bg-secondary-color  overflow-y-scroll scrollbar-hide z-10    ">
               {toggleListSong.items.map((x, index) => (
                 <div
-                  className="flex p-4 border-b border-border-color items-center cursor-pointer hover:bg-third-color "
+                  className={`${
+                    activeSong.encodeId === x.encodeId && "activeSong"
+                  } flex p-4 border-b border-border-color items-center cursor-pointer hover:bg-third-color `}
                   key={index}
                   onClick={() => {
-                    dispatch(listsongSlice.actions.songChange(x));
-                    console.log(x);
+                    dispatch(
+                      listsongSlice.actions.songChange({ song: x, click: true })
+                    );
+                    dispatch(listsongSlice.actions.activeSongChange(x));
+                    if (x.streamingStatus == 2) {
+                      info();
+                      return;
+                    }
+
+                    dispatch(
+                      listsongSlice.actions.listsongChange(toggleListSong)
+                    );
+                    dispatch(listsongSlice.actions.checkLoading(true));
+                    axios
+                      .get(
+                        `https://serverzingmp3.vercel.app/api/song?id=${x?.encodeId}`
+                      )
+                      .then((res) => {
+                        // dispatch(listsongSlice.actions);
+                        console.log({ res });
+                        res.data.msg !== "Success"
+                          ? (message.warning(res.data.msg),
+                            dispatch(listsongSlice.actions.checkLoading("")))
+                          : (dispatch(
+                              listsongSlice.actions.checkLoading(false)
+                            ),
+                            dispatch(
+                              listsongSlice.actions.srcChange(
+                                res?.data?.data?.[128]
+                              )
+                            ));
+                      });
                   }}
                 >
                   <div>
@@ -200,6 +276,13 @@ const Player = () => {
           </div>
           <p>04:30</p>
         </div>
+        {/* Audio */}
+        <audio
+          ref={audioRef}
+          id="audio"
+          src={src1 ? src1 : playSong?.data?.[128]}
+        ></audio>
+
         {/* Control button */}
         <div className="flex gap-8 mt-6">
           <ButtonIcon
@@ -215,9 +298,28 @@ const Player = () => {
           <button className="xl:bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center bg-transparent  flex-grow  ">
             <i className="fa-solid fa-backward-step"></i>
           </button>
-          <button className="xl:bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center  bg-transparent  flex-grow ">
-            {toggleListSong ? (
-              <i className="fa-duotone fa-play"></i>
+          <button
+            className="xl:bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center  bg-transparent  flex-grow "
+            onClick={() => {
+              isPlay
+                ? dispatch(navbarSlice.actions.iconPlayChange(false))
+                : dispatch(navbarSlice.actions.iconPlayChange(true));
+              isPlay ? audioRef.current.play() : audioRef.current.pause();
+              playSong.msg !== "Success" &&
+                (message.warning(playSong.msg),
+                dispatch(navbarSlice.actions.iconPlayChange(true)));
+
+              // (audioRef.current.src(setSrc(playSong.data?.[128] || src1)),
+              //   audioRef.current.load());
+              // message.success("Player");
+            }}
+          >
+            {!checkLoading && toggleListSong ? (
+              !isPlay ? (
+                <i className="fa-duotone fa-pause"></i>
+              ) : (
+                <i className="fa-duotone fa-play"></i>
+              )
             ) : (
               <div className="lds-roller -top-[6px] -left-[12px] after:[&>div]:bg-light-title-color ">
                 <div></div>

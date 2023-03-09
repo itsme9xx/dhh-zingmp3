@@ -7,7 +7,7 @@ import { useMemo } from "react";
 
 const Video = () => {
   const pickvideo = useSelector((state) => state?.search?.video);
-  console.log({ pickvideo });
+  // console.log({ pickvideo });
 
   const srcList = useMemo(() => {
     if (!pickvideo) return undefined;
@@ -20,7 +20,6 @@ const Video = () => {
         };
       });
   }, [pickvideo]);
-  console.log("src", srcList);
   return (
     <div className=" py-8 ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0  ">
       <Search />

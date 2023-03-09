@@ -16,7 +16,7 @@ const Login = () => {
     navigate("/");
   }
   return (
-    <div className="text-center  w-screen mt-16 ">
+    <div className=" ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0 text-center py-8 ">
       <h1>Welcome to Zing Mp3</h1>
       <button className="mt-12 bg-green-400" onClick={handleLoginWithGoogle}>
         <i className="fa-brands fa-google-plus-g mr-4"></i>Login with Google
