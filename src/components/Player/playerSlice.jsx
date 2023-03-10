@@ -6,7 +6,7 @@ export const playerSlice = createSlice({
     button: "",
     songtoday: "",
     songplay: "",
-    volume: 0,
+    volume: 0.4,
   },
   reducers: {
     modalChange: (state, action) => {
