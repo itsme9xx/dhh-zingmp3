@@ -47,14 +47,15 @@ const ListSong = () => {
   const info = () => {
     message.warning("Bài hát này chỉ dành cho tài khoản VIP!", 2);
   };
-  const handleClickSong = (x) => {
+  const handleClickSong = (x, index) => {
     if (x.streamingStatus == 2) {
       info();
       return;
     }
-
+    dispatch(listsongSlice.actions.currentSongIndexChange(index));
     dispatch(listsongSlice.actions.activeSongChange(x));
-    dispatch(listsongSlice.actions.songChange({ song: x, click: true }));
+    //Click song hiển thị ra thông tin bài hát bên Player
+    dispatch(listsongSlice.actions.songChange(x));
     dispatch(listsongSlice.actions.listsongChange(listSong.song));
     dispatch(listsongSlice.actions.checkLoading(true));
     axios
@@ -136,12 +137,12 @@ const ListSong = () => {
             {listSong?.song?.items.map((x, index) => (
               <div
                 className={`${
-                  activeSong.encodeId === x.encodeId && "activeSong"
+                  activeSong?.encodeId === x?.encodeId && "activeSong"
                 } list-song px-1 py-2  hover:bg-third-color flex items-center gap-4 border-b-[0.1px] border-b-border-color text-lighter-text-color text-base font-semibold cursor-pointer `}
                 id={index}
                 key={index}
                 onClick={() => {
-                  handleClickSong(x);
+                  handleClickSong(x, index);
                 }}
               >
                 <div className="flex gap-4 items-center  w-[42%]  ">

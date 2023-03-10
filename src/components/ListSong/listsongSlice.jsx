@@ -6,15 +6,14 @@ export const listsongSlice = createSlice({
     song: "",
     listsongmenu: "",
     src: "",
-    click: "",
     checkloading: "",
     songactive: "",
     activesong: "",
+    currentsongindex: 0,
   },
   reducers: {
     songChange: (state, action) => {
-      state.song = action.payload.song;
-      state.click = action.payload.click;
+      state.song = action.payload;
     },
     listsongChange: (state, action) => {
       state.listsongmenu = action.payload;
@@ -27,6 +26,9 @@ export const listsongSlice = createSlice({
     },
     activeSongChange: (state, action) => {
       state.activesong = action.payload;
+    },
+    currentSongIndexChange: (state, action) => {
+      state.currentsongindex = action.payload;
     },
   },
 });

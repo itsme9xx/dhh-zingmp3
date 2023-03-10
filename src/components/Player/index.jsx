@@ -11,34 +11,67 @@ import { listsongSlice } from "../ListSong/listsongSlice";
 import { useRef } from "react";
 import { message } from "antd";
 import { navbarSlice } from "../Navbar/navbarSlice";
+import { formatTime } from "../../utils/FormatTime";
 
 const Player = () => {
   const dispatch = useDispatch();
   const [showPopUp, setShowPopUp] = useState(false);
-  const [showVolume, setShowVolume] = useState(false);
   const [showSuffle, setShowSuffle] = useState(false);
   const [showRepeat, setShowRepeat] = useState(false);
-  // const [isPlay, setIsPlay] = useState(true);
+
   const [isLoading, setIsLoading] = useState(false);
   const [isShowList, setIsShowList] = useState(false);
   const [showLyrics, setShowLyrics] = useState(false);
   const [playSong, setPlaySong] = useState();
+  const [volumeValue, setVolumeValue] = useState(40);
 
   const [src, setSrc] = useState("");
   const audioRef = useRef(null);
   const toggleListSong = useSelector((state) => state.listsong.listsongmenu);
   const rendersongdefault = useSelector((state) => state.playlist.list);
   const pickSong = useSelector((state) => state.listsong.song);
-  const isPlay1 = useSelector((state) => state.listsong.click);
   const src1 = useSelector((state) => state.listsong.src);
   const checkLoading = useSelector((state) => state.listsong.checkloading);
   const isPlay = useSelector((state) => state.navbar.isPlay);
   const activeSong = useSelector((state) => state.listsong.activesong);
+  const currentSongIndex = useSelector(
+    (state) => state.listsong.currentsongindex
+  );
 
-  console.log({ isPlay1 });
+  const volume = useSelector((state) => state.player.volume);
+
+  const handleVolume = (e) => {
+    setVolumeValue(e.target.value);
+    dispatch(playerSlice.actions.setVolume(e.target.value));
+  };
+  useEffect(() => {
+    audioRef.current.volume = volume;
+  }, [volume]);
+
+  // console.log({ isPlay1 });
   console.log({ pickSong });
   // console.log({ src1 });
-  console.log({ checkLoading });
+  // console.log({ checkLoading });
+  const element = document.getElementsByClassName("activeSong");
+  const scrollToActiveSong = () => {
+    console.log({ element });
+    for (let i = 0; i < element.length; i++) {
+      if (element.length == 1) {
+        element[0].scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "nearest",
+        });
+      } else
+        element[i].scrollIntoView({
+          block: "nearest",
+          inline: "nearest",
+        });
+    }
+  };
+  useEffect(() => {
+    scrollToActiveSong();
+  }, [currentSongIndex, pickSong, isShowList]);
 
   useEffect(() => {
     checkLoading === false &&
@@ -76,19 +109,168 @@ const Player = () => {
         `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[0]?.encodeId}`
       )
       .then((res) => {
-        console.log("abcd", res);
+        // console.log("abcd", res);
         // audioRef.current.src(setSrc(src1 ? src1 : res?.data?.data?.[128]));
         setPlaySong(res.data);
         // dispatch(playerSlice.actions.songPlay(res.data));
       });
   }, [toggleListSong]);
 
-  const handleShuffleButton = () => {
-    setShowSuffle(!showSuffle);
-  };
   const handleShowSongButton = () => {
     setShowPopUp(!showPopUp);
   };
+  const handleShuffleButton = () => {
+    setShowSuffle(!showSuffle);
+  };
+  const handlePrevSong = () => {
+    let tempIndex;
+    if (currentSongIndex == 0) tempIndex = toggleListSong.items.length - 1;
+    else tempIndex = currentSongIndex - 1;
+
+    dispatch(listsongSlice.actions.currentSongIndexChange(tempIndex));
+
+    console.log(toggleListSong);
+
+    dispatch(
+      listsongSlice.actions.songChange(toggleListSong?.items?.[tempIndex])
+    );
+    dispatch(
+      listsongSlice.actions.activeSongChange(toggleListSong?.items?.[tempIndex])
+    );
+
+    if (toggleListSong?.items?.[tempIndex]?.streamingStatus === 2) {
+      info();
+
+      return;
+    }
+
+    dispatch(listsongSlice.actions.checkLoading(true));
+    axios
+      .get(
+        `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
+      )
+      .then((res) => {
+        console.log(tempIndex);
+        res.data.msg !== "Success"
+          ? (message.warning(res.data.msg),
+            dispatch(listsongSlice.actions.checkLoading("")))
+          : (dispatch(listsongSlice.actions.checkLoading(false)),
+            dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128])));
+      });
+  };
+  const handleNextSong = () => {
+    let tempIndex;
+    if (currentSongIndex === toggleListSong.items.length - 1) tempIndex = 0;
+    else tempIndex = currentSongIndex + 1;
+
+    dispatch(listsongSlice.actions.currentSongIndexChange(tempIndex));
+
+    // console.log(toggleListSong);
+
+    dispatch(
+      listsongSlice.actions.songChange(toggleListSong?.items?.[tempIndex])
+    );
+    dispatch(
+      listsongSlice.actions.activeSongChange(toggleListSong?.items?.[tempIndex])
+    );
+
+    if (toggleListSong?.items?.[tempIndex].streamingStatus === 2) {
+      info();
+
+      return;
+    }
+
+    dispatch(listsongSlice.actions.checkLoading(true));
+    axios
+      .get(
+        `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
+      )
+      .then((res) => {
+        console.log(tempIndex);
+        res.data.msg !== "Success"
+          ? (message.warning(res.data.msg),
+            dispatch(listsongSlice.actions.checkLoading("")))
+          : (dispatch(listsongSlice.actions.checkLoading(false)),
+            dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128])));
+      });
+  };
+  // const handleNextSong = async () => {
+  //   dispatch(
+  //     listsongSlice.actions.currentSongIndexChange(currentSongIndex + 1)
+  //   );
+
+  //   console.log(toggleListSong);
+
+  //   dispatch(
+  //     listsongSlice.actions.songChange(
+  //       toggleListSong?.items?.[currentSongIndex]
+  //     )
+  //   );
+  //   dispatch(
+  //     listsongSlice.actions.activeSongChange(
+  //       toggleListSong?.items?.[currentSongIndex]
+  //     )
+  //   );
+
+  //   if (toggleListSong?.items?.[currentSongIndex].streamingStatus === 2) {
+  //     info();
+  //     return;
+  //   }
+
+  //   dispatch(listsongSlice.actions.checkLoading(true));
+  //   // wait for dispatch to complete
+  //   await new Promise((resolve) => setTimeout(resolve, 0));
+
+  //   const res = await axios.get(
+  //     `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[currentSongIndex]?.encodeId}`
+  //   );
+
+  //   console.log(currentSongIndex);
+
+  //   if (res.data.msg !== "Success") {
+  //     message.warning(res.data.msg);
+  //     dispatch(listsongSlice.actions.checkLoading(""));
+  //   } else {
+  //     dispatch(listsongSlice.actions.checkLoading(false));
+  //     dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
+  //   }
+  // };
+  // const handleNextSong = async () => {
+  //   let tempIndex;
+  //   if (currentSongIndex === toggleListSong.length - 1) tempIndex = 0;
+  //   else tempIndex = currentSongIndex + 1;
+  //   dispatch(listsongSlice.actions.currentSongIndexChange(tempIndex));
+
+  //   console.log(toggleListSong);
+
+  //   dispatch(
+  //     listsongSlice.actions.songChange(toggleListSong?.items?.[tempIndex])
+  //   );
+  //   dispatch(
+  //     listsongSlice.actions.activeSongChange(toggleListSong?.items?.[tempIndex])
+  //   );
+
+  //   if (toggleListSong?.items?.[tempIndex].streamingStatus === 2) {
+  //     info();
+  //     return;
+  //   }
+
+  //   dispatch(listsongSlice.actions.checkLoading(true));
+
+  //   const res = await axios.get(
+  //     `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
+  //   );
+
+  //   console.log(tempIndex);
+
+  //   if (res.data.msg !== "Success") {
+  //     message.warning(res.data.msg);
+  //     dispatch(listsongSlice.actions.checkLoading(""));
+  //   } else {
+  //     dispatch(listsongSlice.actions.checkLoading(false));
+  //     dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
+  //   }
+  // };
   const handleRepeatButton = () => {
     setShowRepeat(!showRepeat);
   };
@@ -96,8 +278,8 @@ const Player = () => {
   const info = () => {
     message.warning("Bài hát này chỉ dành cho tài khoản VIP!", 2);
   };
-  console.log({ playSong });
-  console.log({ toggleListSong });
+  // console.log({ playSong });
+  // console.log({ toggleListSong });
   const PopUp = () => {
     return (
       <div
@@ -156,26 +338,36 @@ const Player = () => {
       <div className="m-8">
         <div className=" mt-[50%] xl:flex justify-between items-center mx-4 mb-8 hidden ">
           <div className=" w-8 h-8 hover:bg-third-color hover:rounded-full flex justify-center items-center cursor-pointer relative group z-20">
-            <i className="fa-duotone fa-volume-low "></i>
-            {/* Low volumn */}
+            {/* Low volume */}
+            {volume == 0 ? (
+              <i className="fa-solid fa-volume-xmark"></i>
+            ) : volume <= 30 && volumeValue > 0 ? (
+              <i className="fa-duotone fa-volume-low "></i>
+            ) : volume <= 70 && volumeValue > 30 ? (
+              <i className="fa-solid fa-volume"></i>
+            ) : (
+              <i className="fa-solid fa-volume-high"></i>
+            )}
+
+            {/* Medium volume */}
             {/* <i className="fa-solid fa-volume"></i> */}
+            {/* High volume */}
             {/* <i className="fa-solid fa-volume-high"></i> */}
-            {/* <i className="fa-solid fa-volume-xmark"></i> */} {/* Mute */}
+            {/* Muted volume */}
+            {/* <i className="fa-solid fa-volume-xmark"></i> */}
             <input
-              type="range"
-              className="volumnButton absolute -translate-y-12 h-16 w-10  opacity-0 group-hover:opacity-100  "
-            />
-            {/* <input
-              type="range"
+              onChange={handleVolume}
               min="0"
-              max="10"
-              defaultValue="0"
-              className="slider volumnButton absolute -translate-y-12 opacity-0 group-hover:opacity-100 "
-            /> */}
+              max="1"
+              step="0.02"
+              value={volume}
+              type="range"
+              className="volumeButton absolute -translate-y-12 h-[70px]  w-10  opacity-0 group-hover:opacity-100  "
+            />
           </div>
           {isShowList && (
             <div className="absolute bottom-[310px] top-0 left-0 right-0 bg-secondary-color  overflow-y-scroll scrollbar-hide z-10    ">
-              {toggleListSong.items.map((x, index) => (
+              {toggleListSong?.items?.map((x, index) => (
                 <div
                   className={`${
                     activeSong.encodeId === x.encodeId && "activeSong"
@@ -183,17 +375,15 @@ const Player = () => {
                   key={index}
                   onClick={() => {
                     dispatch(
-                      listsongSlice.actions.songChange({ song: x, click: true })
+                      listsongSlice.actions.currentSongIndexChange(index)
                     );
+                    dispatch(listsongSlice.actions.songChange(x));
                     dispatch(listsongSlice.actions.activeSongChange(x));
                     if (x.streamingStatus == 2) {
                       info();
                       return;
                     }
 
-                    dispatch(
-                      listsongSlice.actions.listsongChange(toggleListSong)
-                    );
                     dispatch(listsongSlice.actions.checkLoading(true));
                     axios
                       .get(
@@ -274,13 +464,22 @@ const Player = () => {
               className="slider "
             />
           </div>
-          <p>04:30</p>
+          <p>
+            {pickSong?.duration || toggleListSong?.items?.[0]?.duration
+              ? formatTime(
+                  pickSong?.duration || toggleListSong?.items?.[0]?.duration
+                )
+              : "00:00"}
+          </p>
         </div>
         {/* Audio */}
         <audio
           ref={audioRef}
           id="audio"
           src={src1 ? src1 : playSong?.data?.[128]}
+          onEnded={() => {
+            handleNextSong();
+          }}
         ></audio>
 
         {/* Control button */}
@@ -295,7 +494,12 @@ const Player = () => {
               style={{ color: showSuffle ? "#1976d2" : "" }}
             ></i>
           </ButtonIcon>
-          <button className="xl:bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center bg-transparent  flex-grow  ">
+          <button
+            className="xl:bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center bg-transparent  flex-grow  "
+            onClick={() => {
+              handlePrevSong();
+            }}
+          >
             <i className="fa-solid fa-backward-step"></i>
           </button>
           <button
@@ -333,7 +537,12 @@ const Player = () => {
               </div>
             )}
           </button>
-          <button className="xl:bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center  bg-transparent  flex-grow ">
+          <button
+            className="xl:bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center  bg-transparent  flex-grow "
+            onClick={() => {
+              handleNextSong();
+            }}
+          >
             <i className="fa-solid fa-forward-step"></i>
           </button>
           <button
