@@ -23,11 +23,7 @@ const ListSong = () => {
     window.scrollTo(0, 0);
   }, []);
   const param = useParams();
-  // console.log(
-  //   `https://serverzingmp3.vercel.app/api/detailplaylist?id=${JSON.stringify(
-  //     param.keyword
-  //   )}`
-  // );
+
   const [listSong, setListSong] = useState();
   useEffect(() => {
     setIsLoading(true);
@@ -42,7 +38,6 @@ const ListSong = () => {
         setIsLoading(false);
       });
   }, []);
-  // console.log({ listSong });
 
   const info = () => {
     message.warning("Bài hát này chỉ dành cho tài khoản VIP!", 2);

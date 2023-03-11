@@ -10,7 +10,6 @@ import { playerSlice } from "../Player/playerSlice";
 const Navbar = () => {
   const location = useLocation();
 
-  // console.log(location);
   const navigate = useNavigate();
   const [theme, setTheme] = useState(JSON.parse(localStorage.theme || true));
   const [showModal, setShowModal] = useState(false);
@@ -22,19 +21,13 @@ const Navbar = () => {
 
   const dispatch = useDispatch();
   const isPlay = useSelector((state) => state.navbar.isPlay);
-  // console.log({ isPlay });
   const LyricsButton = useSelector((state) => state.player.button);
   const b = useSelector((state) => state.player.songtoday);
   const checkLoading = useSelector((state) => state.listsong.checkloading);
-
-  // console.log("a", a);
-  // console.log("b", b);
-
   const handleClickPlay = () => {
     isPlay
       ? dispatch(navbarSlice.actions.iconPlayChange(false))
       : dispatch(navbarSlice.actions.iconPlayChange(true));
-    // dispatch(listsongSlice.actions.checkLoading(false));
   };
   const handleMode = (x) => {
     setTheme(x);

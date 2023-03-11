@@ -48,7 +48,6 @@ const PlayList = () => {
   useEffect(() => {
     setIsLoading(true);
     axios.get("https://serverzingmp3.vercel.app/api/home").then((res) => {
-      // console.log(res);
       setTop100(res.data.data.items);
       setIsLoading(false);
       dispatch(
@@ -63,18 +62,6 @@ const PlayList = () => {
     });
   }, []);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const data = await axios.get("https://serverzingmp3.vercel.app/api/home");
-  //     setTop100(data.data.data.items);
-  //   fetchData()
-  //   };
-  //     .catch(console.error);
-  // }, []);
-  // console.log(top100);
-
-  // console.log(import.meta.env.REACT_APP_BASE_URL_API);
-
   let data1 = {};
   let data2 = {};
   let data3 = {};
@@ -88,7 +75,7 @@ const PlayList = () => {
     data4 = top100.find((x) => x.sectionId === "h100");
     data5 = top100.find((x) => x.sectionId === "hAlbum");
   }
-  // console.log({ data });
+
   return (
     <div className="py-8 ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0 ">
       <Search />

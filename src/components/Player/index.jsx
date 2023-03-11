@@ -47,14 +47,8 @@ const Player = () => {
   useEffect(() => {
     audioRef.current.volume = volume;
   }, [volume]);
-
-  // console.log({ isPlay1 });
-  // console.log({ pickSong });
-  // console.log({ src1 });
-  // console.log({ checkLoading });
   const element = document.getElementsByClassName("activeSong");
   const scrollToActiveSong = () => {
-    // console.log({ element });
     for (let i = 0; i < element.length; i++) {
       if (element.length == 1) {
         element[0].scrollIntoView({
@@ -91,7 +85,6 @@ const Player = () => {
         }`
       )
       .then((res) => {
-        // console.log("abc", res);
         dispatch(playerSlice.actions.showSongToday(res?.data?.data?.song));
         dispatch(listsongSlice.actions.listsongChange(res?.data?.data?.song));
         dispatch(
@@ -113,11 +106,7 @@ const Player = () => {
         `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[0]?.encodeId}`
       )
       .then((res) => {
-        // console.log("abcd", res);
-        // audioRef.current.src(setSrc(src1 ? src1 : res?.data?.data?.[128]));
-
         setPlaySong(res.data);
-        // dispatch(playerSlice.actions.songPlay(res.data));
       });
   }, [toggleListSong]);
 
@@ -146,7 +135,6 @@ const Player = () => {
         `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
       )
       .then((res) => {
-        // console.log(tempIndex);
         if (res.data.msg !== "Success") {
           handleNextSong(tempIndex);
           message.warning(res.data.msg),
@@ -214,7 +202,6 @@ const Player = () => {
         `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
       )
       .then((res) => {
-        // console.log(res);
         if (res.data.msg !== "Success") {
           handleNextSong(tempIndex);
           message.warning(res.data.msg),
@@ -234,8 +221,6 @@ const Player = () => {
   const info = () => {
     message.warning("Bài hát này chỉ dành cho tài khoản VIP!", 2);
   };
-  // console.log({ playSong });
-  // console.log({ toggleListSong });
   const PopUp = () => {
     return (
       <div
@@ -291,13 +276,6 @@ const Player = () => {
             ) : (
               <i className="fa-solid fa-volume-high"></i>
             )}
-
-            {/* Medium volume */}
-            {/* <i className="fa-solid fa-volume"></i> */}
-            {/* High volume */}
-            {/* <i className="fa-solid fa-volume-high"></i> */}
-            {/* Muted volume */}
-            {/* <i className="fa-solid fa-volume-xmark"></i> */}
             <input
               onChange={handleVolume}
               min="0"
@@ -333,8 +311,6 @@ const Player = () => {
                         `https://serverzingmp3.vercel.app/api/song?id=${x?.encodeId}`
                       )
                       .then((res) => {
-                        // dispatch(listsongSlice.actions);
-                        console.log({ res });
                         res.data.msg !== "Success"
                           ? (message.warning(res.data.msg),
                             dispatch(listsongSlice.actions.checkLoading("")))
@@ -458,10 +434,6 @@ const Player = () => {
               playSong.msg !== "Success" &&
                 (message.warning(playSong.msg),
                 dispatch(navbarSlice.actions.iconPlayChange(true)));
-
-              // (audioRef.current.src(setSrc(playSong.data?.[128] || src1)),
-              //   audioRef.current.load());
-              // message.success("Player");
             }}
           >
             {!checkLoading && toggleListSong ? (

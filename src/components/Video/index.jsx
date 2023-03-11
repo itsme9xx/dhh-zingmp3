@@ -7,7 +7,6 @@ import { useMemo } from "react";
 
 const Video = () => {
   const pickvideo = useSelector((state) => state?.search?.video);
-  // console.log({ pickvideo });
 
   const srcList = useMemo(() => {
     if (!pickvideo) return undefined;

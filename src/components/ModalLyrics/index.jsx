@@ -29,7 +29,7 @@ const ModalLyrics = () => {
   return (
     <div className="bg-third-color fixed top-10 left-[73px] xl:right-[396px] bottom-0 right-0 ">
       <div className="m-8 p-4 border-2 border-third-color flex gap-10 xl:translate-y-60 overflow-hidden 2xl:translate-x-[330px] border-none">
-        <div className="w-[300px]">
+        <div className="w-[240px]">
           <div>
             <img src={activeSong?.thumbnailM} alt="" />
           </div>

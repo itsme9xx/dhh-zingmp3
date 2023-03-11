@@ -39,8 +39,6 @@ const SearchPage = () => {
   };
 
   const handleClickSong = (x, index) => {
-    console.log({ x });
-    console.log({ index });
     if (x.streamingStatus == 2) {
       info();
       return;
@@ -71,7 +69,6 @@ const SearchPage = () => {
         setIsLoading(false);
       });
   }, [param]);
-  // console.log(searchSong);
   return (
     <div className="py-8 ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0 ">
       <Search />
