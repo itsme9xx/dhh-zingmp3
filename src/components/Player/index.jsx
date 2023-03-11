@@ -12,13 +12,13 @@ import { useRef } from "react";
 import { message } from "antd";
 import { navbarSlice } from "../Navbar/navbarSlice";
 import { formatTime } from "../../utils/FormatTime";
+import { ButtonIcon } from "../../App";
 
 const Player = () => {
   const dispatch = useDispatch();
   const [showPopUp, setShowPopUp] = useState(false);
   const [showSuffle, setShowSuffle] = useState(false);
   const [showRepeat, setShowRepeat] = useState(false);
-
   const [isLoading, setIsLoading] = useState(false);
   const [isShowList, setIsShowList] = useState(false);
   const [showLyrics, setShowLyrics] = useState(false);
@@ -37,8 +37,9 @@ const Player = () => {
   const currentSongIndex = useSelector(
     (state) => state.listsong.currentsongindex
   );
-
+  const isLoop = useSelector((state) => state.player.loop);
   const volume = useSelector((state) => state.player.volume);
+  const currentTime = useSelector((state) => state.player.currenttimesong);
 
   const handleVolume = (e) => {
     setVolumeValue(e.target.value);
@@ -49,12 +50,12 @@ const Player = () => {
   }, [volume]);
 
   // console.log({ isPlay1 });
-  console.log({ pickSong });
+  // console.log({ pickSong });
   // console.log({ src1 });
   // console.log({ checkLoading });
   const element = document.getElementsByClassName("activeSong");
   const scrollToActiveSong = () => {
-    console.log({ element });
+    // console.log({ element });
     for (let i = 0; i < element.length; i++) {
       if (element.length == 1) {
         element[0].scrollIntoView({
@@ -91,10 +92,14 @@ const Player = () => {
         }`
       )
       .then((res) => {
-        // console.log(res)
+        // console.log("abc", res);
         dispatch(playerSlice.actions.showSongToday(res?.data?.data?.song));
         dispatch(listsongSlice.actions.listsongChange(res?.data?.data?.song));
-
+        dispatch(
+          listsongSlice.actions.activeSongChange(
+            res?.data?.data?.song?.items?.[0]
+          )
+        );
         setIsLoading(false);
       });
   }, [rendersongdefault]);
@@ -111,6 +116,7 @@ const Player = () => {
       .then((res) => {
         // console.log("abcd", res);
         // audioRef.current.src(setSrc(src1 ? src1 : res?.data?.data?.[128]));
+
         setPlaySong(res.data);
         // dispatch(playerSlice.actions.songPlay(res.data));
       });
@@ -120,65 +126,54 @@ const Player = () => {
     setShowPopUp(!showPopUp);
   };
   const handleShuffleButton = () => {
-    setShowSuffle(!showSuffle);
-  };
-  const handlePrevSong = () => {
     let tempIndex;
-    if (currentSongIndex == 0) tempIndex = toggleListSong.items.length - 1;
-    else tempIndex = currentSongIndex - 1;
-
-    dispatch(listsongSlice.actions.currentSongIndexChange(tempIndex));
-
-    console.log(toggleListSong);
-
+    do {
+      tempIndex = Math.floor(Math.random() * toggleListSong?.items.length);
+    } while (tempIndex === currentSongIndex);
+    if (toggleListSong?.items?.[tempIndex].streamingStatus === 2) {
+      info();
+      tempIndex = tempIndex + 1;
+    }
     dispatch(
       listsongSlice.actions.songChange(toggleListSong?.items?.[tempIndex])
     );
     dispatch(
       listsongSlice.actions.activeSongChange(toggleListSong?.items?.[tempIndex])
     );
-
-    if (toggleListSong?.items?.[tempIndex]?.streamingStatus === 2) {
-      info();
-
-      return;
-    }
-
+    dispatch(listsongSlice.actions.currentSongIndexChange(tempIndex));
     dispatch(listsongSlice.actions.checkLoading(true));
     axios
       .get(
         `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
       )
       .then((res) => {
-        console.log(tempIndex);
-        res.data.msg !== "Success"
-          ? (message.warning(res.data.msg),
-            dispatch(listsongSlice.actions.checkLoading("")))
-          : (dispatch(listsongSlice.actions.checkLoading(false)),
-            dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128])));
+        // console.log(tempIndex);
+        if (res.data.msg !== "Success") {
+          handleNextSong(tempIndex);
+          message.warning(res.data.msg),
+            dispatch(listsongSlice.actions.checkLoading(""));
+        } else {
+          dispatch(listsongSlice.actions.checkLoading(false)),
+            dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
+        }
       });
   };
-  const handleNextSong = () => {
+  const handlePrevSong = (index) => {
     let tempIndex;
-    if (currentSongIndex === toggleListSong.items.length - 1) tempIndex = 0;
-    else tempIndex = currentSongIndex + 1;
-
-    dispatch(listsongSlice.actions.currentSongIndexChange(tempIndex));
-
-    // console.log(toggleListSong);
-
-    dispatch(
-      listsongSlice.actions.songChange(toggleListSong?.items?.[tempIndex])
-    );
-    dispatch(
-      listsongSlice.actions.activeSongChange(toggleListSong?.items?.[tempIndex])
-    );
+    if (currentSongIndex == 0) tempIndex = toggleListSong.items.length - 1;
+    else tempIndex = (index || currentSongIndex) - 1;
 
     if (toggleListSong?.items?.[tempIndex].streamingStatus === 2) {
       info();
-
-      return;
+      tempIndex = tempIndex - 1;
     }
+    dispatch(
+      listsongSlice.actions.songChange(toggleListSong?.items?.[tempIndex])
+    );
+    dispatch(
+      listsongSlice.actions.activeSongChange(toggleListSong?.items?.[tempIndex])
+    );
+    dispatch(listsongSlice.actions.currentSongIndexChange(tempIndex));
 
     dispatch(listsongSlice.actions.checkLoading(true));
     axios
@@ -186,93 +181,55 @@ const Player = () => {
         `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
       )
       .then((res) => {
-        console.log(tempIndex);
-        res.data.msg !== "Success"
-          ? (message.warning(res.data.msg),
-            dispatch(listsongSlice.actions.checkLoading("")))
-          : (dispatch(listsongSlice.actions.checkLoading(false)),
-            dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128])));
+        if (res.data.msg !== "Success") {
+          handlePrevSong(tempIndex);
+          message.warning(res.data.msg),
+            dispatch(listsongSlice.actions.checkLoading(""));
+        } else {
+          dispatch(listsongSlice.actions.checkLoading(false)),
+            dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
+        }
       });
   };
-  // const handleNextSong = async () => {
-  //   dispatch(
-  //     listsongSlice.actions.currentSongIndexChange(currentSongIndex + 1)
-  //   );
 
-  //   console.log(toggleListSong);
+  const handleNextSong = (index) => {
+    let tempIndex = 0;
+    if (currentSongIndex === toggleListSong.items.length - 1) tempIndex = 0;
+    else tempIndex = (index || currentSongIndex) + 1;
 
-  //   dispatch(
-  //     listsongSlice.actions.songChange(
-  //       toggleListSong?.items?.[currentSongIndex]
-  //     )
-  //   );
-  //   dispatch(
-  //     listsongSlice.actions.activeSongChange(
-  //       toggleListSong?.items?.[currentSongIndex]
-  //     )
-  //   );
+    if (toggleListSong?.items?.[tempIndex].streamingStatus === 2) {
+      info();
+      tempIndex = tempIndex + 1;
+    }
+    dispatch(
+      listsongSlice.actions.songChange(toggleListSong?.items?.[tempIndex])
+    );
+    dispatch(
+      listsongSlice.actions.activeSongChange(toggleListSong?.items?.[tempIndex])
+    );
+    dispatch(listsongSlice.actions.currentSongIndexChange(tempIndex));
 
-  //   if (toggleListSong?.items?.[currentSongIndex].streamingStatus === 2) {
-  //     info();
-  //     return;
-  //   }
+    dispatch(listsongSlice.actions.checkLoading(true));
+    axios
+      .get(
+        `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
+      )
+      .then((res) => {
+        // console.log(res);
+        if (res.data.msg !== "Success") {
+          handleNextSong(tempIndex);
+          message.warning(res.data.msg),
+            dispatch(listsongSlice.actions.checkLoading(""));
+        } else {
+          dispatch(listsongSlice.actions.checkLoading(false)),
+            dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
+        }
+      });
+  };
 
-  //   dispatch(listsongSlice.actions.checkLoading(true));
-  //   // wait for dispatch to complete
-  //   await new Promise((resolve) => setTimeout(resolve, 0));
-
-  //   const res = await axios.get(
-  //     `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[currentSongIndex]?.encodeId}`
-  //   );
-
-  //   console.log(currentSongIndex);
-
-  //   if (res.data.msg !== "Success") {
-  //     message.warning(res.data.msg);
-  //     dispatch(listsongSlice.actions.checkLoading(""));
-  //   } else {
-  //     dispatch(listsongSlice.actions.checkLoading(false));
-  //     dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
-  //   }
-  // };
-  // const handleNextSong = async () => {
-  //   let tempIndex;
-  //   if (currentSongIndex === toggleListSong.length - 1) tempIndex = 0;
-  //   else tempIndex = currentSongIndex + 1;
-  //   dispatch(listsongSlice.actions.currentSongIndexChange(tempIndex));
-
-  //   console.log(toggleListSong);
-
-  //   dispatch(
-  //     listsongSlice.actions.songChange(toggleListSong?.items?.[tempIndex])
-  //   );
-  //   dispatch(
-  //     listsongSlice.actions.activeSongChange(toggleListSong?.items?.[tempIndex])
-  //   );
-
-  //   if (toggleListSong?.items?.[tempIndex].streamingStatus === 2) {
-  //     info();
-  //     return;
-  //   }
-
-  //   dispatch(listsongSlice.actions.checkLoading(true));
-
-  //   const res = await axios.get(
-  //     `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
-  //   );
-
-  //   console.log(tempIndex);
-
-  //   if (res.data.msg !== "Success") {
-  //     message.warning(res.data.msg);
-  //     dispatch(listsongSlice.actions.checkLoading(""));
-  //   } else {
-  //     dispatch(listsongSlice.actions.checkLoading(false));
-  //     dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
-  //   }
-  // };
   const handleRepeatButton = () => {
     setShowRepeat(!showRepeat);
+    dispatch(playerSlice.actions.setLoop(!showRepeat));
   };
 
   const info = () => {
@@ -294,20 +251,7 @@ const Player = () => {
       </div>
     );
   };
-  const ButtonIcon = styled.button`
-    background-color: var(--primary-color);
-    width: 40px;
-    height: 40px;
-    display: flex;
-    flex-grow: 1;
-    justify-content: center;
-    align-item: center;
-    &:hover {
-      border-radius: 9999px;
-      border-color: var(--third-color);
-      background-color: var(--third-color);
-    }
-  `;
+
   return (
     <div className=" fixed xl:top-0 xl:right-0 bottom-0 xl:border-l-2  text-light-title-color xl:flex flex-col justify-between border-border-color w-full xl:w-fit bg-secondary-color xl:bg-transparent  border-t z-50 ">
       <div className="m-8 p-4 border-2 border-third-color hidden xl:block">
@@ -359,7 +303,7 @@ const Player = () => {
               onChange={handleVolume}
               min="0"
               max="1"
-              step="0.02"
+              step="0.01"
               value={volume}
               type="range"
               className="volumeButton absolute -translate-y-12 h-[70px]  w-10  opacity-0 group-hover:opacity-100  "
@@ -370,7 +314,7 @@ const Player = () => {
               {toggleListSong?.items?.map((x, index) => (
                 <div
                   className={`${
-                    activeSong.encodeId === x.encodeId && "activeSong"
+                    activeSong?.encodeId === x?.encodeId && "activeSong"
                   } flex p-4 border-b border-border-color items-center cursor-pointer hover:bg-third-color `}
                   key={index}
                   onClick={() => {
@@ -445,7 +389,7 @@ const Player = () => {
             {showPopUp && <PopUp />}
             {showLyrics && (
               <ModalLyrics
-                song={toggleListSong}
+                song={pickSong || toggleListSong}
                 setShowLyrics={setShowLyrics}
               />
             )}
@@ -454,14 +398,18 @@ const Player = () => {
         </div>
         {/* slider music  */}
         <div className="flex gap-5 justify-between items-center">
-          <p>00:00</p>
+          <p>{currentTime ? formatTime(currentTime) : "00:00"}</p>
           <div className=" flex-grow">
             <input
               type="range"
               min="0"
-              max="10"
-              defaultValue="0"
+              max={pickSong?.duration || toggleListSong?.items?.[0]?.duration}
               className="slider "
+              value={currentTime}
+              onInput={(e) => {
+                dispatch(playerSlice.actions.setCurrentTime(e.target.value));
+                audioRef.current.currentTime = e.target.value;
+              }}
             />
           </div>
           <p>
@@ -478,7 +426,11 @@ const Player = () => {
           id="audio"
           src={src1 ? src1 : playSong?.data?.[128]}
           onEnded={() => {
-            handleNextSong();
+            showSuffle ? handleShuffleButton() : handleNextSong();
+          }}
+          loop={isLoop && "loop"}
+          onTimeUpdate={(e) => {
+            dispatch(playerSlice.actions.setCurrentTime(e.target.currentTime));
           }}
         ></audio>
 
@@ -486,7 +438,7 @@ const Player = () => {
         <div className="flex gap-8 mt-6">
           <ButtonIcon
             onClick={() => {
-              handleShuffleButton();
+              setShowSuffle(!showSuffle);
             }}
           >
             <i

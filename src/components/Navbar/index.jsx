@@ -21,7 +21,7 @@ const Navbar = () => {
 
   const dispatch = useDispatch();
   const isPlay = useSelector((state) => state.navbar.isPlay);
-  console.log({ isPlay });
+  // console.log({ isPlay });
   const a = useSelector((state) => state.player.button);
   const b = useSelector((state) => state.player.songtoday);
   const checkLoading = useSelector((state) => state.listsong.checkloading);

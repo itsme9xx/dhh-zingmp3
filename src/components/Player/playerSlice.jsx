@@ -7,6 +7,9 @@ export const playerSlice = createSlice({
     songtoday: "",
     songplay: "",
     volume: 0.4,
+    loop: false,
+    currenttimesong: 0,
+    processtime: 0,
   },
   reducers: {
     modalChange: (state, action) => {
@@ -21,6 +24,15 @@ export const playerSlice = createSlice({
 
     setVolume: (state, action) => {
       state.volume = action.payload;
+    },
+    setLoop: (state, action) => {
+      state.loop = action.payload;
+    },
+    setCurrentTime: (state, action) => {
+      state.currenttimesong = action.payload;
+    },
+    setProcessTime: (state, action) => {
+      state.processtime = action.payload;
     },
   },
 });

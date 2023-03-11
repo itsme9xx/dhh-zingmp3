@@ -8,6 +8,7 @@ import ListSong from "../components/ListSong";
 import SearchPage from "../components/Search";
 import Video from "../components/Video";
 
+
 const RouterPage = () => {
   return (
     <AuthProvider>
@@ -26,6 +27,7 @@ const RouterPage = () => {
         <Route path="/search/:keyword" element={<SearchPage />} />
         <Route path="/video/:keyword" element={<Video />} />
       </Routes>
+      
       <Player></Player>
     </AuthProvider>
   );
