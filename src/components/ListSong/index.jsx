@@ -145,10 +145,14 @@ const ListSong = () => {
                   handleClickSong(x, index);
                 }}
               >
-                <div className="flex gap-4 items-center  w-[42%]  ">
+                <div className="flex gap-4 items-center  w-[42%]   ">
                   <i className="fa-sharp fa-solid fa-music text-[14px]"></i>
-                  <div className="w-[15%] rounded-lg relative">
-                    <img src={x?.thumbnail} className="" alt="" />
+                  <div className="  rounded-lg  relative">
+                    <img
+                      src={x?.thumbnail}
+                      className=" max-w-[60px]  "
+                      alt=""
+                    />
                     {x?.streamingStatus == 2 && (
                       <span className="text-gray-600 absolute tracking-widest right-0 top-0 -translate-y-1/2 translate-x-2 bg-[#f4e570] text-[10px] leading-3 py-[2px] px-1 rounded-sm">
                         VIP

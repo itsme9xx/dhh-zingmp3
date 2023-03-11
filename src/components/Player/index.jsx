@@ -24,8 +24,6 @@ const Player = () => {
   const [showLyrics, setShowLyrics] = useState(false);
   const [playSong, setPlaySong] = useState();
   const [volumeValue, setVolumeValue] = useState(40);
-
-  const [src, setSrc] = useState("");
   const audioRef = useRef(null);
   const toggleListSong = useSelector((state) => state.listsong.listsongmenu);
   const rendersongdefault = useSelector((state) => state.playlist.list);
@@ -40,6 +38,7 @@ const Player = () => {
   const isLoop = useSelector((state) => state.player.loop);
   const volume = useSelector((state) => state.player.volume);
   const currentTime = useSelector((state) => state.player.currenttimesong);
+  const LyricsButton = useSelector((state) => state.player.button);
 
   const handleVolume = (e) => {
     setVolumeValue(e.target.value);
@@ -253,8 +252,8 @@ const Player = () => {
   };
 
   return (
-    <div className=" fixed xl:top-0 xl:right-0 bottom-0 xl:border-l-2  text-light-title-color xl:flex flex-col justify-between border-border-color w-full xl:w-fit bg-secondary-color xl:bg-transparent  border-t z-50 ">
-      <div className="m-8 p-4 border-2 border-third-color hidden xl:block">
+    <div className=" fixed xl:top-0 xl:right-0 bottom-0 xl:border-l-2  text-light-title-color xl:flex flex-col justify-between border-border-color w-full xl:w-[400px] bg-secondary-color xl:bg-transparent  border-t z-50 ">
+      <div className="m-8 p-4 border-2 border-third-color hidden xl:block ">
         {isLoading ? (
           <Skeleton height={290} />
         ) : (
@@ -353,8 +352,8 @@ const Player = () => {
                   <div>
                     <img
                       src={x?.thumbnail}
-                      width={60}
                       style={{ marginRight: 10 }}
+                      className="max-w-[60px]"
                       alt=""
                     />
                   </div>
@@ -387,13 +386,8 @@ const Player = () => {
               style={{ fontSize: 25 }}
             ></i>
             {showPopUp && <PopUp />}
-            {showLyrics && (
-              <ModalLyrics
-                song={pickSong || toggleListSong}
-                setShowLyrics={setShowLyrics}
-              />
-            )}
             {/* <ModalLyrics /> */}
+            {LyricsButton && <ModalLyrics />}
           </div>
         </div>
         {/* slider music  */}

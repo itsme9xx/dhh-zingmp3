@@ -4,6 +4,7 @@ import { playlistSlice } from "../components/PlayList/playlistSlice";
 import { playerSlice } from "../components/Player/playerSlice";
 import { listsongSlice } from "../components/ListSong/listsongSlice";
 import { searchSlice } from "../components/Search/searchSlice";
+import { moldallyricsSlice } from "../components/ModalLyrics/modallyricsSlice";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     player: playerSlice.reducer,
     listsong: listsongSlice.reducer,
     search: searchSlice.reducer,
+    modal: moldallyricsSlice.reducer,
   },
 });
 

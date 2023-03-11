@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import ModalLyrics from "../ModalLyrics";
 import { listsongSlice } from "../ListSong/listsongSlice";
+import { playerSlice } from "../Player/playerSlice";
 
 const Navbar = () => {
   const location = useLocation();
@@ -13,16 +14,16 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [theme, setTheme] = useState(JSON.parse(localStorage.theme || true));
   const [showModal, setShowModal] = useState(false);
-  const [isActive, setIsActive] = useState(false);
+
   const handle = () => {
     setShowModal(!showModal);
-    setIsActive(!isActive);
+    dispatch(playerSlice.actions.modalChange(!showModal));
   };
 
   const dispatch = useDispatch();
   const isPlay = useSelector((state) => state.navbar.isPlay);
   // console.log({ isPlay });
-  const a = useSelector((state) => state.player.button);
+  const LyricsButton = useSelector((state) => state.player.button);
   const b = useSelector((state) => state.player.songtoday);
   const checkLoading = useSelector((state) => state.listsong.checkloading);
 
@@ -106,7 +107,7 @@ const Navbar = () => {
       </div>
       <div
         className={`${
-          a === true || isActive ? "bg-light-title-color" : "bg-third-color"
+          LyricsButton === true ? "bg-light-title-color" : "bg-third-color"
         } rounded-full w-10 h-10  flex justify-center items-center cursor-pointer  `}
         title="Player"
         onClick={() => {
@@ -115,7 +116,7 @@ const Navbar = () => {
       >
         <i className="fa-sharp fa-solid fa-music text-primary-color"></i>
       </div>
-      {showModal && <ModalLyrics song={b} />}
+      {LyricsButton && <ModalLyrics />}
       <div
         className="rounded-full w-10 h-10 bg-light-title-color flex justify-center items-center cursor-pointer "
         onClick={handleLogin}
