@@ -2,21 +2,32 @@ import axios from "axios";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import Skeleton from "react-loading-skeleton";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { ListSongLoading } from "../ListLoading";
 import { listsongSlice } from "../ListSong/listsongSlice";
 import { Search } from "../PlayList";
 import { searchSlice } from "./searchSlice";
+import { message } from "antd";
+import { info } from "autoprefixer";
 
 const SearchPage = () => {
   const dispatch = useDispatch();
   const param = useParams();
   const [searchSong, setSearchSong] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  let video = {};
   const navigate = useNavigate();
+  const activeSong = useSelector((state) => state.listsong.activesong);
+
+  const info = () => {
+    message.warning("Bài hát này chỉ dành cho tài khoản VIP!", 2);
+  };
+  const infoVideo = () => {
+    message.success("Video đang load ! Vui lòng chờ chút <3", 2);
+  };
+
   const handleVideo = (x) => {
+    infoVideo();
     axios
       .get(`https://serverzingmp3.vercel.app/api/video?id=${x.encodeId}`)
       .then((res) => {
@@ -27,25 +38,28 @@ const SearchPage = () => {
       });
   };
 
-  //   const datafilter = [
-  //     {
-  //       name: "Tất cả",
-  //       active: false,
-  //     },
-  //     {
-  //       name: "Bài hát",
-  //       active: false,
-  //     },
-  //     {
-  //       name: "Playlist",
-  //       active: false,
-  //     },
-  //     {
-  //       name: "Top MV",
-  //       active: false,
-  //     },
-  //   ];
-
+  const handleClickSong = (x, index) => {
+    console.log({ x });
+    console.log({ index });
+    if (x.streamingStatus == 2) {
+      info();
+      return;
+    }
+    dispatch(listsongSlice.actions.currentSongIndexChange(index));
+    dispatch(listsongSlice.actions.activeSongChange(x));
+    // Click song hiển thị ra thông tin bài hát bên Player
+    dispatch(listsongSlice.actions.songChange(x));
+    dispatch(listsongSlice.actions.checkLoading(true));
+    axios
+      .get(`https://serverzingmp3.vercel.app/api/song?id=${x?.encodeId}`)
+      .then((res) => {
+        res.data.msg !== "Success"
+          ? (message.warning(res.data.msg),
+            dispatch(listsongSlice.actions.checkLoading("")))
+          : (dispatch(listsongSlice.actions.checkLoading(false)),
+            dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128])));
+      });
+  };
   useEffect(() => {
     setIsLoading(true);
     axios
@@ -61,22 +75,6 @@ const SearchPage = () => {
   return (
     <div className="py-8 ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0 ">
       <Search />
-      {/* {isLoading && <ListSongLoading />} */}
-      {/* <div className="flex gap-10">
-        {datafilter.map((x, index) => (
-          <p
-            className={`text-2xl ${
-              x.active == true ? "bg-red-500" : "bg-yellow-500"
-            } `}
-            key={index}
-            onClick={() => {
-              x.active = true;
-            }}
-          >
-            {x.name}
-          </p>
-        ))}
-      </div> */}
       <div className="mt-12">
         {isLoading ? (
           <div>
@@ -147,9 +145,11 @@ const SearchPage = () => {
               {searchSong?.songs?.map((x, index) => (
                 <div
                   key={index}
-                  className="flex  border-b border-b-border-color items-center px-4 py-4 gap-4 text-lighter-text-color font-semibold hover:bg-third-color"
+                  className={`${
+                    activeSong?.encodeId === x?.encodeId && "activeSong"
+                  } flex  border-b border-b-border-color items-center px-4 py-4 gap-4 text-lighter-text-color font-semibold hover:bg-third-color`}
                   onClick={() => {
-                    dispatch(listsongSlice.actions.songChange(x));
+                    handleClickSong(x, index);
                   }}
                 >
                   <div className="">
