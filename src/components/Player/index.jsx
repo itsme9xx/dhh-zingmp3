@@ -23,7 +23,7 @@ const Player = () => {
   const [isShowList, setIsShowList] = useState(false);
   const [showLyrics, setShowLyrics] = useState(false);
   const [playSong, setPlaySong] = useState();
-  const [volumeValue, setVolumeValue] = useState(40);
+  const [volumeValue, setVolumeValue] = useState(0.4);
   const audioRef = useRef(null);
   const toggleListSong = useSelector((state) => state.listsong.listsongmenu);
   const rendersongdefault = useSelector((state) => state.playlist.list);
@@ -269,9 +269,9 @@ const Player = () => {
             {/* Low volume */}
             {volume == 0 ? (
               <i className="fa-solid fa-volume-xmark"></i>
-            ) : volume <= 30 && volumeValue > 0 ? (
+            ) : volume <= 0.3 && volumeValue > 0 ? (
               <i className="fa-duotone fa-volume-low "></i>
-            ) : volume <= 70 && volumeValue > 30 ? (
+            ) : volume <= 0.7 && volumeValue > 0.3 ? (
               <i className="fa-solid fa-volume"></i>
             ) : (
               <i className="fa-solid fa-volume-high"></i>
@@ -283,7 +283,7 @@ const Player = () => {
               step="0.01"
               value={volume}
               type="range"
-              className="volumeButton absolute -translate-y-12 h-[70px]  w-10  opacity-0 group-hover:opacity-100  "
+              className="volumeButton absolute -translate-y-12 h-[60px]  w-10  opacity-0 group-hover:opacity-100  "
             />
           </div>
           {isShowList && (
