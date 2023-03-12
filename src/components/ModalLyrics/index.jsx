@@ -5,29 +5,26 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { playerSlice } from "../Player/playerSlice";
 import { moldallyricsSlice } from "./modallyricsSlice";
+import { Lrc } from "react-lrc";
 
 const ModalLyrics = () => {
   const dispatch = useDispatch();
   const activeSong = useSelector((state) => state.listsong.activesong);
   const lyrics = useSelector((state) => state.modal.lyrics);
-  console.log(lyrics);
 
-  useEffect(() => {
-    axios
-      .get(
-        `https://serverzingmp3.vercel.app/api/lyric?id=${activeSong.encodeId}`
-      )
-      .then((res) => {
-        // console.log(res.data.data.sentences);
-        dispatch(
-          moldallyricsSlice.actions.LyricsChange(res.data.data.sentences)
-        );
-      });
-  }, [activeSong]);
+  // Lấy API lời bài hát
+  // useEffect(() => {
+  //   axios
+  //     .get(
+  //       `https://serverzingmp3.vercel.app/api/lyric?id=${activeSong.encodeId}`
+  //     )
+  //     .then((res) => {
+  //       dispatch(moldallyricsSlice.actions.LyricsChange(res.data.data.file));
+  //     });
+  // }, [activeSong]);
 
-  // console.log("modal", props);
   return (
-    <div className="bg-third-color fixed top-10 left-[73px] xl:right-[396px] bottom-0 right-0 ">
+    <div className="bg-third-color fixed top-10 left-[73px] xl:right-[398px] bottom-[174px] right-0  text-light-title-color  xl:bottom-0  ">
       <div className="m-8 p-4 border-2 border-third-color flex gap-10 xl:translate-y-60 overflow-hidden 2xl:translate-x-[330px] border-none">
         <div className="w-[240px]">
           <div>
@@ -38,7 +35,24 @@ const ModalLyrics = () => {
             <p className="text-[13px]">{activeSong.artistsNames}</p>
           </div>
         </div>
-        {/* <div>{lyrics?.map((x) => x.words)}</div> */}
+        {/* <div>
+          <Lrc
+            lrc={lyrics}
+            lineRenderer={({ active, index, line: { content } }) => {
+              let color = "black";
+              if (index === currentLineIndex) {
+                color = "green";
+              } else if (index === currentLineIndex - 1) {
+                color = "yellow";
+              } else if (index === currentLineIndex + 1) {
+                color = "blue";
+              }
+
+              return <Line style={{ color }}>{content}</Line>;
+            }}
+            currentMillisecond={10}
+          />
+        </div> */}
         <div>Lyrics Here Coming soon</div>
       </div>
       <div

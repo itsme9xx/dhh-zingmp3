@@ -109,7 +109,7 @@ const Navbar = () => {
       >
         <i className="fa-sharp fa-solid fa-music text-primary-color"></i>
       </div>
-      {LyricsButton && <ModalLyrics />}
+      {/* {LyricsButton && <ModalLyrics />} */}
       <div
         className="rounded-full w-10 h-10 bg-light-title-color flex justify-center items-center cursor-pointer "
         onClick={handleLogin}

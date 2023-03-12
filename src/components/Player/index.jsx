@@ -352,7 +352,7 @@ const Player = () => {
             Danh Sách Phát
           </button>
           <div
-            className="relative w-8 flex justify-center h-8 items-center hover:bg-third-color hover:rounded-full"
+            className="relative w-8 flex justify-center h-8 items-center hover:bg-third-color hover:rounded-full "
             onClick={() => {
               handleShowSongButton();
             }}
@@ -363,9 +363,9 @@ const Player = () => {
             ></i>
             {showPopUp && <PopUp />}
             {/* <ModalLyrics /> */}
-            {LyricsButton && <ModalLyrics />}
           </div>
         </div>
+        {LyricsButton && <ModalLyrics />}
         {/* slider music  */}
         <div className="flex gap-5 justify-between items-center">
           <p>{currentTime ? formatTime(currentTime) : "00:00"}</p>
