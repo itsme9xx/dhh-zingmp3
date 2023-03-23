@@ -42,7 +42,7 @@ const Navbar = () => {
   document.body.classList = theme ? "dark" : "light";
 
   return (
-    <div className=" flex flex-col p-4 bg-secondary-color  h-screen items-center border-r-[0.5px]  border-border-color gap-5 pt-12 fixed">
+    <div className="hidden ssm:flex flex-col p-4 bg-secondary-color  h-screen items-center border-r-[0.5px]  border-border-color gap-5 pt-12 fixed">
       <div
         className={`${
           theme ? "bg-light-title-color" : "bg-third-color"
