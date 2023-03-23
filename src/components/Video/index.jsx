@@ -20,7 +20,7 @@ const Video = () => {
       });
   }, [pickvideo]);
   return (
-    <div className=" py-8 ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0  ">
+    <div className=" py-8 ml-2  ssm:ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0  ">
       <Search />
       {srcList && (
         <div className="mt-10 pr-10 xl:pr-0  ">

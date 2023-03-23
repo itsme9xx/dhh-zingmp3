@@ -70,7 +70,7 @@ const SearchPage = () => {
       });
   }, [param]);
   return (
-    <div className="py-8 ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0 ">
+    <div className="py-8 ml-2  ssm:ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0 ">
       <Search />
       <div className="mt-12">
         {isLoading ? (
