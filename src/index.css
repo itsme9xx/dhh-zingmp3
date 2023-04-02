@@ -77,6 +77,14 @@ button {
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  -webkit-transition: border-color 0.25s;
+  -moz-transition: border-color 0.25s;
+  -ms-transition: border-color 0.25s;
+  -o-transition: border-color 0.25s;
 }
 
 /* Input range */
@@ -95,11 +103,14 @@ input.slider::-webkit-slider-runnable-track {
   height: 1px;
   cursor: pointer;
   animation-duration: 0.2s;
-
   box-shadow: 0px 0px 6px #000000;
   background: #2497e3;
   border-radius: 1px;
   border: 0px solid #000000;
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  -ms-border-radius: 1px;
+  -o-border-radius: 1px;
 }
 input.slider::-webkit-slider-thumb {
   box-shadow: 0px 0px 0px #000000;
@@ -111,6 +122,10 @@ input.slider::-webkit-slider-thumb {
   cursor: pointer;
   -webkit-appearance: none;
   margin-top: -9px;
+  -webkit-border-radius: 25px;
+  -moz-border-radius: 25px;
+  -ms-border-radius: 25px;
+  -o-border-radius: 25px;
 }
 input.slider:focus::-webkit-slider-runnable-track {
   background: #2497e3;
@@ -124,6 +139,10 @@ input.slider::-moz-range-track {
   background: #2497e3;
   border-radius: 1px;
   border: 0px solid #000000;
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  -ms-border-radius: 1px;
+  -o-border-radius: 1px;
 }
 input.slider::-moz-range-thumb {
   box-shadow: 0px 0px 0px #000000;
@@ -133,6 +152,10 @@ input.slider::-moz-range-thumb {
   border-radius: 25px;
   background: #a1d0ff;
   cursor: pointer;
+  -webkit-border-radius: 25px;
+  -moz-border-radius: 25px;
+  -ms-border-radius: 25px;
+  -o-border-radius: 25px;
 }
 input.slider::-ms-track {
   width: 100%;
@@ -148,12 +171,20 @@ input.slider::-ms-fill-lower {
   border: 0px solid #000000;
   border-radius: 2px;
   box-shadow: 0px 0px 6px #000000;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  -ms-border-radius: 2px;
+  -o-border-radius: 2px;
 }
 input.slider::-ms-fill-upper {
   background: #2497e3;
   border: 0px solid #000000;
   border-radius: 2px;
   box-shadow: 0px 0px 6px #000000;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  -ms-border-radius: 2px;
+  -o-border-radius: 2px;
 }
 input.slider::-ms-thumb {
   margin-top: 1px;
@@ -164,6 +195,10 @@ input.slider::-ms-thumb {
   border-radius: 25px;
   background: #a1d0ff;
   cursor: pointer;
+  -webkit-border-radius: 25px;
+  -moz-border-radius: 25px;
+  -ms-border-radius: 25px;
+  -o-border-radius: 25px;
 }
 input.slider:focus::-ms-fill-lower {
   background: #2497e3;
