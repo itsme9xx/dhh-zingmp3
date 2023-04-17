@@ -237,8 +237,8 @@ const Player = () => {
   };
 
   return (
-    <div className=" fixed xl:top-0 xl:right-0 bottom-0 xl:border-l-2  text-light-title-color xl:flex flex-col justify-between border-border-color w-full xl:w-[400px] bg-secondary-color xl:bg-transparent  border-t z-50 ">
-      <div className="m-8 p-4 border-2 border-third-color hidden xl:block ">
+    <div className=" fixed xl:top-0 xl:right-0 bottom-0 xl:border-l-2  text-light-title-color xl:flex flex-col justify-between border-border-color w-full xl:w-[400px] bg-secondary-color xl:bg-transparent  border-t z-50 h-auto xl:h-screen">
+      <div className="m-8 mb-0 p-4 border-2 border-third-color hidden xl:block ">
         {isLoading ? (
           <Skeleton height={290} />
         ) : (
@@ -263,8 +263,8 @@ const Player = () => {
           </p>
         </div>
       </div>
-      <div className="m-8">
-        <div className=" mt-[50%] xl:flex justify-between items-center mx-4 mb-8 hidden ">
+      <div className="m-8 mt-4">
+        <div className="  xl:flex justify-between items-center mx-4 mb-8 hidden ">
           <div className=" w-8 h-8 hover:bg-third-color hover:rounded-full flex justify-center items-center cursor-pointer relative group z-20">
             {/* Low volume */}
             {volume == 0 ? (

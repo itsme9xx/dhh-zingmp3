@@ -1,9 +1,0 @@
-xem token khi refresh web o tren vercel , tai sao bi mat 
-nut X cua loi nhac
-
-
-
------------------------------
-
-khi 1 bài hát của playlist khác đc chọn , xong chọn 1 bài hát không có link khác của playlist khác
-đoạn logic handleNextSong , chỗ !success
