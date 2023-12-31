@@ -52,12 +52,12 @@ const PlayList = () => {
       setIsLoading(false);
       dispatch(
         playlistSlice.actions.listChange(
-          res.data.data.items[5].items[0]?.encodeId
+          res.data.data?.items[6]?.items[0]?.encodeId
         )
       );
       localStorage.setItem(
         "defaultSong",
-        res.data.data.items[5].items[0]?.encodeId
+        res.data.data?.items[6]?.items[0]?.encodeId
       );
     });
   }, []);
