@@ -45,4 +45,7 @@ router.get("/categorymv", ZingController.getCategoryMV);
 // getVideo
 router.get("/video", ZingController.getVideo);
 
+// getTop100Valid
+router.get("/nonblockip", ZingController.getNonblockip);
+
 module.exports = router;

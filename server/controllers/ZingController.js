@@ -90,6 +90,60 @@ class ZingController {
       res.json(data);
     });
   }
+
+  getNonblockip = async (req, res) => {
+    try {
+      const top = await ZingMp3.getTop100();
+      const playlists = Object.values(top?.data || {}).flat();
+
+      let allSongs = [];
+
+      for (const playlist of playlists[1].items) {
+        console.log("playlist", playlist);
+        const detail = await ZingMp3.getDetailPlaylist(playlist.encodeId);
+        const songs = detail?.data?.song?.items || [];
+        for (const song of songs) {
+          allSongs.push(song);
+
+          if (allSongs.length >= 200) break;
+        }
+
+        if (allSongs.length >= 200) break;
+      }
+
+      const results = await Promise.allSettled(
+        allSongs.map((song) => ZingMp3.getSong(song.encodeId))
+      );
+
+      const validSongs = results
+        .map((result, index) => {
+          console.log("result", result);
+          if (
+            result.status === "fulfilled" &&
+            result.value?.msg === "Success"
+          ) {
+            return {
+              id: allSongs[index].encodeId,
+              title: allSongs[index].title,
+              artists: allSongs[index].artistsNames,
+              thumbnail: allSongs[index].thumbnail,
+              link128: result.value?.data?.[128],
+            };
+          }
+          return null;
+        })
+        .filter(Boolean);
+
+      return res.json({
+        msg: "Success",
+        total: validSongs.length,
+        data: validSongs,
+      });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ msg: "Failed" });
+    }
+  };
 }
 
 module.exports = new ZingController();

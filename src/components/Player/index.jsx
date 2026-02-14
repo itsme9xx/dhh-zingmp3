@@ -137,7 +137,7 @@ const Player = () => {
       .then((res) => {
         if (res.data.msg !== "Success") {
           handleNextSong(tempIndex);
-          message.warning(res.data.msg),
+          message.warning("IP máy chủ ở nước ngoài nên bị chặn"),
             dispatch(listsongSlice.actions.checkLoading(""));
         } else {
           dispatch(listsongSlice.actions.checkLoading(false)),
@@ -170,7 +170,7 @@ const Player = () => {
       .then((res) => {
         if (res.data.msg !== "Success") {
           handlePrevSong(tempIndex);
-          message.warning(res.data.msg),
+          message.warning("IP máy chủ ở nước ngoài nên bị chặn"),
             dispatch(listsongSlice.actions.checkLoading(""));
         } else {
           dispatch(listsongSlice.actions.checkLoading(false)),
@@ -204,7 +204,7 @@ const Player = () => {
       .then((res) => {
         if (res.data.msg !== "Success") {
           handleNextSong(tempIndex);
-          message.warning(res.data.msg),
+          message.warning("IP máy chủ ở nước ngoài nên bị chặn"),
             dispatch(listsongSlice.actions.checkLoading(""));
         } else {
           dispatch(listsongSlice.actions.checkLoading(false)),
@@ -312,7 +312,9 @@ const Player = () => {
                       )
                       .then((res) => {
                         res.data.msg !== "Success"
-                          ? (message.warning(res.data.msg),
+                          ? (message.warning(
+                              "IP máy chủ ở nước ngoài nên bị chặn"
+                            ),
                             dispatch(listsongSlice.actions.checkLoading("")))
                           : (dispatch(
                               listsongSlice.actions.checkLoading(false)
@@ -432,7 +434,7 @@ const Player = () => {
                 : dispatch(navbarSlice.actions.iconPlayChange(true));
               isPlay ? audioRef.current.play() : audioRef.current.pause();
               playSong.msg !== "Success" &&
-                (message.warning(playSong.msg),
+                (message.warning("IP máy chủ ở nước ngoài nên bị chặn"),
                 dispatch(navbarSlice.actions.iconPlayChange(true)));
             }}
           >
