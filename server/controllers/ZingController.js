@@ -105,12 +105,12 @@ class ZingController {
         for (const song of songs) {
           allSongs.push(song);
 
-          if (allSongs.length >= 200) break;
+          if (allSongs.length >= 15) break;
         }
 
-        if (allSongs.length >= 200) break;
+        if (allSongs.length >= 15) break;
       }
-
+      allSongs = allSongs.slice(0, 15);
       const results = await Promise.allSettled(
         allSongs.map((song) => ZingMp3.getSong(song.encodeId))
       );
