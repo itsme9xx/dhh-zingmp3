@@ -1,8 +1,8 @@
 const path = require("path");
 const express = require("express");
-const app = express();
 const cors = require("cors");
-const port = process.env.PORT || 3000;
+
+const app = express();
 
 // Page Home
 app.get("/", (req, res) => {
@@ -18,6 +18,4 @@ app.get("*", (req, res) => {
   res.send("Nhập Sai Đường Dẫn! Vui Lòng Nhập Lại >.<");
 });
 
-app.listen(port, () => {
-  console.log(`Start server listen at http://localhost:${port}`);
-});
+module.exports = app;
