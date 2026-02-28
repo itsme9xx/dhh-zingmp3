@@ -14,6 +14,8 @@ import { navbarSlice } from "../Navbar/navbarSlice";
 import { formatTime } from "../../utils/FormatTime";
 import { ButtonIcon } from "../../App";
 
+const serverAPI = import.meta.env.VITE_SERVERAPI;
+
 const Player = () => {
   const dispatch = useDispatch();
   const [showPopUp, setShowPopUp] = useState(false);
@@ -78,7 +80,7 @@ const Player = () => {
     setIsLoading(true);
     axios
       .get(
-        `https://serverzingmp3.vercel.app/api/detailplaylist?id=${
+        `${serverAPI}/api/detailplaylist?id=${
           rendersongdefault
             ? rendersongdefault
             : localStorage.getItem("defaultSong")
@@ -102,9 +104,7 @@ const Player = () => {
 
   useEffect(() => {
     axios
-      .get(
-        `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[0]?.encodeId}`
-      )
+      .get(`${serverAPI}/api/song?id=${toggleListSong?.items?.[0]?.encodeId}`)
       .then((res) => {
         setPlaySong(res.data);
       });
@@ -132,7 +132,7 @@ const Player = () => {
     dispatch(listsongSlice.actions.checkLoading(true));
     axios
       .get(
-        `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
+        `${serverAPI}/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
       )
       .then((res) => {
         if (res.data.msg !== "Success") {
@@ -165,7 +165,7 @@ const Player = () => {
     dispatch(listsongSlice.actions.checkLoading(true));
     axios
       .get(
-        `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
+        `${serverAPI}/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
       )
       .then((res) => {
         if (res.data.msg !== "Success") {
@@ -199,7 +199,7 @@ const Player = () => {
     dispatch(listsongSlice.actions.checkLoading(true));
     axios
       .get(
-        `https://serverzingmp3.vercel.app/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
+        `${serverAPI}/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
       )
       .then((res) => {
         if (res.data.msg !== "Success") {
@@ -221,17 +221,43 @@ const Player = () => {
   const info = () => {
     message.warning("Bài hát này chỉ dành cho tài khoản VIP!", 2);
   };
+
+  const handleDownload = async () => {
+    let linkUrl = playSong?.data?.[128];
+    console.log("linkUrl", playSong?.data?.[128]);
+    console.log("picksong", pickSong);
+    const response = await fetch(linkUrl);
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${pickSong.alias}.mp3`;
+    link.click();
+
+    window.URL.revokeObjectURL(url);
+  };
   const PopUp = () => {
     return (
-      <div
-        className="cursor-pointer absolute  -translate-x-[55px] -translate-y-16 w-28 hover:brightness-110 z-20 "
-        onClick={() => {
-          setShowLyrics(true);
-          dispatch(playerSlice.actions.modalChange(true));
-        }}
-      >
-        <h2 className="bg-third-color py-2 px-4 rounded-lg  ">Lời bài hát</h2>
+      <div className="cursor-pointer absolute  -translate-x-[55px] -translate-y-16 w-28  z-20 mb-10 ">
+        <h2
+          className="bg-third-color py-2 px-4 rounded-lg hover:brightness-110"
+          onClick={() => {
+            setShowLyrics(true);
+            dispatch(playerSlice.actions.modalChange(true));
+          }}
+        >
+          Lời bài hát
+        </h2>
         <div className="clipPath absolute w-3 h-3 right-0 bg-third-color -translate-y-[4px]  border-r-red-100 border-b-red-300 "></div>
+        <h2
+          className="bg-third-color py-2 px-4 rounded-lg mt-2 hover:brightness-110"
+          onClick={handleDownload}
+        >
+          Tải xuống
+        </h2>
+
+        <div className="clipPath absolute w-3 h-3 right-0 bg-third-color -translate-y-[4px]" />
       </div>
     );
   };
@@ -263,9 +289,39 @@ const Player = () => {
           </p>
         </div>
       </div>
-      <div className="m-8 mt-4">
-        <div className="  xl:flex justify-between items-center mx-4 mb-8 hidden ">
-          <div className=" w-8 h-8 hover:bg-third-color hover:rounded-full flex justify-center items-center cursor-pointer relative group z-20">
+      <div className="m-8 mt-4  ">
+        <div className=" justify-between items-center  mb-8 -mx-8 cursor-pointer  text-xs flex ssm:hidden     ">
+          <h2
+            className="bg-third-color py-2 px-2 rounded-lg hover:brightness-110"
+            onClick={() => {
+              setShowLyrics(true);
+              dispatch(playerSlice.actions.modalChange(true));
+            }}
+          >
+            Lời bài hát
+          </h2>
+          <div className="">
+            <p className="font-bold">
+              {pickSong?.title || toggleListSong?.items?.[0]?.title || (
+                <Skeleton height={20} style={{ marginBottom: 10 }} />
+              )}
+            </p>
+            <p className="text-[13px]">
+              {pickSong?.artistsNames ||
+                toggleListSong?.items?.[0]?.artistsNames || (
+                  <Skeleton height={20} />
+                )}
+            </p>
+          </div>
+          <h2
+            className="bg-third-color py-2 px-2 rounded-lg hover:brightness-110"
+            onClick={handleDownload}
+          >
+            Tải xuống
+          </h2>
+        </div>
+        <div className="  justify-between items-center mx-4 mb-8 ssm:flex hidden   ">
+          <div className=" w-8 h-8 hover:bg-third-color hover:rounded-full flex justify-center items-center cursor-pointer relative group z-20 ">
             {/* Low volume */}
             {volume == 0 ? (
               <i className="fa-solid fa-volume-xmark"></i>
@@ -283,7 +339,7 @@ const Player = () => {
               step="0.01"
               value={volume}
               type="range"
-              className="volumeButton absolute -translate-y-12 h-[60px]  w-10  opacity-0 group-hover:opacity-100  "
+              className="volumeButton absolute -translate-y-12 h-[60px]  w-10  opacity-0 group-hover:opacity-100   "
             />
           </div>
           {isShowList && (
@@ -307,9 +363,7 @@ const Player = () => {
 
                     dispatch(listsongSlice.actions.checkLoading(true));
                     axios
-                      .get(
-                        `https://serverzingmp3.vercel.app/api/song?id=${x?.encodeId}`
-                      )
+                      .get(`${serverAPI}/api/song?id=${x?.encodeId}`)
                       .then((res) => {
                         res.data.msg !== "Success"
                           ? (message.warning(res.data.msg),
@@ -344,13 +398,26 @@ const Player = () => {
             </div>
           )}
           <button
-            className="bg-third-color hover:border-none hover:brightness-110 rounded-3xl text-[13px]"
+            className="bg-third-color hover:border-none hover:brightness-110 rounded-3xl text-[13px] hidden xl:block"
             onClick={() => {
               setIsShowList(!isShowList);
             }}
           >
             Danh Sách Phát
           </button>
+          <div className=" xl:hidden">
+            <p className="font-bold">
+              {pickSong?.title || toggleListSong?.items?.[0]?.title || (
+                <Skeleton height={20} style={{ marginBottom: 10 }} />
+              )}
+            </p>
+            <p className="text-[13px]">
+              {pickSong?.artistsNames ||
+                toggleListSong?.items?.[0]?.artistsNames || (
+                  <Skeleton height={20} />
+                )}
+            </p>
+          </div>
           <div
             className="relative w-8 flex justify-center h-8 items-center hover:bg-third-color hover:rounded-full "
             onClick={() => {

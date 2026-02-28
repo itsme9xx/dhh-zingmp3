@@ -18,6 +18,9 @@ app.get("*", (req, res) => {
   res.send("Nhập Sai Đường Dẫn! Vui Lòng Nhập Lại >.<");
 });
 
-app.listen(port, () => {
-  console.log(`Start server listen at http://localhost:${port}`);
+// app.listen(port, () => {
+//   console.log(`Start server listen at http://localhost:${port}`);
+// });
+app.listen(3000, "0.0.0.0", () => {
+  console.log("Server running on 0.0.0.0");
 });

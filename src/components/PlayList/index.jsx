@@ -9,6 +9,8 @@ import { useDispatch } from "react-redux";
 import { playlistSlice } from "./playlistSlice";
 import { useSelector } from "react-redux";
 
+const serverAPI = import.meta.env.VITE_SERVERAPI;
+
 export function Search() {
   const navigate = useNavigate();
   const handleKeyPress = (e) => {
@@ -18,20 +20,26 @@ export function Search() {
   };
   const [searchKey, setSearchKey] = useState();
   return (
-    <div className=" flex h-12 w-96 items-center bg-third-color">
-      <i className="fa-sharp fa-solid fa-magnifying-glass text-light-title-color ml-4 mr-2"></i>
-      <input
-        placeholder="Nhập từ khóa tìm kiếm"
-        className="w-full bg-transparent text-light-title-color px-2 outline-none"
-        type="search"
-        name="musicsearch"
-        onChange={(e) => {
-          setSearchKey(e.target.value);
-        }}
-        onKeyUp={(e) => {
-          handleKeyPress(e);
-        }}
-      />
+    <div className="flex items-stretch h-14">
+      <a href="/" className="h-full flex items-center px-4 ssm:hidden">
+        <img
+          src="/logo.png"
+          alt="Logo"
+          className="h-full w-auto object-contain"
+        />
+      </a>
+      <div className="flex flex-1 items-center bg-third-color px-4">
+        <i className="fa-sharp fa-solid fa-magnifying-glass text-light-title-color mr-2"></i>
+
+        <input
+          placeholder="Nhập từ khóa tìm kiếm"
+          className="w-full bg-transparent text-light-title-color outline-none"
+          type="search"
+          name="musicsearch"
+          onChange={(e) => setSearchKey(e.target.value)}
+          onKeyUp={(e) => handleKeyPress(e)}
+        />
+      </div>
     </div>
   );
 }
@@ -47,7 +55,7 @@ const PlayList = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    axios.get("https://serverzingmp3.vercel.app/api/home").then((res) => {
+    axios.get(`${serverAPI}/api/home`).then((res) => {
       setTop100(res.data.data.items);
       setIsLoading(false);
       dispatch(

@@ -11,6 +11,8 @@ import { searchSlice } from "./searchSlice";
 import { message } from "antd";
 import { info } from "autoprefixer";
 
+const serverAPI = import.meta.env.VITE_SERVERAPI;
+
 const SearchPage = () => {
   const dispatch = useDispatch();
   const param = useParams();
@@ -28,14 +30,12 @@ const SearchPage = () => {
 
   const handleVideo = (x) => {
     infoVideo();
-    axios
-      .get(`https://serverzingmp3.vercel.app/api/video?id=${x.encodeId}`)
-      .then((res) => {
-        navigate(`/video/${x.encodeId}`);
-        dispatch(
-          searchSlice.actions.videoChange(res?.data?.data?.streaming?.mp4)
-        );
-      });
+    axios.get(`${serverAPI}/api/video?id=${x.encodeId}`).then((res) => {
+      navigate(`/video/${x.encodeId}`);
+      dispatch(
+        searchSlice.actions.videoChange(res?.data?.data?.streaming?.mp4)
+      );
+    });
   };
 
   const handleClickSong = (x, index) => {
@@ -48,22 +48,18 @@ const SearchPage = () => {
     // Click song hiển thị ra thông tin bài hát bên Player
     dispatch(listsongSlice.actions.songChange(x));
     dispatch(listsongSlice.actions.checkLoading(true));
-    axios
-      .get(`https://serverzingmp3.vercel.app/api/song?id=${x?.encodeId}`)
-      .then((res) => {
-        res.data.msg !== "Success"
-          ? (message.warning(res.data.msg),
-            dispatch(listsongSlice.actions.checkLoading("")))
-          : (dispatch(listsongSlice.actions.checkLoading(false)),
-            dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128])));
-      });
+    axios.get(`${serverAPI}/api/song?id=${x?.encodeId}`).then((res) => {
+      res.data.msg !== "Success"
+        ? (message.warning(res.data.msg),
+          dispatch(listsongSlice.actions.checkLoading("")))
+        : (dispatch(listsongSlice.actions.checkLoading(false)),
+          dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128])));
+    });
   };
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get(
-        `https://serverzingmp3.vercel.app/api/search?keyword=${param.keyword}`
-      )
+      .get(`${serverAPI}/api/search?keyword=${param.keyword}`)
       .then((res) => {
         setSearchSong(res.data.data);
         setIsLoading(false);
