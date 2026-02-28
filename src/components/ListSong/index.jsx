@@ -53,7 +53,9 @@ const ListSong = () => {
     dispatch(listsongSlice.actions.checkLoading(true));
     axios.get(`${serverAPI}/api/song?id=${x?.encodeId}`).then((res) => {
       res.data.msg !== "Success"
-        ? (message.warning("Sừa Server đang đặt ở nước ngoài nên bị chặn"),
+        ? (message.warning(
+            "Server đang đặt ở nước ngoài nên bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
+          ),
           dispatch(listsongSlice.actions.checkLoading("")))
         : (dispatch(listsongSlice.actions.checkLoading(false)),
           dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128])));

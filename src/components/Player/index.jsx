@@ -137,7 +137,9 @@ const Player = () => {
       .then((res) => {
         if (res.data.msg !== "Success") {
           handleNextSong(tempIndex);
-          message.warning("Sừa Server đang đặt ở nước ngoài nên bị chặn"),
+          message.warning(
+            "Server đang đặt ở nước ngoài nên bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
+          ),
             dispatch(listsongSlice.actions.checkLoading(""));
         } else {
           dispatch(listsongSlice.actions.checkLoading(false)),
@@ -170,7 +172,9 @@ const Player = () => {
       .then((res) => {
         if (res.data.msg !== "Success") {
           handlePrevSong(tempIndex);
-          message.warning("Sừa Server đang đặt ở nước ngoài nên bị chặn"),
+          message.warning(
+            "Server đang đặt ở nước ngoài nên bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
+          ),
             dispatch(listsongSlice.actions.checkLoading(""));
         } else {
           dispatch(listsongSlice.actions.checkLoading(false)),
@@ -204,7 +208,9 @@ const Player = () => {
       .then((res) => {
         if (res.data.msg !== "Success") {
           handleNextSong(tempIndex);
-          message.warning("Sừa Server đang đặt ở nước ngoài nên bị chặn"),
+          message.warning(
+            "Server đang đặt ở nước ngoài nên bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
+          ),
             dispatch(listsongSlice.actions.checkLoading(""));
         } else {
           dispatch(listsongSlice.actions.checkLoading(false)),
@@ -367,7 +373,7 @@ const Player = () => {
                       .then((res) => {
                         res.data.msg !== "Success"
                           ? (message.warning(
-                              "Sừa Server đang đặt ở nước ngoài nên bị chặn"
+                              "Server đang đặt ở nước ngoài nên bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
                             ),
                             dispatch(listsongSlice.actions.checkLoading("")))
                           : (dispatch(
