@@ -30,6 +30,7 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Page Home
 app.get("/", (req, res) => {
@@ -45,4 +46,6 @@ app.get("*", (req, res) => {
   res.send("Nhập Sai Đường Dẫn! Vui Lòng Nhập Lại >.<");
 });
 
-module.exports = app;
+app.listen(PORT, "0.0.0.0", () => {
+  console.log("Server running on port " + PORT);
+});
