@@ -111,7 +111,7 @@ const Navbar = () => {
       </div>
       {/* {LyricsButton && <ModalLyrics />} */}
       <div
-        className="rounded-full w-10 h-10 bg-light-title-color flex justify-center items-center cursor-pointer "
+        className="rounded-full w-10 h-10 bg-light-title-color justify-center items-center cursor-pointer hidden"
         onClick={handleLogin}
         title="Account"
       >

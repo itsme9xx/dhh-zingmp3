@@ -50,7 +50,7 @@ const SearchPage = () => {
     dispatch(listsongSlice.actions.checkLoading(true));
     axios.get(`${serverAPI}/api/song?id=${x?.encodeId}`).then((res) => {
       res.data.msg !== "Success"
-        ? (message.warning(res.data.msg),
+        ? (message.warning("Sừa Server đang đặt ở nước ngoài nên bị chặn"),
           dispatch(listsongSlice.actions.checkLoading("")))
         : (dispatch(listsongSlice.actions.checkLoading(false)),
           dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128])));

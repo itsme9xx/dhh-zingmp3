@@ -137,7 +137,7 @@ const Player = () => {
       .then((res) => {
         if (res.data.msg !== "Success") {
           handleNextSong(tempIndex);
-          message.warning(res.data.msg),
+          message.warning("Sừa Server đang đặt ở nước ngoài nên bị chặn"),
             dispatch(listsongSlice.actions.checkLoading(""));
         } else {
           dispatch(listsongSlice.actions.checkLoading(false)),
@@ -170,7 +170,7 @@ const Player = () => {
       .then((res) => {
         if (res.data.msg !== "Success") {
           handlePrevSong(tempIndex);
-          message.warning(res.data.msg),
+          message.warning("Sừa Server đang đặt ở nước ngoài nên bị chặn"),
             dispatch(listsongSlice.actions.checkLoading(""));
         } else {
           dispatch(listsongSlice.actions.checkLoading(false)),
@@ -204,7 +204,7 @@ const Player = () => {
       .then((res) => {
         if (res.data.msg !== "Success") {
           handleNextSong(tempIndex);
-          message.warning(res.data.msg),
+          message.warning("Sừa Server đang đặt ở nước ngoài nên bị chặn"),
             dispatch(listsongSlice.actions.checkLoading(""));
         } else {
           dispatch(listsongSlice.actions.checkLoading(false)),
@@ -366,7 +366,9 @@ const Player = () => {
                       .get(`${serverAPI}/api/song?id=${x?.encodeId}`)
                       .then((res) => {
                         res.data.msg !== "Success"
-                          ? (message.warning(res.data.msg),
+                          ? (message.warning(
+                              "Sừa Server đang đặt ở nước ngoài nên bị chặn"
+                            ),
                             dispatch(listsongSlice.actions.checkLoading("")))
                           : (dispatch(
                               listsongSlice.actions.checkLoading(false)
