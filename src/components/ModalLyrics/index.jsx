@@ -60,7 +60,7 @@ const ModalLyrics = () => {
       <div
         className="absolute right-10 top-4 cursor-pointer w-10 h-10 rounded-full bg-lighter-text-color flex justify-center items-center"
         onClick={() => {
-          dispatch(playerSlice.actions.modalChange(false));
+          dispatch(playerSlice.actions.toggleLyrics(false));
         }}
       >
         <i className="fa-regular fa-xmark"></i>

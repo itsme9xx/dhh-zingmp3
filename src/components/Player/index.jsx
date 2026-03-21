@@ -13,6 +13,8 @@ import { message } from "antd";
 import { navbarSlice } from "../Navbar/navbarSlice";
 import { formatTime } from "../../utils/FormatTime";
 import { ButtonIcon } from "../../App";
+import ListDownload from "../ListDownload";
+import { dbPromise } from "../../utils/db";
 
 const serverAPI = import.meta.env.VITE_SERVERAPI;
 
@@ -22,11 +24,13 @@ const Player = () => {
   const [showSuffle, setShowSuffle] = useState(false);
   const [showRepeat, setShowRepeat] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isShowList, setIsShowList] = useState(false);
   const [showLyrics, setShowLyrics] = useState(false);
   const [playSong, setPlaySong] = useState();
   const [volumeValue, setVolumeValue] = useState(0.4);
+  const [offlineSongs, setOfflineSongs] = useState([]);
   const audioRef = useRef(null);
+  const currentUrlRef = useRef(null);
+  const showList = useSelector((state) => state.player.isShowList);
   const toggleListSong = useSelector((state) => state.listsong.listsongmenu);
   const rendersongdefault = useSelector((state) => state.playlist.list);
   const pickSong = useSelector((state) => state.listsong.song);
@@ -40,7 +44,37 @@ const Player = () => {
   const isLoop = useSelector((state) => state.player.loop);
   const volume = useSelector((state) => state.player.volume);
   const currentTime = useSelector((state) => state.player.currenttimesong);
-  const LyricsButton = useSelector((state) => state.player.button);
+  const showLyrics2 = useSelector((state) => state.player.showLyrics);
+  const showDownload = useSelector((state) => state.player.showDownload);
+  const [isDownloaded, setIsDownloaded] = useState(false);
+
+  const checkDownloaded = async (encodeId) => {
+    const db = await dbPromise;
+    const song = await db.get("songs", encodeId);
+    return !!song;
+  };
+  useEffect(() => {
+    const loadOfflineSongs = async () => {
+      const db = await dbPromise;
+      const songs = await db.getAll("songs");
+      setOfflineSongs(songs);
+    };
+
+    if (showDownload) {
+      loadOfflineSongs();
+      dispatch(listsongSlice.actions.currentSongIndexChange(0));
+    }
+  }, [showDownload]);
+  useEffect(() => {
+    const check = async () => {
+      if (pickSong?.encodeId) {
+        const result = await checkDownloaded(pickSong.encodeId);
+        setIsDownloaded(result);
+      }
+    };
+
+    check();
+  }, [pickSong]);
 
   const handleVolume = (e) => {
     setVolumeValue(e.target.value);
@@ -65,9 +99,10 @@ const Player = () => {
         });
     }
   };
+
   useEffect(() => {
     scrollToActiveSong();
-  }, [currentSongIndex, pickSong, isShowList]);
+  }, [currentSongIndex, pickSong, showList]);
 
   useEffect(() => {
     checkLoading === false &&
@@ -75,6 +110,18 @@ const Player = () => {
       audioRef.current?.play(),
       dispatch(navbarSlice.actions.iconPlayChange(false)));
   }, [checkLoading]);
+
+  useEffect(() => {
+    if (!src1 || !audioRef.current) return;
+    const audio = audioRef.current;
+
+    audio
+      .play()
+      .then(() => {
+        dispatch(navbarSlice.actions.iconPlayChange(false));
+      })
+      .catch((err) => console.log(err));
+  }, [src1]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -103,120 +150,123 @@ const Player = () => {
   }, [isPlay]);
 
   useEffect(() => {
-    axios
-      .get(`${serverAPI}/api/song?id=${toggleListSong?.items?.[0]?.encodeId}`)
-      .then((res) => {
-        setPlaySong(res.data);
-      });
+    const id = toggleListSong?.items?.[0]?.encodeId;
+    if (!id) return;
+    axios.get(`${serverAPI}/api/song?id=${id}`).then((res) => {
+      setPlaySong(res.data);
+    });
   }, [toggleListSong]);
 
   const handleShowSongButton = () => {
     setShowPopUp(!showPopUp);
   };
   const handleShuffleButton = () => {
+    const list = showDownload ? offlineSongs : toggleListSong?.items;
+    if (!list || list.length === 0) return;
     let tempIndex;
     do {
-      tempIndex = Math.floor(Math.random() * toggleListSong?.items.length);
+      tempIndex = Math.floor(Math.random() * list.length);
     } while (tempIndex === currentSongIndex);
-    if (toggleListSong?.items?.[tempIndex].streamingStatus === 2) {
-      info();
-      tempIndex = tempIndex + 1;
-    }
-    dispatch(
-      listsongSlice.actions.songChange(toggleListSong?.items?.[tempIndex])
-    );
-    dispatch(
-      listsongSlice.actions.activeSongChange(toggleListSong?.items?.[tempIndex])
-    );
-    dispatch(listsongSlice.actions.currentSongIndexChange(tempIndex));
-    dispatch(listsongSlice.actions.checkLoading(true));
-    axios
-      .get(
-        `${serverAPI}/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
-      )
-      .then((res) => {
-        if (res.data.msg !== "Success") {
-          handleNextSong(tempIndex);
-          message.warning(
-            "Server đang đặt ở nước ngoài nên bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
-          ),
-            dispatch(listsongSlice.actions.checkLoading(""));
-        } else {
-          dispatch(listsongSlice.actions.checkLoading(false)),
-            dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
-        }
-      });
-  };
-  const handlePrevSong = (index) => {
-    let tempIndex;
-    if (currentSongIndex == 0) tempIndex = toggleListSong.items.length - 1;
-    else tempIndex = (index || currentSongIndex) - 1;
 
-    if (toggleListSong?.items?.[tempIndex].streamingStatus === 2) {
-      info();
-      tempIndex = tempIndex - 1;
-    }
-    dispatch(
-      listsongSlice.actions.songChange(toggleListSong?.items?.[tempIndex])
-    );
-    dispatch(
-      listsongSlice.actions.activeSongChange(toggleListSong?.items?.[tempIndex])
-    );
+    const song = list[tempIndex];
+    const { blob, ...safeSong } = song;
+
+    dispatch(listsongSlice.actions.songChange(safeSong));
+    dispatch(listsongSlice.actions.activeSongChange(safeSong));
     dispatch(listsongSlice.actions.currentSongIndexChange(tempIndex));
 
+    // OFFLINE
+    if (showDownload) {
+      if (song.blob) {
+        const url = URL.createObjectURL(song.blob);
+        dispatch(listsongSlice.actions.srcChange(url));
+      }
+      return;
+    }
+
+    // ONLINE
+    if (song.streamingStatus === 2) {
+      info();
+      return;
+    }
+
     dispatch(listsongSlice.actions.checkLoading(true));
-    axios
-      .get(
-        `${serverAPI}/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
-      )
-      .then((res) => {
-        if (res.data.msg !== "Success") {
-          handlePrevSong(tempIndex);
-          message.warning(
-            "Server đang đặt ở nước ngoài nên bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
-          ),
-            dispatch(listsongSlice.actions.checkLoading(""));
-        } else {
-          dispatch(listsongSlice.actions.checkLoading(false)),
-            dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
-        }
-      });
+
+    axios.get(`${serverAPI}/api/song?id=${song?.encodeId}`).then((res) => {
+      if (res.data.msg !== "Success") {
+        message.warning(
+          "Server đang đặt ở nước ngoài nên bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
+        );
+        dispatch(listsongSlice.actions.checkLoading(false));
+      } else {
+        dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
+        dispatch(listsongSlice.actions.checkLoading(false));
+      }
+    });
   };
 
-  const handleNextSong = (index) => {
-    let tempIndex = 0;
-    if (currentSongIndex === toggleListSong.items.length - 1) tempIndex = 0;
-    else tempIndex = (index || currentSongIndex) + 1;
+  const handlePrevSong = () => {
+    const list = showDownload ? offlineSongs : toggleListSong?.items;
+    if (!list || list.length === 0) return;
 
-    if (toggleListSong?.items?.[tempIndex].streamingStatus === 2) {
-      info();
-      tempIndex = tempIndex + 1;
+    let prevIndex =
+      currentSongIndex === 0 ? list.length - 1 : currentSongIndex - 1;
+
+    const song = list[prevIndex];
+    const { blob, ...safeSong } = song;
+
+    dispatch(listsongSlice.actions.songChange(safeSong));
+    dispatch(listsongSlice.actions.activeSongChange(safeSong));
+    dispatch(listsongSlice.actions.currentSongIndexChange(prevIndex));
+
+    // OFFLINE
+    if (showDownload) {
+      if (song.blob) {
+        const url = URL.createObjectURL(song.blob);
+        dispatch(listsongSlice.actions.srcChange(url));
+      }
+      return;
     }
-    dispatch(
-      listsongSlice.actions.songChange(toggleListSong?.items?.[tempIndex])
-    );
-    dispatch(
-      listsongSlice.actions.activeSongChange(toggleListSong?.items?.[tempIndex])
-    );
-    dispatch(listsongSlice.actions.currentSongIndexChange(tempIndex));
 
+    // ONLINE
     dispatch(listsongSlice.actions.checkLoading(true));
-    axios
-      .get(
-        `${serverAPI}/api/song?id=${toggleListSong?.items?.[tempIndex]?.encodeId}`
-      )
-      .then((res) => {
-        if (res.data.msg !== "Success") {
-          handleNextSong(tempIndex);
-          message.warning(
-            "Server đang đặt ở nước ngoài nên bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
-          ),
-            dispatch(listsongSlice.actions.checkLoading(""));
-        } else {
-          dispatch(listsongSlice.actions.checkLoading(false)),
-            dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
-        }
-      });
+
+    axios.get(`${serverAPI}/api/song?id=${song?.encodeId}`).then((res) => {
+      dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
+      dispatch(listsongSlice.actions.checkLoading(false));
+    });
+  };
+
+  const handleNextSong = () => {
+    const list = showDownload ? offlineSongs : toggleListSong?.items;
+    if (!list || list.length === 0) return;
+
+    let nextIndex =
+      currentSongIndex === list.length - 1 ? 0 : currentSongIndex + 1;
+
+    const song = list[nextIndex];
+    const { blob, ...safeSong } = song;
+
+    dispatch(listsongSlice.actions.songChange(safeSong));
+    dispatch(listsongSlice.actions.activeSongChange(safeSong));
+    dispatch(listsongSlice.actions.currentSongIndexChange(nextIndex));
+
+    // OFFLINE
+    if (showDownload) {
+      if (song.blob) {
+        const url = URL.createObjectURL(song.blob);
+        dispatch(listsongSlice.actions.srcChange(url));
+      }
+      return;
+    }
+
+    // ONLINE
+    dispatch(listsongSlice.actions.checkLoading(true));
+
+    axios.get(`${serverAPI}/api/song?id=${song?.encodeId}`).then((res) => {
+      dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
+      dispatch(listsongSlice.actions.checkLoading(false));
+    });
   };
 
   const handleRepeatButton = () => {
@@ -229,19 +279,31 @@ const Player = () => {
   };
 
   const handleDownload = async () => {
-    let linkUrl = playSong?.data?.[128];
-    console.log("linkUrl", playSong?.data?.[128]);
-    console.log("picksong", pickSong);
-    const response = await fetch(linkUrl);
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${pickSong.alias}.mp3`;
-    link.click();
-
-    window.URL.revokeObjectURL(url);
+    try {
+      axios
+        .get(`${serverAPI}/api/song?id=${pickSong?.encodeId}`)
+        .then((res) => {
+          dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
+        });
+      const linkUrl = src1;
+      const response = await fetch(linkUrl);
+      const blob = await response.blob();
+      const db = await dbPromise;
+      await db.put("songs", {
+        encodeId: pickSong.encodeId,
+        title: pickSong.title,
+        thumbnailM: pickSong.thumbnail,
+        artistsNames: pickSong.artistsNames,
+        blob: blob,
+        album: pickSong.album.title,
+        duration: pickSong.duration,
+      });
+      setIsDownloaded(true);
+      message.success("Đã tải bài hát!");
+    } catch (err) {
+      console.error(err);
+      message.error("Download lỗi!");
+    }
   };
   const PopUp = () => {
     return (
@@ -250,17 +312,24 @@ const Player = () => {
           className="bg-third-color py-2 px-4 rounded-lg hover:brightness-110"
           onClick={() => {
             setShowLyrics(true);
-            dispatch(playerSlice.actions.modalChange(true));
+            dispatch(playerSlice.actions.toggleLyrics(true));
           }}
         >
           Lời bài hát
         </h2>
         <div className="clipPath absolute w-3 h-3 right-0 bg-third-color -translate-y-[4px]  border-r-red-100 border-b-red-300 "></div>
         <h2
-          className="bg-third-color py-2 px-4 rounded-lg mt-2 hover:brightness-110"
-          onClick={handleDownload}
+          className={`bg-third-color py-2 px-4 rounded-lg mt-2  ${
+            isDownloaded
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:brightness-110"
+          }`}
+          onClick={() => {
+            if (isDownloaded) return;
+            handleDownload();
+          }}
         >
-          Tải xuống
+          {isDownloaded ? "Đã tải" : "Tải xuống"}
         </h2>
 
         <div className="clipPath absolute w-3 h-3 right-0 bg-third-color -translate-y-[4px]" />
@@ -301,7 +370,7 @@ const Player = () => {
             className="bg-third-color py-2 px-2 rounded-lg hover:brightness-110"
             onClick={() => {
               setShowLyrics(true);
-              dispatch(playerSlice.actions.modalChange(true));
+              dispatch(playerSlice.actions.toggleLyrics(true));
             }}
           >
             Lời bài hát
@@ -320,10 +389,17 @@ const Player = () => {
             </p>
           </div>
           <h2
-            className="bg-third-color py-2 px-2 rounded-lg hover:brightness-110"
-            onClick={handleDownload}
+            className={`bg-third-color py-2 px-4 rounded-lg mt-2  ${
+              isDownloaded
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:brightness-110"
+            }`}
+            onClick={() => {
+              if (isDownloaded) return;
+              handleDownload();
+            }}
           >
-            Tải xuống
+            {isDownloaded ? "Đã tải" : "Tải xuống"}
           </h2>
         </div>
         <div className="  justify-between items-center mx-4 mb-8 ssm:flex hidden   ">
@@ -348,67 +424,124 @@ const Player = () => {
               className="volumeButton absolute -translate-y-12 h-[60px]  w-10  opacity-0 group-hover:opacity-100   "
             />
           </div>
-          {isShowList && (
+          {showList && (
             <div className="absolute bottom-[310px] top-0 left-0 right-0 bg-secondary-color  overflow-y-scroll scrollbar-hide z-10    ">
-              {toggleListSong?.items?.map((x, index) => (
-                <div
-                  className={`${
-                    activeSong?.encodeId === x?.encodeId && "activeSong"
-                  } flex p-4 border-b border-border-color items-center cursor-pointer hover:bg-third-color `}
-                  key={index}
-                  onClick={() => {
-                    dispatch(
-                      listsongSlice.actions.currentSongIndexChange(index)
+              {showDownload
+                ? offlineSongs.map((x, index) => {
+                    return (
+                      <div
+                        key={index}
+                        className={`${
+                          activeSong?.encodeId === x?.encodeId && "activeSong"
+                        } flex p-4 border-b border-border-color items-center cursor-pointer hover:bg-third-color `}
+                        onClick={() => {
+                          const { blob, ...safex } = x;
+                          // dispatch(
+                          //   listsongSlice.actions.currentSongIndexChange(index)
+                          // );
+                          dispatch(
+                            listsongSlice.actions.activeSongChange(safex)
+                          );
+                          dispatch(listsongSlice.actions.songChange(safex));
+                          dispatch(listsongSlice.actions.listsongChange(safex));
+                          if (x.blob) {
+                            dispatch(listsongSlice.actions.checkLoading(true));
+                            dispatch(listsongSlice.actions.srcChange(""));
+                            if (currentUrlRef.current) {
+                              URL.revokeObjectURL(currentUrlRef.current);
+                            }
+                            const url = URL.createObjectURL(x.blob);
+                            currentUrlRef.current = url;
+                            setTimeout(() => {
+                              dispatch(listsongSlice.actions.srcChange(url));
+                              dispatch(
+                                listsongSlice.actions.checkLoading(false)
+                              );
+                            }, 50);
+                          }
+                        }}
+                      >
+                        <div>
+                          <img
+                            src={x?.thumbnailM}
+                            style={{ marginRight: 10 }}
+                            className="max-w-[60px]"
+                            alt=""
+                          />
+                        </div>
+                        <div>
+                          <p className="font-bold line-clamp-1"> {x?.title}</p>
+                          <p className="text-[13px] line-clamp-1 font-medium">
+                            {x?.artistsNames}/
+                          </p>
+                        </div>
+                      </div>
                     );
-                    dispatch(listsongSlice.actions.songChange(x));
-                    dispatch(listsongSlice.actions.activeSongChange(x));
-                    if (x.streamingStatus == 2) {
-                      info();
-                      return;
-                    }
+                  })
+                : toggleListSong?.items?.map((x, index) => (
+                    <div
+                      className={`${
+                        activeSong?.encodeId === x?.encodeId && "activeSong"
+                      } flex p-4 border-b border-border-color items-center cursor-pointer hover:bg-third-color `}
+                      key={index}
+                      onClick={() => {
+                        dispatch(
+                          listsongSlice.actions.currentSongIndexChange(index)
+                        );
+                        dispatch(listsongSlice.actions.songChange(x));
+                        dispatch(listsongSlice.actions.activeSongChange(x));
+                        if (x.streamingStatus == 2) {
+                          info();
+                          return;
+                        }
 
-                    dispatch(listsongSlice.actions.checkLoading(true));
-                    axios
-                      .get(`${serverAPI}/api/song?id=${x?.encodeId}`)
-                      .then((res) => {
-                        res.data.msg !== "Success"
-                          ? (message.warning(
-                              "Server đang đặt ở nước ngoài nên bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
-                            ),
-                            dispatch(listsongSlice.actions.checkLoading("")))
-                          : (dispatch(
-                              listsongSlice.actions.checkLoading(false)
-                            ),
-                            dispatch(
-                              listsongSlice.actions.srcChange(
-                                res?.data?.data?.[128]
-                              )
-                            ));
-                      });
-                  }}
-                >
-                  <div>
-                    <img
-                      src={x?.thumbnail}
-                      style={{ marginRight: 10 }}
-                      className="max-w-[60px]"
-                      alt=""
-                    />
-                  </div>
-                  <div>
-                    <p className="font-bold line-clamp-1"> {x?.title}</p>
-                    <p className="text-[13px] line-clamp-1 font-medium">
-                      {x?.artistsNames}/
-                    </p>
-                  </div>
-                </div>
-              ))}
+                        dispatch(listsongSlice.actions.checkLoading(true));
+                        axios
+                          .get(`${serverAPI}/api/song?id=${x?.encodeId}`)
+                          .then((res) => {
+                            res.data.msg !== "Success"
+                              ? (message.warning(
+                                  "Server đang đặt ở nước ngoài nên bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
+                                ),
+                                dispatch(
+                                  listsongSlice.actions.checkLoading("")
+                                ))
+                              : (dispatch(
+                                  listsongSlice.actions.checkLoading(false)
+                                ),
+                                dispatch(
+                                  listsongSlice.actions.srcChange(
+                                    res?.data?.data?.[128]
+                                  )
+                                ));
+                          });
+                      }}
+                    >
+                      <div>
+                        <img
+                          src={x?.thumbnail}
+                          style={{ marginRight: 10 }}
+                          className="max-w-[60px]"
+                          alt=""
+                        />
+                      </div>
+                      <div>
+                        <p className="font-bold line-clamp-1"> {x?.title}</p>
+                        <p className="text-[13px] line-clamp-1 font-medium">
+                          {x?.artistsNames}/
+                        </p>
+                      </div>
+                    </div>
+                  ))}
             </div>
           )}
           <button
             className="bg-third-color hover:border-none hover:brightness-110 rounded-3xl text-[13px] hidden xl:block"
             onClick={() => {
-              setIsShowList(!isShowList);
+              dispatch(playerSlice.actions.toggleList());
+              if (showDownload) {
+                loadOfflineSongs();
+              }
             }}
           >
             Danh Sách Phát
@@ -440,7 +573,9 @@ const Player = () => {
             {/* <ModalLyrics /> */}
           </div>
         </div>
-        {LyricsButton && <ModalLyrics />}
+        {showLyrics2 && <ModalLyrics />}
+        {showDownload && <ListDownload />}
+
         {/* slider music  */}
         <div className="flex gap-5 justify-between items-center">
           <p>{currentTime ? formatTime(currentTime) : "00:00"}</p>
@@ -507,6 +642,7 @@ const Player = () => {
                 : dispatch(navbarSlice.actions.iconPlayChange(true));
               isPlay ? audioRef.current.play() : audioRef.current.pause();
               playSong.msg !== "Success" &&
+                !isDownloaded &&
                 (message.warning(playSong.msg),
                 dispatch(navbarSlice.actions.iconPlayChange(true)));
             }}

@@ -8,10 +8,20 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { useDispatch } from "react-redux";
 import { playlistSlice } from "./playlistSlice";
 import { useSelector } from "react-redux";
+import { playerSlice } from "../Player/playerSlice";
 
 const serverAPI = import.meta.env.VITE_SERVERAPI;
 
 export function Search() {
+  const dispatch = useDispatch();
+  const showList = useSelector((state) => state.player.isShowList);
+
+  const handleDownload = () => {
+    dispatch(playerSlice.actions.toggleDownload());
+    if (showList) {
+      dispatch(playerSlice.actions.toggleList());
+    }
+  };
   const navigate = useNavigate();
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
@@ -21,14 +31,13 @@ export function Search() {
   const [searchKey, setSearchKey] = useState();
   return (
     <div className="flex items-stretch h-14">
-      <a href="/" className="h-full flex items-center px-4 ssm:hidden">
-        <img
-          src="/logo.png"
-          alt="Logo"
-          className="h-full w-auto object-contain"
-        />
-      </a>
-      <div className="flex flex-1 items-center bg-third-color px-4">
+      <div
+        onClick={() => navigate("/")}
+        className="h-full flex items-center px-4 cursor-pointer ssm:hidden "
+      >
+        <img src="/logo.png" className="h-full w-auto object-contain" />
+      </div>
+      <div className="flex flex-1 items-center bg-third-color px-4 ">
         <i className="fa-sharp fa-solid fa-magnifying-glass text-light-title-color mr-2"></i>
 
         <input
@@ -39,6 +48,15 @@ export function Search() {
           onChange={(e) => setSearchKey(e.target.value)}
           onKeyUp={(e) => handleKeyPress(e)}
         />
+      </div>
+      <div
+        className=" h-full flex items-center px-4 cursor-pointer ssm:hidden  "
+        onClick={() => {
+          handleDownload();
+        }}
+        title="DownloadMobile"
+      >
+        <i className="fa-solid fa-download text-red-500"></i>
       </div>
     </div>
   );
@@ -60,12 +78,14 @@ const PlayList = () => {
       setIsLoading(false);
       dispatch(
         playlistSlice.actions.listChange(
-          res.data.data?.items[6]?.items[0]?.encodeId
+          res.data.data?.items?.[5]?.items?.[0]?.encodeId ??
+            res.data.data?.items?.[6]?.items[0]?.encodeId
         )
       );
       localStorage.setItem(
         "defaultSong",
-        res.data.data?.items[6]?.items[0]?.encodeId
+        res.data.data?.items?.[5]?.items?.[0]?.encodeId ??
+          res.data.data?.items?.[6]?.items[0]?.encodeId
       );
     });
   }, []);

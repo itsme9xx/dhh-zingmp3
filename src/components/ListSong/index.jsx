@@ -46,10 +46,10 @@ const ListSong = () => {
       return;
     }
     dispatch(listsongSlice.actions.currentSongIndexChange(index));
-    dispatch(listsongSlice.actions.activeSongChange(x));
+    dispatch(listsongSlice.actions.activeSongChange(x)); // sáng song ở bên phải
     //Click song hiển thị ra thông tin bài hát bên Player
-    dispatch(listsongSlice.actions.songChange(x));
-    dispatch(listsongSlice.actions.listsongChange(listSong.song));
+    dispatch(listsongSlice.actions.songChange(x)); // thay thông tin nhạc ở bên phải
+    dispatch(listsongSlice.actions.listsongChange(listSong.song)); // thay list nhạc bên phải
     dispatch(listsongSlice.actions.checkLoading(true));
     axios.get(`${serverAPI}/api/song?id=${x?.encodeId}`).then((res) => {
       res.data.msg !== "Success"

@@ -12,16 +12,22 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const [theme, setTheme] = useState(JSON.parse(localStorage.theme || true));
-  const [showModal, setShowModal] = useState(false);
+  const showList = useSelector((state) => state.player.isShowList);
 
-  const handle = () => {
-    setShowModal(!showModal);
-    dispatch(playerSlice.actions.modalChange(!showModal));
+  const handleLyrics = () => {
+    dispatch(playerSlice.actions.toggleLyrics());
+  };
+  const handleDownload = () => {
+    dispatch(playerSlice.actions.toggleDownload());
+    if (showList) {
+      dispatch(playerSlice.actions.toggleList());
+    }
   };
 
   const dispatch = useDispatch();
   const isPlay = useSelector((state) => state.navbar.isPlay);
-  const LyricsButton = useSelector((state) => state.player.button);
+  const showLyrics = useSelector((state) => state.player.showLyrics);
+  const showDownload = useSelector((state) => state.player.showDownload);
   const b = useSelector((state) => state.player.songtoday);
   const checkLoading = useSelector((state) => state.listsong.checkloading);
   const handleClickPlay = () => {
@@ -100,16 +106,27 @@ const Navbar = () => {
       </div>
       <div
         className={`${
-          LyricsButton === true ? "bg-light-title-color" : "bg-third-color"
+          showLyrics === true ? "bg-light-title-color" : "bg-third-color"
         } rounded-full w-10 h-10  flex justify-center items-center cursor-pointer  `}
         title="Player"
         onClick={() => {
-          handle();
+          handleLyrics();
         }}
       >
         <i className="fa-sharp fa-solid fa-music text-primary-color"></i>
       </div>
-      {/* {LyricsButton && <ModalLyrics />} */}
+      {/* {showLyrics && <ModalLyrics />} */}
+      <div
+        className={`${
+          showDownload === true ? "bg-light-title-color" : "bg-third-color"
+        } rounded-full w-10 h-10  flex justify-center items-center cursor-pointer  `}
+        onClick={() => {
+          handleDownload();
+        }}
+        title="Download"
+      >
+        <i className="fa-solid fa-download text-primary-color"></i>
+      </div>
       <div
         className="rounded-full w-10 h-10 bg-light-title-color justify-center items-center cursor-pointer hidden"
         onClick={handleLogin}

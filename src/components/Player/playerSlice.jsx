@@ -3,7 +3,9 @@ import { createSlice } from "@reduxjs/toolkit";
 export const playerSlice = createSlice({
   name: "player",
   initialState: {
-    button: "",
+    showLyrics: false,
+    showDownload: false,
+    isShowList: false,
     songtoday: "",
     songplay: "",
     volume: 0.4,
@@ -12,6 +14,17 @@ export const playerSlice = createSlice({
     processtime: 0,
   },
   reducers: {
+    toggleLyrics: (state) => {
+      state.showLyrics = !state.showLyrics;
+      state.showDownload = false;
+    },
+    toggleDownload: (state) => {
+      state.showDownload = !state.showDownload;
+      state.showLyrics = false;
+    },
+    toggleList: (state) => {
+      state.isShowList = !state.isShowList;
+    },
     modalChange: (state, action) => {
       state.button = action.payload;
     },
