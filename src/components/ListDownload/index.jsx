@@ -23,6 +23,25 @@ const ListDownload = () => {
     getSongs();
   }, []);
 
+  const handleDelete = async (song, index) => {
+    try {
+      const db = await dbPromise;
+
+      await db.delete("songs", song.encodeId);
+
+      setSongs((prev) =>
+        prev.filter((item) => item.encodeId !== song.encodeId)
+      );
+
+      if (activeSong?.encodeId === song.encodeId) {
+        dispatch(listsongSlice.actions.songChange(null));
+        dispatch(listsongSlice.actions.srcChange(""));
+        dispatch(listsongSlice.actions.activeSongChange(null));
+      }
+    } catch (err) {
+      console.error("Delete song error:", err);
+    }
+  };
   const handlePlay = (song, index) => {
     const { blob, ...safesong } = song;
 
@@ -64,11 +83,12 @@ const ListDownload = () => {
           <i className="fa-sharp fa-solid fa-award"></i>
           <span className="ml-4">BÀI HÁT</span>
         </div>
-        <div>
-          <p>ALBUM</p>
-        </div>
+
         <div>
           <p>THỜI GIAN</p>
+        </div>
+        <div>
+          <p>THAO TÁC</p>
         </div>
       </div>
       <div className="h-[calc(100vh-308px)] overflow-y-auto overflow-x-hidden">
@@ -77,14 +97,14 @@ const ListDownload = () => {
             <div
               className={`${
                 activeSong?.encodeId === song?.encodeId && "bg-blue-300"
-              } mx-4 px-1 py-2  hover:bg-blue-100 flex items-center gap-4 border-b-[0.1px] border-b-border-color text-lighter-text-color text-base font-semibold cursor-pointer `}
+              } mx-4 px-1 py-2  hover:bg-blue-100 flex items-center  gap-4 border-b-[0.1px] border-b-border-color text-lighter-text-color text-base font-semibold cursor-pointer `}
               key={index}
               id={index}
               onClick={() => {
                 handlePlay(song, index);
               }}
             >
-              <div className="flex gap-4 items-center  w-[42%] ">
+              <div className="flex gap-4 items-center  w-[48%] ">
                 <i className="fa-sharp fa-solid fa-music text-[14px]"></i>
                 <div className="  rounded-lg  relative">
                   <img
@@ -103,15 +123,19 @@ const ListDownload = () => {
                   </p>
                 </div>
               </div>
-              <div className=" w-[49%] ">
-                <span className="font-medium text-[15px] line-clamp-1">
-                  {song?.album}
-                </span>
-              </div>
-              <div className="ml-4">
+              <div className=" w-[46%]">
                 <span className="font-medium text-[15px]">
                   {formatTime(song.duration)}
                 </span>
+              </div>
+              <div
+                className=" ml-4 "
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(song, index);
+                }}
+              >
+                <i className="fa-solid fa-trash"></i>
               </div>
             </div>
           );

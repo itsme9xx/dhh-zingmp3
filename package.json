@@ -31,6 +31,7 @@
     "styled-components": "^5.3.6",
     "tailwind-scrollbar-hide": "^1.1.7",
     "vite-plugin-pwa": "^1.2.0",
+    "youtubei.js": "^17.0.1",
     "zingmp3-api-full": "^1.0.14"
   },
   "devDependencies": {

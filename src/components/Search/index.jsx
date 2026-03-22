@@ -9,6 +9,7 @@ import { listsongSlice } from "../ListSong/listsongSlice";
 import { Search } from "../PlayList";
 import { searchSlice } from "./searchSlice";
 import { message } from "antd";
+import { formatTime } from "../../utils/FormatTime";
 import { info } from "autoprefixer";
 
 const serverAPI = import.meta.env.VITE_SERVERAPI;
@@ -17,7 +18,10 @@ const SearchPage = () => {
   const dispatch = useDispatch();
   const param = useParams();
   const [searchSong, setSearchSong] = useState();
+  const [youtubeSongs, setYoutubeSongs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [type, setType] = useState("baihat");
+
   const navigate = useNavigate();
   const activeSong = useSelector((state) => state.listsong.activesong);
 
@@ -51,7 +55,7 @@ const SearchPage = () => {
     axios.get(`${serverAPI}/api/song?id=${x?.encodeId}`).then((res) => {
       res.data.msg !== "Success"
         ? (message.warning(
-            "Server đang đặt ở nước ngoài nên bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
+            "Server bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
           ),
           dispatch(listsongSlice.actions.checkLoading("")))
         : (dispatch(listsongSlice.actions.checkLoading(false)),
@@ -59,14 +63,43 @@ const SearchPage = () => {
     });
   };
   useEffect(() => {
-    setIsLoading(true);
-    axios
-      .get(`${serverAPI}/api/search?keyword=${param.keyword}`)
-      .then((res) => {
-        setSearchSong(res.data.data);
+    if (!param?.keyword) return;
+    if (type === "baihat") {
+      setIsLoading(true);
+      axios
+        .get(`${serverAPI}/api/search?keyword=${param.keyword}`)
+        .then((res) => {
+          setSearchSong(res.data.data);
+          setIsLoading(false);
+        });
+    }
+  }, [param, type]);
+  const handleClickBaiHat = () => {
+    setType("baihat");
+  };
+  const handleClickYoutube = async () => {
+    setType("youtube");
+  };
+
+  useEffect(() => {
+    if (type !== "youtube") return;
+    if (!param?.keyword) return;
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const res = await axios.get(
+          `${serverAPI}/api/youtube?keyword=${param.keyword}`
+        );
+        setYoutubeSongs(res.data.data);
+      } finally {
         setIsLoading(false);
-      });
-  }, [param]);
+      }
+    };
+
+    fetchData();
+  }, [param, type]);
+
+  const list = type === "baihat" ? searchSong?.songs : youtubeSongs;
   return (
     <div className="py-8 ml-2  ssm:ml-[var(--marginLeftCustom)] xl:mr-[var(--marginRightCustom)] mb-[200px] xl:mb-0 ">
       <Search />
@@ -133,40 +166,73 @@ const SearchPage = () => {
           </div>
         ) : (
           <div>
-            <p className="text-2xl font-semibold mb-4 text-light-title-color">
-              Bài hát
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 cursor-pointer">
-              {searchSong?.songs?.map((x, index) => (
-                <div
-                  key={index}
-                  className={`${
-                    activeSong?.encodeId === x?.encodeId && "activeSong"
-                  } flex  border-b border-b-border-color items-center px-4 py-4 gap-4 text-lighter-text-color font-semibold hover:bg-third-color`}
-                  onClick={() => {
-                    handleClickSong(x, index);
-                  }}
+            <div className="flex justify-evenly items-center">
+              <p
+                className={`text-2xl font-semibold mb-4 cursor-pointer ${
+                  type === "baihat" ? "text-[rgb(19,176,201)]" : "text-gray-400"
+                }`}
+                onClick={handleClickBaiHat}
+              >
+                Bài hát
+              </p>
+
+              <div
+                className="flex items-center gap-2 cursor-pointer"
+                onClick={handleClickYoutube}
+              >
+                <i className="fa-brands fa-youtube text-2xl text-red-500 mb-4"></i>
+
+                <p
+                  className={`text-2xl font-semibold mb-4 ${
+                    type === "youtube" ? "text-red-500" : "text-gray-400"
+                  }`}
                 >
-                  <div className="">
-                    <i className="fa-sharp fa-solid fa-music text-[14px]"></i>
+                  Youtube
+                </p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 cursor-pointer">
+              {list?.map((x, index) => {
+                return (
+                  <div
+                    key={index}
+                    className={`${
+                      activeSong?.encodeId === x?.encodeId && "activeSong"
+                    } flex justify-between  border-b border-b-border-color items-center  text-lighter-text-color font-semibold hover:bg-third-color`}
+                    onClick={() => {
+                      handleClickSong(x, index);
+                    }}
+                  >
+                    <div className="flex px-4 py-4 gap-4 items-center">
+                      <div className="">
+                        <i className="fa-sharp fa-solid fa-music text-[14px]"></i>
+                      </div>
+                      <div>
+                        <img
+                          src={x?.thumbnail}
+                          className="w-[50px] rounded-md"
+                          alt=""
+                        />
+                      </div>
+                      <div>
+                        <p className="line-clamp-1 text-light-title-color">
+                          {x?.title}
+                        </p>
+                        <p className="line-clamp-1 font-medium text-[14px]">
+                          {x?.artistsNames}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="px-4 ">
+                      <p className="line-clamp-1 font-medium text-[14px]">
+                        {typeof x?.duration === "number"
+                          ? formatTime(x.duration)
+                          : x?.duration}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <img
-                      src={x?.thumbnail}
-                      className="w-[50px] rounded-md"
-                      alt=""
-                    />
-                  </div>
-                  <div>
-                    <p className="line-clamp-1 text-light-title-color">
-                      {x?.title}
-                    </p>
-                    <p className="line-clamp-1 font-medium text-[14px]">
-                      {x?.artistsNames}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

@@ -48,6 +48,11 @@ const Player = () => {
   const showDownload = useSelector((state) => state.player.showDownload);
   const [isDownloaded, setIsDownloaded] = useState(false);
 
+  const duration = pickSong?.duration ?? toggleListSong?.items?.[0]?.duration;
+
+  const displayDuration =
+    typeof duration === "number" ? formatTime(duration) : duration || "00:00";
+
   const checkDownloaded = async (encodeId) => {
     const db = await dbPromise;
     const song = await db.get("songs", encodeId);
@@ -195,7 +200,7 @@ const Player = () => {
     axios.get(`${serverAPI}/api/song?id=${song?.encodeId}`).then((res) => {
       if (res.data.msg !== "Success") {
         message.warning(
-          "Server đang đặt ở nước ngoài nên bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
+          "Server bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
         );
         dispatch(listsongSlice.actions.checkLoading(false));
       } else {
@@ -336,6 +341,50 @@ const Player = () => {
       </div>
     );
   };
+  useEffect(() => {
+    if (!("mediaSession" in navigator)) return;
+
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const setMetadata = () => {
+      const song = pickSong || toggleListSong?.items?.[0];
+
+      if (!song) return;
+
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: song.title || "Unknown",
+        artist: song.artistsNames || "Unknown",
+      });
+    };
+
+    setMetadata();
+
+    navigator.mediaSession.setActionHandler("play", () => {
+      audio.play();
+      dispatch(navbarSlice.actions.iconPlayChange(false));
+    });
+
+    navigator.mediaSession.setActionHandler("pause", () => {
+      audio.pause();
+      dispatch(navbarSlice.actions.iconPlayChange(true));
+    });
+
+    navigator.mediaSession.setActionHandler("nexttrack", () => {
+      handleNextSong();
+    });
+
+    navigator.mediaSession.setActionHandler("previoustrack", () => {
+      handlePrevSong();
+    });
+
+    return () => {
+      navigator.mediaSession.setActionHandler("play", null);
+      navigator.mediaSession.setActionHandler("pause", null);
+      navigator.mediaSession.setActionHandler("nexttrack", null);
+      navigator.mediaSession.setActionHandler("previoustrack", null);
+    };
+  }, [pickSong, toggleListSong, currentSongIndex, isPlay]);
 
   return (
     <div className=" fixed xl:top-0 xl:right-0 bottom-0 xl:border-l-2  text-light-title-color xl:flex flex-col justify-between border-border-color w-full xl:w-[400px] bg-secondary-color xl:bg-transparent  border-t z-50 h-auto xl:h-screen">
@@ -344,7 +393,12 @@ const Player = () => {
           <Skeleton height={290} />
         ) : (
           <img
-            src={pickSong?.thumbnailM || toggleListSong?.items?.[0]?.thumbnailM}
+            src={
+              pickSong?.thumbnailM ||
+              pickSong?.thumbnail ||
+              toggleListSong?.items?.[0]?.thumbnailM ||
+              toggleListSong?.items?.[0]?.thumbnail
+            }
             className="w-full"
             alt=""
           />
@@ -463,7 +517,7 @@ const Player = () => {
                       >
                         <div>
                           <img
-                            src={x?.thumbnailM}
+                            src={x?.thumbnail ?? x?.thumbnailM}
                             style={{ marginRight: 10 }}
                             className="max-w-[60px]"
                             alt=""
@@ -501,7 +555,7 @@ const Player = () => {
                           .then((res) => {
                             res.data.msg !== "Success"
                               ? (message.warning(
-                                  "Server đang đặt ở nước ngoài nên bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
+                                  "Server bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
                                 ),
                                 dispatch(
                                   listsongSlice.actions.checkLoading("")
@@ -592,13 +646,7 @@ const Player = () => {
               }}
             />
           </div>
-          <p>
-            {pickSong?.duration || toggleListSong?.items?.[0]?.duration
-              ? formatTime(
-                  pickSong?.duration || toggleListSong?.items?.[0]?.duration
-                )
-              : "00:00"}
-          </p>
+          <p>{displayDuration}</p>
         </div>
         {/* Audio */}
         <audio
@@ -643,8 +691,9 @@ const Player = () => {
               isPlay ? audioRef.current.play() : audioRef.current.pause();
               playSong.msg !== "Success" &&
                 !isDownloaded &&
-                (message.warning(playSong.msg),
-                dispatch(navbarSlice.actions.iconPlayChange(true)));
+                // (
+                message.warning(playSong.msg);
+              // dispatch(navbarSlice.actions.iconPlayChange(true)));
             }}
           >
             {!checkLoading && toggleListSong ? (
