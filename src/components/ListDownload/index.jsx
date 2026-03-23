@@ -66,7 +66,7 @@ const ListDownload = () => {
   };
 
   return (
-    <div className="bg-third-color fixed top-8 ssm:left-[73px]  xl:right-[398px] bottom-[174px] right-0  text-light-title-color  xl:bottom-0  ">
+    <div className="bg-third-color fixed top-8 left-[0px] ssm:left-[73px]  xl:right-[398px] bottom-[174px] right-0  text-light-title-color  xl:bottom-0  ">
       <h2 className="text-xl flex justify-center mt-6 pb-6 text-[rgb(19,176,201)] border-b-2">
         Nhạc đã tải
       </h2>
@@ -106,7 +106,7 @@ const ListDownload = () => {
             >
               <div className="flex gap-4 items-center  w-[48%] ">
                 <i className="fa-sharp fa-solid fa-music text-[14px]"></i>
-                <div className="  rounded-lg  relative">
+                <div className="  rounded-lg  relative hidden ssm:block">
                   <img
                     src={song?.thumbnailM}
                     className=" max-w-[60px]  "
@@ -129,7 +129,7 @@ const ListDownload = () => {
                 </span>
               </div>
               <div
-                className=" ml-4 "
+                className=" mr-6"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDelete(song, index);
