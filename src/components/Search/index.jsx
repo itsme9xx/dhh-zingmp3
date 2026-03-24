@@ -167,15 +167,21 @@ const SearchPage = () => {
         ) : (
           <div>
             <div className="flex justify-evenly items-center">
-              <p
-                className={`text-2xl font-semibold mb-4 cursor-pointer ${
-                  type === "baihat" ? "text-[rgb(19,176,201)]" : "text-gray-400"
-                }`}
+              <div
+                className="flex items-center gap-2 cursor-pointer"
                 onClick={handleClickBaiHat}
               >
-                Bài hát
-              </p>
-
+                <i className="fa-solid fa-music text-2xl text-[rgb(19,176,201)] mb-4"></i>
+                <p
+                  className={`text-2xl font-semibold mb-4 cursor-pointer ${
+                    type === "baihat"
+                      ? "text-[rgb(19,176,201)]"
+                      : "text-gray-400"
+                  }`}
+                >
+                  Bài hát
+                </p>
+              </div>
               <div
                 className="flex items-center gap-2 cursor-pointer"
                 onClick={handleClickYoutube}

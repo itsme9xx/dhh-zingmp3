@@ -105,7 +105,7 @@ const ListSong = () => {
         </div>
         {/* Right */}
         <div className="w-full flex-grow  ">
-          <div className="text-title-color text-base font-medium">
+          <div className="text-title-color text-base font-medium md:block hidden">
             <span className="pr-2 mr-2 font-medium border-r-[0.5px] border-r-border-color text-base text-lighter-text-color ">
               Lời tựa :
             </span>
@@ -116,7 +116,7 @@ const ListSong = () => {
               <i className="fa-sharp fa-solid fa-award"></i>
               <span className="ml-4">BÀI HÁT</span>
             </div>
-            <div>
+            <div className="md:block hidden">
               <p>ALBUM</p>
             </div>
             <div>
@@ -129,14 +129,14 @@ const ListSong = () => {
               <div
                 className={`${
                   activeSong?.encodeId === x?.encodeId && "activeSong"
-                } list-song px-1 py-2  hover:bg-third-color flex items-center gap-4 border-b-[0.1px] border-b-border-color text-lighter-text-color text-base font-semibold cursor-pointer `}
+                } list-song px-1 py-2  hover:bg-third-color flex md:items-center justify-between gap-4 border-b-[0.1px] border-b-border-color text-lighter-text-color text-base font-semibold cursor-pointer `}
                 id={index}
                 key={index}
                 onClick={() => {
                   handleClickSong(x, index);
                 }}
               >
-                <div className="flex gap-4 items-center  w-[42%]   ">
+                <div className="flex gap-4 items-center   md:w-[42%] w-[70%]  ">
                   <i className="fa-sharp fa-solid fa-music text-[14px]"></i>
                   <div className="  rounded-lg  relative">
                     <img
@@ -160,7 +160,7 @@ const ListSong = () => {
                     </p>
                   </div>
                 </div>
-                <div className=" w-[49%] ">
+                <div className=" w-[49%] md:block hidden ">
                   <span className="font-medium text-[15px] line-clamp-1">
                     {x?.album?.title}
                   </span>

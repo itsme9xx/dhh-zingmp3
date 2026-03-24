@@ -66,7 +66,7 @@ const ListDownload = () => {
   };
 
   return (
-    <div className="bg-third-color fixed top-8 left-[0px] ssm:left-[73px]  xl:right-[398px] bottom-[174px] right-0  text-light-title-color  xl:bottom-0  ">
+    <div className="bg-third-color fixed top-8 left-[0px] ssm:left-[73px]  xl:right-[398px] bottom-[228px] ssm:bottom-[232px] right-0  text-light-title-color  xl:bottom-0  ">
       <h2 className="text-xl flex justify-center mt-6 pb-6 text-[rgb(19,176,201)] border-b-2">
         Nhạc đã tải
       </h2>
