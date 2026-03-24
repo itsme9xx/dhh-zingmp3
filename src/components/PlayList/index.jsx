@@ -16,6 +16,9 @@ export function Search() {
   const dispatch = useDispatch();
   const showList = useSelector((state) => state.player.isShowList);
 
+  const handleRefresh = () => {
+    window.location.reload();
+  };
   const handleDownload = () => {
     dispatch(playerSlice.actions.toggleDownload());
     if (showList) {
@@ -48,6 +51,15 @@ export function Search() {
           onChange={(e) => setSearchKey(e.target.value)}
           onKeyUp={(e) => handleKeyPress(e)}
         />
+      </div>
+      <div
+        className=" h-full flex items-center px-4 cursor-pointer ssm:hidden  "
+        onClick={() => {
+          handleRefresh();
+        }}
+        title="RefreshMobile"
+      >
+        <i className="fa fa-refresh text-red-500"></i>
       </div>
       <div
         className=" h-full flex items-center px-4 cursor-pointer ssm:hidden  "
