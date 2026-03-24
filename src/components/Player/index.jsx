@@ -284,31 +284,21 @@ const Player = () => {
   };
 
   const handleDownload = async () => {
-    try {
-      axios
-        .get(`${serverAPI}/api/song?id=${pickSong?.encodeId}`)
-        .then((res) => {
-          dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
-        });
-      const linkUrl = src1;
-      const response = await fetch(linkUrl);
-      const blob = await response.blob();
-      const db = await dbPromise;
-      await db.put("songs", {
-        encodeId: pickSong.encodeId,
-        title: pickSong.title,
-        thumbnailM: pickSong.thumbnail,
-        artistsNames: pickSong.artistsNames,
-        blob: blob,
-        album: pickSong.album.title,
-        duration: pickSong.duration,
-      });
-      setIsDownloaded(true);
-      message.success("Đã tải bài hát!");
-    } catch (err) {
-      console.error(err);
-      message.error("Download lỗi!");
-    }
+    const linkUrl = src1;
+    const response = await fetch(linkUrl);
+    const blob = await response.blob();
+    const db = await dbPromise;
+    await db.put("songs", {
+      encodeId: pickSong.encodeId,
+      title: pickSong.title,
+      thumbnailM: pickSong.thumbnail,
+      artistsNames: pickSong.artistsNames,
+      blob: blob,
+      album: pickSong.album.title,
+      duration: pickSong.duration,
+    });
+    setIsDownloaded(true);
+    message.success("Đã tải bài hát!");
   };
   const PopUp = () => {
     return (

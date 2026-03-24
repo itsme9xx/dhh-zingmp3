@@ -13,7 +13,7 @@ export const ListLoading = () => {
             height={30}
             style={{ marginTop: 40, marginBottom: 20 }}
           />
-          <div className=" grid  grid-cols-2 md:grid-cols-4 xl:grid-cols-5  gap-5  ">
+          <div className=" grid  grid-cols-1 ssm:grid-cols-2 md:grid-cols-4 xl:grid-cols-5  gap-5  ">
             <div>
               <Skeleton height={250} />
             </div>
