@@ -337,18 +337,27 @@ const Player = () => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const setMetadata = () => {
+    const updateMetadata = () => {
       const song = pickSong || toggleListSong?.items?.[0];
-
       if (!song) return;
 
       navigator.mediaSession.metadata = new MediaMetadata({
         title: song.title || "Unknown",
         artist: song.artistsNames || "Unknown",
+        album: song.album?.title || "Unknown",
+        artwork: [
+          {
+            src: song.thumbnailM || song.thumbnail,
+            sizes: "512x512",
+            type: "image/jpeg",
+          },
+        ],
       });
     };
 
-    setMetadata();
+    updateMetadata();
+
+    audio.onloadedmetadata = updateMetadata;
 
     navigator.mediaSession.setActionHandler("play", () => {
       audio.play();
