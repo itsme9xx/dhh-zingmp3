@@ -357,7 +357,25 @@ const Player = () => {
 
     updateMetadata();
 
-    audio.onloadedmetadata = updateMetadata;
+    audio.addEventListener("loadedmetadata", updateMetadata);
+
+    const updatePosition = () => {
+      if (
+        audio.paused ||
+        !("setPositionState" in navigator.mediaSession) ||
+        !audio.duration ||
+        isNaN(audio.duration)
+      )
+        return;
+
+      navigator.mediaSession.setPositionState({
+        duration: audio.duration,
+        playbackRate: audio.playbackRate,
+        position: audio.currentTime,
+      });
+    };
+
+    audio.addEventListener("timeupdate", updatePosition);
 
     navigator.mediaSession.setActionHandler("play", () => {
       audio.play();
@@ -369,21 +387,29 @@ const Player = () => {
       dispatch(navbarSlice.actions.iconPlayChange(true));
     });
 
-    navigator.mediaSession.setActionHandler("nexttrack", () => {
-      handleNextSong();
-    });
+    navigator.mediaSession.setActionHandler("nexttrack", handleNextSong);
+    navigator.mediaSession.setActionHandler("previoustrack", handlePrevSong);
 
-    navigator.mediaSession.setActionHandler("previoustrack", () => {
-      handlePrevSong();
+    navigator.mediaSession.setActionHandler("seekto", (details) => {
+      if (!details.seekTime) return;
+
+      if (details.fastSeek && "fastSeek" in audio) {
+        audio.fastSeek(details.seekTime);
+      } else {
+        audio.currentTime = details.seekTime;
+      }
     });
 
     return () => {
+      audio.removeEventListener("loadedmetadata", updateMetadata);
+      audio.removeEventListener("timeupdate", updatePosition);
       navigator.mediaSession.setActionHandler("play", null);
       navigator.mediaSession.setActionHandler("pause", null);
       navigator.mediaSession.setActionHandler("nexttrack", null);
       navigator.mediaSession.setActionHandler("previoustrack", null);
+      navigator.mediaSession.setActionHandler("seekto", null);
     };
-  }, [pickSong, toggleListSong, currentSongIndex, isPlay]);
+  }, [pickSong, toggleListSong, currentSongIndex]);
 
   return (
     <div className=" fixed xl:top-0 xl:right-0 bottom-0 xl:border-l-2  text-light-title-color xl:flex flex-col justify-between border-border-color w-full xl:w-[400px] bg-secondary-color xl:bg-transparent  border-t z-50 h-auto xl:h-screen">
@@ -489,9 +515,9 @@ const Player = () => {
                         } flex p-4 border-b border-border-color items-center cursor-pointer hover:bg-third-color `}
                         onClick={() => {
                           const { blob, ...safex } = x;
-                          // dispatch(
-                          //   listsongSlice.actions.currentSongIndexChange(index)
-                          // );
+                          dispatch(
+                            listsongSlice.actions.currentSongIndexChange(index)
+                          );
                           dispatch(
                             listsongSlice.actions.activeSongChange(safex)
                           );
@@ -500,9 +526,13 @@ const Player = () => {
                           if (x.blob) {
                             dispatch(listsongSlice.actions.checkLoading(true));
                             dispatch(listsongSlice.actions.srcChange(""));
-                            if (currentUrlRef.current) {
-                              URL.revokeObjectURL(currentUrlRef.current);
-                            }
+                            useEffect(() => {
+                              return () => {
+                                if (currentUrlRef.current) {
+                                  URL.revokeObjectURL(currentUrlRef.current);
+                                }
+                              };
+                            }, []);
                             const url = URL.createObjectURL(x.blob);
                             currentUrlRef.current = url;
                             setTimeout(() => {
