@@ -9,6 +9,12 @@ import { useDispatch } from "react-redux";
 import { playlistSlice } from "./playlistSlice";
 import { useSelector } from "react-redux";
 import { playerSlice } from "../Player/playerSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faDownload,
+  faMagnifyingGlass,
+  faRefresh,
+} from "@fortawesome/free-solid-svg-icons";
 
 const serverAPI = import.meta.env.VITE_SERVERAPI;
 
@@ -41,7 +47,11 @@ export function Search() {
         <img src="/logo.png" className="h-full w-auto object-contain" />
       </div>
       <div className="flex flex-1 items-center bg-third-color px-4 ">
-        <i className="fa-sharp fa-solid fa-magnifying-glass text-light-title-color mr-2"></i>
+        {/* <i className="fa-sharp fa-solid fa-magnifying-glass text-light-title-color mr-2"></i> */}
+        <FontAwesomeIcon
+          className=" text-light-title-color mr-2 "
+          icon={faMagnifyingGlass}
+        />
 
         <input
           placeholder="Nhập từ khóa tìm kiếm"
@@ -59,7 +69,8 @@ export function Search() {
         }}
         title="RefreshMobile"
       >
-        <i className="fa fa-refresh text-red-500"></i>
+        {/* <i className="fa fa-refresh text-red-500"></i> */}
+        <FontAwesomeIcon className="text-red-500" icon={faRefresh} />
       </div>
       <div
         className=" h-full flex items-center px-4 cursor-pointer ssm:hidden  "
@@ -68,7 +79,8 @@ export function Search() {
         }}
         title="DownloadMobile"
       >
-        <i className="fa-solid fa-download text-red-500"></i>
+        {/* <i className="fa-solid fa-download text-red-500"></i> */}
+        <FontAwesomeIcon className="text-red-500" icon={faDownload} />
       </div>
     </div>
   );

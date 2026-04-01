@@ -6,6 +6,14 @@ import { useSelector } from "react-redux";
 import ModalLyrics from "../ModalLyrics";
 import { listsongSlice } from "../ListSong/listsongSlice";
 import { playerSlice } from "../Player/playerSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faDownload,
+  faHouse,
+  faPlay,
+  faPause,
+  faMusic,
+} from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = () => {
   const location = useLocation();
@@ -76,7 +84,8 @@ const Navbar = () => {
           navigate("/");
         }}
       >
-        <i className="fa-sharp fa-solid fa-house text-primary-color "></i>
+        {/* <i className="fa-sharp fa-solid fa-house text-primary-color "></i> */}
+        <FontAwesomeIcon className="text-primary-color" icon={faHouse} />
       </div>
       <div
         className="rounded-full w-10 h-10 bg-light-title-color flex justify-center items-center cursor-pointer "
@@ -87,9 +96,11 @@ const Navbar = () => {
       >
         {!checkLoading && b ? (
           isPlay ? (
-            <i className="fa-sharp fa-solid fa-play text-primary-color "></i>
+            // <i className="fa-sharp fa-solid fa-play text-primary-color "></i>
+            <FontAwesomeIcon className="text-primary-color" icon={faPlay} />
           ) : (
-            <i className="fa-duotone fa-pause"></i>
+            // <i className="fa-duotone fa-pause"></i>
+            <FontAwesomeIcon icon={faPause} />
           )
         ) : (
           <div className="lds-roller -top-[6px] -left-[6px]">
@@ -113,7 +124,8 @@ const Navbar = () => {
           handleLyrics();
         }}
       >
-        <i className="fa-sharp fa-solid fa-music text-primary-color"></i>
+        {/* <i className="fa-sharp fa-solid fa-music text-primary-color"></i> */}
+        <FontAwesomeIcon className="text-primary-color" icon={faMusic} />
       </div>
       {/* {showLyrics && <ModalLyrics />} */}
       <div
@@ -125,7 +137,8 @@ const Navbar = () => {
         }}
         title="Download"
       >
-        <i className="fa-solid fa-download text-primary-color"></i>
+        {/* <i className="fa-solid fa-download text-primary-color"></i> */}
+        <FontAwesomeIcon className="text-primary-color" icon={faDownload} />
       </div>
       <div
         className="rounded-full w-10 h-10 bg-light-title-color justify-center items-center cursor-pointer hidden"

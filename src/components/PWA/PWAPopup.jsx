@@ -73,8 +73,8 @@ export default function PWAPopup() {
         <p>
           {isIOS ? (
             <>
-              Nhấn <b>Share ⬆️</b> <br />→ Chọn <b>Thêm vào MH chính</b> <br />→
-              Nhấn <b>Thêm</b>
+              Nhấn <b>Share ở Safari ⬆️</b> <br />→ Chọn
+              <b>Thêm vào MH chính</b> <br />→ Nhấn <b>Thêm</b>
             </>
           ) : (
             "Website có thể cài app trên điện thoại để sử dụng thuận tiện "

@@ -11,6 +11,8 @@ import { searchSlice } from "./searchSlice";
 import { message } from "antd";
 import { formatTime } from "../../utils/FormatTime";
 import { info } from "autoprefixer";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMusic, faPlay } from "@fortawesome/free-solid-svg-icons";
 
 const serverAPI = import.meta.env.VITE_SERVERAPI;
 
@@ -107,7 +109,11 @@ const SearchPage = () => {
             <Skeleton width={200} height={40} />
             <div className="grid grid-cols-1 md:grid-cols-2 mt-6 gap-10">
               <div className="flex items-center gap-4  border-b border-b-border-color pb-4">
-                <i className="fa-sharp fa-solid fa-music text-lighter-text-color "></i>
+                {/* <i className="fa-sharp fa-solid fa-music text-lighter-text-color "></i> */}
+                <FontAwesomeIcon
+                  className="text-lighter-text-color"
+                  icon={faMusic}
+                />
                 <Skeleton height={60} width={60} />
                 <Skeleton
                   width={200}
@@ -116,7 +122,11 @@ const SearchPage = () => {
                 />
               </div>
               <div className="flex items-center gap-4 border-b border-b-border-color pb-4">
-                <i className="fa-sharp fa-solid fa-music text-lighter-text-color "></i>
+                {/* <i className="fa-sharp fa-solid fa-music text-lighter-text-color "></i> */}
+                <FontAwesomeIcon
+                  className="text-lighter-text-color"
+                  icon={faMusic}
+                />
                 <Skeleton height={60} width={60} />
                 <Skeleton
                   width={200}
@@ -125,7 +135,11 @@ const SearchPage = () => {
                 />
               </div>
               <div className="flex items-center gap-4 border-b border-b-border-color pb-4">
-                <i className="fa-sharp fa-solid fa-music text-lighter-text-color "></i>
+                {/* <i className="fa-sharp fa-solid fa-music text-lighter-text-color "></i> */}
+                <FontAwesomeIcon
+                  className="text-lighter-text-color"
+                  icon={faMusic}
+                />
                 <Skeleton height={60} width={60} />
                 <Skeleton
                   width={200}
@@ -134,7 +148,11 @@ const SearchPage = () => {
                 />
               </div>
               <div className="flex items-center gap-4 border-b border-b-border-color pb-4">
-                <i className="fa-sharp fa-solid fa-music text-lighter-text-color "></i>
+                {/* <i className="fa-sharp fa-solid fa-music text-lighter-text-color "></i> */}
+                <FontAwesomeIcon
+                  className="text-lighter-text-color"
+                  icon={faMusic}
+                />
                 <Skeleton height={60} width={60} />
                 <Skeleton
                   width={200}
@@ -143,7 +161,11 @@ const SearchPage = () => {
                 />
               </div>
               <div className="flex items-center gap-4 border-b border-b-border-color pb-4">
-                <i className="fa-sharp fa-solid fa-music text-lighter-text-color "></i>
+                {/* <i className="fa-sharp fa-solid fa-music text-lighter-text-color "></i> */}
+                <FontAwesomeIcon
+                  className="text-lighter-text-color"
+                  icon={faMusic}
+                />
                 <Skeleton height={60} width={60} />
                 <Skeleton
                   width={200}
@@ -152,7 +174,11 @@ const SearchPage = () => {
                 />
               </div>
               <div className="flex items-center gap-4 border-b border-b-border-color pb-4">
-                <i className="fa-sharp fa-solid fa-music text-lighter-text-color "></i>
+                {/* <i className="fa-sharp fa-solid fa-music text-lighter-text-color "></i> */}
+                <FontAwesomeIcon
+                  className="text-lighter-text-color"
+                  icon={faMusic}
+                />
                 <Skeleton height={60} width={60} />
                 <Skeleton
                   width={200}
@@ -169,7 +195,11 @@ const SearchPage = () => {
                 className="flex items-center gap-2 cursor-pointer"
                 onClick={handleClickBaiHat}
               >
-                <i className="fa-solid fa-music text-2xl text-[rgb(19,176,201)] mb-4"></i>
+                {/* <i className="fa-solid fa-music text-2xl text-[rgb(19,176,201)] mb-4"></i> */}
+                <FontAwesomeIcon
+                  className="text-2xl text-[rgb(19,176,201)] mb-4"
+                  icon={faMusic}
+                />
                 <p
                   className={`text-2xl font-semibold mb-4 cursor-pointer ${
                     type === "baihat"
@@ -185,7 +215,6 @@ const SearchPage = () => {
                 onClick={handleClickYoutube}
               >
                 <i className="fa-brands fa-youtube text-2xl text-red-500 mb-4"></i>
-
                 <p
                   className={`text-2xl font-semibold mb-4 ${
                     type === "youtube" ? "text-red-500" : "text-gray-400"
@@ -209,7 +238,11 @@ const SearchPage = () => {
                   >
                     <div className="flex px-4 py-4 gap-4 items-center">
                       <div className="">
-                        <i className="fa-sharp fa-solid fa-music text-[14px]"></i>
+                        {/* <i className="fa-sharp fa-solid fa-music text-[14px]"></i> */}
+                        <FontAwesomeIcon
+                          className="text-[14px]"
+                          icon={faMusic}
+                        />
                       </div>
                       <div>
                         <img
@@ -317,7 +350,8 @@ const SearchPage = () => {
                   <div className=" ">
                     <div className=" relative hover:scale-110 duration-1000 transition-all overflow-hidden hover:brightness-50  ">
                       <div className="absolute w-[40px] h-[40px] flex justify-center items-center border-2 border-white  rounded-full top-[42%] left-[42%] z-10 ">
-                        <i className="fa-duotone fa-play text-white"></i>
+                        {/* <i className="fa-duotone fa-play text-white"></i> */}
+                        <FontAwesomeIcon className="text-white" icon={faPlay} />
                       </div>
                       <img src={x.thumbnailM} className="" alt="" />
                     </div>

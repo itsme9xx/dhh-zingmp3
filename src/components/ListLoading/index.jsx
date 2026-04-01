@@ -1,6 +1,8 @@
 import React from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMusic } from "@fortawesome/free-solid-svg-icons";
 
 export const ListLoading = () => {
   return Array(5)
@@ -46,7 +48,11 @@ export const ListSongLoading = () => {
             key={index}
           >
             <div className="flex gap-4 items-center w-[43%]  ">
-              <i className="fa-sharp fa-solid fa-music text-lighter-text-color "></i>
+              {/* <i className="fa-sharp fa-solid fa-music text-lighter-text-color "></i> */}
+              <FontAwesomeIcon
+                className="text-lighter-text-color"
+                icon={faMusic}
+              />
 
               <Skeleton width={40} height={40} />
               <Skeleton className="w-[80px] xl:w-[100px] h-[20px]" />

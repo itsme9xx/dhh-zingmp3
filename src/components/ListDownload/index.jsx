@@ -6,6 +6,13 @@ import { dbPromise } from "../../utils/db";
 import { formatTime } from "../../utils/FormatTime";
 import { listsongSlice } from "../ListSong/listsongSlice";
 import { playerSlice } from "../Player/playerSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faXmark,
+  faAward,
+  faMusic,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 
 const ListDownload = () => {
   const [songs, setSongs] = useState([]);
@@ -43,7 +50,7 @@ const ListDownload = () => {
     }
   };
   const handlePlay = (song, index) => {
-    const { blob, ...safesong } = song;
+    const { blob, thumbnailBlob, ...safesong } = song;
 
     // dispatch(listsongSlice.actions.currentSongIndexChange(index));
     dispatch(listsongSlice.actions.activeSongChange(safesong));
@@ -76,11 +83,13 @@ const ListDownload = () => {
           dispatch(playerSlice.actions.toggleDownload(false));
         }}
       >
-        <i className="fa-regular fa-xmark"></i>
+        {/* <i className="fa-regular fa-xmark"></i> */}
+        <FontAwesomeIcon icon={faXmark} />
       </div>
       <div className="mx-4 flex justify-between py-5 border-b border-b-border-color px-2 text-lighter-text-color text-base font-semibold">
         <div>
-          <i className="fa-sharp fa-solid fa-award"></i>
+          {/* <i className="fa-sharp fa-solid fa-award"></i> */}
+          <FontAwesomeIcon icon={faAward} />
           <span className="ml-4">BÀI HÁT</span>
         </div>
 
@@ -105,7 +114,8 @@ const ListDownload = () => {
               }}
             >
               <div className="flex gap-4 items-center  w-[48%] ">
-                <i className="fa-sharp fa-solid fa-music text-[14px]"></i>
+                {/* <i className="fa-sharp fa-solid fa-music text-[14px]"></i> */}
+                <FontAwesomeIcon className="text-[14px]" icon={faMusic} />
                 <div className="  rounded-lg  relative hidden ssm:block">
                   <img
                     src={song?.thumbnailM}
@@ -113,7 +123,6 @@ const ListDownload = () => {
                     alt=""
                   />
                 </div>
-
                 <div>
                   <p className="line-clamp-1 text-light-title-color">
                     {song?.title}
@@ -135,7 +144,8 @@ const ListDownload = () => {
                   handleDelete(song, index);
                 }}
               >
-                <i className="fa-solid fa-trash"></i>
+                {/* <i className="fa-solid fa-trash"></i> */}
+                <FontAwesomeIcon icon={faTrash} />
               </div>
             </div>
           );

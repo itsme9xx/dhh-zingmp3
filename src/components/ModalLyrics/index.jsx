@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { playerSlice } from "../Player/playerSlice";
 import { moldallyricsSlice } from "./modallyricsSlice";
 import { Lrc } from "react-lrc";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const serverAPI = import.meta.env.VITE_SERVERAPI;
 
@@ -63,7 +65,8 @@ const ModalLyrics = () => {
           dispatch(playerSlice.actions.toggleLyrics(false));
         }}
       >
-        <i className="fa-regular fa-xmark"></i>
+        {/* <i className="fa-regular fa-xmark"></i> */}
+        <FontAwesomeIcon icon={faXmark} />
       </div>
     </div>
   );

@@ -11,6 +11,8 @@ import { ListSongLoading } from "../ListLoading";
 import { message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { listsongSlice } from "./listsongSlice";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAward, faMusic } from "@fortawesome/free-solid-svg-icons";
 const serverAPI = import.meta.env.VITE_SERVERAPI;
 
 const ListSong = () => {
@@ -113,7 +115,8 @@ const ListSong = () => {
           </div>
           <div className="flex justify-between py-5 border-b border-b-border-color px-2 text-lighter-text-color text-base font-semibold">
             <div>
-              <i className="fa-sharp fa-solid fa-award"></i>
+              {/* <i className="fa-sharp fa-solid fa-award"></i> */}
+              <FontAwesomeIcon icon={faAward} />
               <span className="ml-4">BÀI HÁT</span>
             </div>
             <div className="md:block hidden">
@@ -137,7 +140,8 @@ const ListSong = () => {
                 }}
               >
                 <div className="flex gap-4 items-center   md:w-[42%] w-[70%]  ">
-                  <i className="fa-sharp fa-solid fa-music text-[14px]"></i>
+                  {/* <i className="fa-sharp fa-solid fa-music text-[14px]"></i> */}
+                  <FontAwesomeIcon className="text-[14px]" icon={faMusic} />
                   <div className="  rounded-lg  relative">
                     <img
                       src={x?.thumbnail}

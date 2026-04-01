@@ -15,6 +15,16 @@ import { formatTime } from "../../utils/FormatTime";
 import { ButtonIcon } from "../../App";
 import ListDownload from "../ListDownload";
 import { dbPromise } from "../../utils/db";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faPause,
+  faPlay,
+  faVolumeXmark,
+  faVolumeLow,
+  faVolumeHigh,
+  faBackwardStep,
+  faForwardStep,
+} from "@fortawesome/free-solid-svg-icons";
 
 const serverAPI = import.meta.env.VITE_SERVERAPI;
 
@@ -174,7 +184,7 @@ const Player = () => {
     } while (tempIndex === currentSongIndex);
 
     const song = list[tempIndex];
-    const { blob, ...safeSong } = song;
+    const { blob, thumbnailBlob, ...safeSong } = song;
 
     dispatch(listsongSlice.actions.songChange(safeSong));
     dispatch(listsongSlice.actions.activeSongChange(safeSong));
@@ -218,7 +228,7 @@ const Player = () => {
       currentSongIndex === 0 ? list.length - 1 : currentSongIndex - 1;
 
     const song = list[prevIndex];
-    const { blob, ...safeSong } = song;
+    const { blob, thumbnailBlob, ...safeSong } = song;
 
     dispatch(listsongSlice.actions.songChange(safeSong));
     dispatch(listsongSlice.actions.activeSongChange(safeSong));
@@ -250,7 +260,7 @@ const Player = () => {
       currentSongIndex === list.length - 1 ? 0 : currentSongIndex + 1;
 
     const song = list[nextIndex];
-    const { blob, ...safeSong } = song;
+    const { blob, thumbnailBlob, ...safeSong } = song;
 
     dispatch(listsongSlice.actions.songChange(safeSong));
     dispatch(listsongSlice.actions.activeSongChange(safeSong));
@@ -288,10 +298,13 @@ const Player = () => {
     const response = await fetch(linkUrl);
     const blob = await response.blob();
     const db = await dbPromise;
+    const imageRes = await fetch(pickSong.thumbnail);
+    const imageBlob = await imageRes.blob();
     await db.put("songs", {
       encodeId: pickSong.encodeId,
       title: pickSong.title,
       thumbnailM: pickSong.thumbnail,
+      thumbnailBlob: imageBlob,
       artistsNames: pickSong.artistsNames,
       blob: blob,
       album: pickSong.album.title,
@@ -339,15 +352,18 @@ const Player = () => {
 
     const updateMetadata = () => {
       const song = pickSong || toggleListSong?.items?.[0];
+      const imageUrl = song?.thumbnailBlob
+        ? URL.createObjectURL(song?.thumbnailBlob)
+        : song?.thumbnailM;
       if (!song) return;
 
       navigator.mediaSession.metadata = new MediaMetadata({
-        title: song.title || "Unknown",
-        artist: song.artistsNames || "Unknown",
-        album: song.album?.title || "Unknown",
+        title: song?.title || "Unknown",
+        artist: song?.artistsNames || "Unknown",
+        album: song?.album?.title || "Unknown",
         artwork: [
           {
-            src: song.thumbnailM || song.thumbnail,
+            src: song?.thumbnailM || song?.thumbnail || imageUrl,
             sizes: "512x512",
             type: "image/jpeg",
           },
@@ -358,7 +374,6 @@ const Player = () => {
     updateMetadata();
 
     audio.addEventListener("loadedmetadata", updateMetadata);
-
     const updatePosition = () => {
       if (
         audio.paused ||
@@ -485,13 +500,16 @@ const Player = () => {
           <div className=" w-8 h-8 hover:bg-third-color hover:rounded-full flex justify-center items-center cursor-pointer relative group z-20 ">
             {/* Low volume */}
             {volume == 0 ? (
-              <i className="fa-solid fa-volume-xmark"></i>
+              // <i className="fa-solid fa-volume-xmark"></i>
+              <FontAwesomeIcon icon={faVolumeXmark} />
             ) : volume <= 0.3 && volumeValue > 0 ? (
-              <i className="fa-duotone fa-volume-low "></i>
+              // <i className="fa-duotone fa-volume-low "></i>
+              <FontAwesomeIcon icon={faVolumeLow} />
             ) : volume <= 0.7 && volumeValue > 0.3 ? (
               <i className="fa-solid fa-volume"></i>
             ) : (
-              <i className="fa-solid fa-volume-high"></i>
+              // <i className="fa-solid fa-volume-high"></i>
+              <FontAwesomeIcon icon={faVolumeHigh} />
             )}
             <input
               onChange={handleVolume}
@@ -514,7 +532,7 @@ const Player = () => {
                           activeSong?.encodeId === x?.encodeId && "activeSong"
                         } flex p-4 border-b border-border-color items-center cursor-pointer hover:bg-third-color `}
                         onClick={() => {
-                          const { blob, ...safex } = x;
+                          const { blob, thumbnailBlob, ...safex } = x;
                           dispatch(
                             listsongSlice.actions.currentSongIndexChange(index)
                           );
@@ -526,13 +544,9 @@ const Player = () => {
                           if (x.blob) {
                             dispatch(listsongSlice.actions.checkLoading(true));
                             dispatch(listsongSlice.actions.srcChange(""));
-                            useEffect(() => {
-                              return () => {
-                                if (currentUrlRef.current) {
-                                  URL.revokeObjectURL(currentUrlRef.current);
-                                }
-                              };
-                            }, []);
+                            if (currentUrlRef.current) {
+                              URL.revokeObjectURL(currentUrlRef.current);
+                            }
                             const url = URL.createObjectURL(x.blob);
                             currentUrlRef.current = url;
                             setTimeout(() => {
@@ -622,9 +636,6 @@ const Player = () => {
             className="bg-third-color hover:border-none hover:brightness-110 rounded-3xl text-[13px] hidden xl:block"
             onClick={() => {
               dispatch(playerSlice.actions.toggleList());
-              if (showDownload) {
-                loadOfflineSongs();
-              }
             }}
           >
             Danh Sách Phát
@@ -709,7 +720,8 @@ const Player = () => {
               handlePrevSong();
             }}
           >
-            <i className="fa-solid fa-backward-step"></i>
+            {/* <i className="fa-solid fa-backward-step"></i> */}
+            <FontAwesomeIcon icon={faBackwardStep} />
           </button>
           <button
             className="xl:bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center  bg-transparent  flex-grow "
@@ -727,9 +739,11 @@ const Player = () => {
           >
             {!checkLoading && toggleListSong ? (
               !isPlay ? (
-                <i className="fa-duotone fa-pause"></i>
+                // <i className="fa-duotone fa-pause"></i>
+                <FontAwesomeIcon icon={faPause} />
               ) : (
-                <i className="fa-duotone fa-play"></i>
+                // <i className="fa-duotone fa-play"></i>
+                <FontAwesomeIcon icon={faPlay} />
               )
             ) : (
               <div className="lds-roller -top-[6px] -left-[12px] after:[&>div]:bg-light-title-color ">
@@ -750,7 +764,8 @@ const Player = () => {
               handleNextSong();
             }}
           >
-            <i className="fa-solid fa-forward-step"></i>
+            {/* <i className="fa-solid fa-forward-step"></i> */}
+            <FontAwesomeIcon icon={faForwardStep} />
           </button>
           <button
             className="bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center  flex-grow   "
