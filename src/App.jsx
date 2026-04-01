@@ -5,6 +5,7 @@ import PlayList from "./components/PlayList";
 import RouterPage from "./routes";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import styled from "styled-components";
+import PWAPopup from "./components/PWA/PWAPopup";
 
 export const ButtonIcon = styled.button`
   background-color: var(--primary-color);
@@ -24,6 +25,7 @@ const App = () => {
   return (
     <div className="">
       <SkeletonTheme baseColor="#374A57" highlightColor="#525252">
+        <PWAPopup />
         <RouterPage></RouterPage>
       </SkeletonTheme>
     </div>

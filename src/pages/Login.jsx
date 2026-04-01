@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
 
 const Login = () => {
-  localStorage.clear();
+  // localStorage.clear();
   const auth = getAuth();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
