@@ -51,8 +51,7 @@ const ListDownload = () => {
   };
   const handlePlay = (song, index) => {
     const { blob, thumbnailBlob, ...safesong } = song;
-
-    // dispatch(listsongSlice.actions.currentSongIndexChange(index));
+    dispatch(listsongSlice.actions.currentSongIndexChange(index));
     dispatch(listsongSlice.actions.activeSongChange(safesong));
     //Click song hiển thị ra thông tin bài hát bên Player
     dispatch(listsongSlice.actions.songChange(safesong)); //

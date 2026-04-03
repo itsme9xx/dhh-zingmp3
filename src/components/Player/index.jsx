@@ -24,6 +24,8 @@ import {
   faVolumeHigh,
   faBackwardStep,
   faForwardStep,
+  faShuffle,
+  faRepeat,
 } from "@fortawesome/free-solid-svg-icons";
 
 const serverAPI = import.meta.env.VITE_SERVERAPI;
@@ -255,10 +257,8 @@ const Player = () => {
   const handleNextSong = () => {
     const list = showDownload ? offlineSongs : toggleListSong?.items;
     if (!list || list.length === 0) return;
-
     let nextIndex =
       currentSongIndex === list.length - 1 ? 0 : currentSongIndex + 1;
-
     const song = list[nextIndex];
     const { blob, thumbnailBlob, ...safeSong } = song;
 
@@ -407,12 +407,7 @@ const Player = () => {
 
     navigator.mediaSession.setActionHandler("seekto", (details) => {
       if (!details.seekTime) return;
-
-      if (details.fastSeek && "fastSeek" in audio) {
-        audio.fastSeek(details.seekTime);
-      } else {
-        audio.currentTime = details.seekTime;
-      }
+      audio.currentTime = details.seekTime;
     });
 
     return () => {
@@ -709,10 +704,14 @@ const Player = () => {
               setShowSuffle(!showSuffle);
             }}
           >
-            <i
+            {/* <i
               className="fa-solid fa-shuffle "
               style={{ color: showSuffle ? "#1976d2" : "" }}
-            ></i>
+            ></i> */}
+            <FontAwesomeIcon
+              style={{ color: showSuffle ? "#1976d2" : "" }}
+              icon={faShuffle}
+            />
           </ButtonIcon>
           <button
             className="xl:bg-primary-color hover:rounded-full hover:border-bg-third-color hover:bg-third-color w-10 h-10 flex justify-center items-center bg-transparent  flex-grow  "
@@ -773,10 +772,14 @@ const Player = () => {
               handleRepeatButton();
             }}
           >
-            <i
+            {/* <i
               className="fa-solid fa-repeat"
               style={{ color: showRepeat ? "#1976d2" : "" }}
-            ></i>
+            ></i> */}
+            <FontAwesomeIcon
+              style={{ color: showRepeat ? "#1976d2" : "" }}
+              icon={faRepeat}
+            />
           </button>
         </div>
         <div className="xl:flex justify-center mt-12 select-none hidden  ">

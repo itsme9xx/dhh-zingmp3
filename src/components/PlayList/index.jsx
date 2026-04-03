@@ -15,6 +15,7 @@ import {
   faMagnifyingGlass,
   faRefresh,
 } from "@fortawesome/free-solid-svg-icons";
+import logo from "../../assets/logo.png";
 
 const serverAPI = import.meta.env.VITE_SERVERAPI;
 
@@ -44,7 +45,7 @@ export function Search() {
         onClick={() => navigate("/")}
         className="h-full flex items-center px-4 cursor-pointer ssm:hidden "
       >
-        <img src="/logo.png" className="h-full w-auto object-contain" />
+        <img src={logo} className="h-full w-auto object-contain" />
       </div>
       <div className="flex flex-1 items-center bg-third-color px-4 ">
         {/* <i className="fa-sharp fa-solid fa-magnifying-glass text-light-title-color mr-2"></i> */}
