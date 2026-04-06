@@ -6,12 +6,12 @@ import ModalLyrics from "../ModalLyrics";
 import { useSelector } from "react-redux";
 import { playerSlice } from "./playerSlice";
 import { useDispatch } from "react-redux";
-import { useParams, useLocation } from "react-router-dom";
 import { listsongSlice } from "../ListSong/listsongSlice";
 import { useRef } from "react";
 import { message } from "antd";
 import { navbarSlice } from "../Navbar/navbarSlice";
 import { formatTime } from "../../utils/FormatTime";
+import { formatTimeToSecond } from "../../utils/FormatTimeToSecond";
 import { ButtonIcon } from "../../App";
 import ListDownload from "../ListDownload";
 import { dbPromise } from "../../utils/db";
@@ -61,7 +61,6 @@ const Player = () => {
   const [isDownloaded, setIsDownloaded] = useState(false);
 
   const duration = pickSong?.duration ?? toggleListSong?.items?.[0]?.duration;
-
   const displayDuration =
     typeof duration === "number" ? formatTime(duration) : duration || "00:00";
 
@@ -177,7 +176,7 @@ const Player = () => {
   const handleShowSongButton = () => {
     setShowPopUp(!showPopUp);
   };
-  const handleShuffleButton = () => {
+  const handleShuffleButton = async () => {
     const list = showDownload ? offlineSongs : toggleListSong?.items;
     if (!list || list.length === 0) return;
     let tempIndex;
@@ -206,21 +205,37 @@ const Player = () => {
       info();
       return;
     }
-
     dispatch(listsongSlice.actions.checkLoading(true));
-
-    axios.get(`${serverAPI}/api/song?id=${song?.encodeId}`).then((res) => {
+    try {
+      if (song?.videoId) {
+        const res = await axios.get(
+          `${serverAPI}/api/audio?videoId=${song?.videoId}`
+        );
+        if (res.status !== 200) {
+          message.warning("Server bị chặn");
+          dispatch(listsongSlice.actions.checkLoading(""));
+          return;
+        }
+        dispatch(listsongSlice.actions.checkLoading(false));
+        dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
+        return;
+      }
+      const res = await axios.get(`${serverAPI}/api/song?id=${song?.encodeId}`);
       if (res.data.msg !== "Success") {
         message.warning("Server bị chặn");
-        dispatch(listsongSlice.actions.checkLoading(false));
-      } else {
-        dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
-        dispatch(listsongSlice.actions.checkLoading(false));
+        dispatch(listsongSlice.actions.checkLoading(""));
+        return;
       }
-    });
+      dispatch(listsongSlice.actions.checkLoading(false));
+      dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
+    } catch (error) {
+      console.error(err);
+      message.error("Lỗi server");
+      dispatch(listsongSlice.actions.checkLoading(""));
+    }
   };
 
-  const handlePrevSong = () => {
+  const handlePrevSong = async () => {
     const list = showDownload ? offlineSongs : toggleListSong?.items;
     if (!list || list.length === 0) return;
 
@@ -246,13 +261,36 @@ const Player = () => {
     // ONLINE
     dispatch(listsongSlice.actions.checkLoading(true));
 
-    axios.get(`${serverAPI}/api/song?id=${song?.encodeId}`).then((res) => {
-      dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
+    try {
+      if (song?.videoId) {
+        const res = await axios.get(
+          `${serverAPI}/api/audio?videoId=${song?.videoId}`
+        );
+        if (res.status !== 200) {
+          message.warning("Server bị chặn");
+          dispatch(listsongSlice.actions.checkLoading(""));
+          return;
+        }
+        dispatch(listsongSlice.actions.checkLoading(false));
+        dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
+        return;
+      }
+      const res = await axios.get(`${serverAPI}/api/song?id=${song?.encodeId}`);
+      if (res.data.msg !== "Success") {
+        message.warning("Server bị chặn");
+        dispatch(listsongSlice.actions.checkLoading(""));
+        return;
+      }
       dispatch(listsongSlice.actions.checkLoading(false));
-    });
+      dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
+    } catch (error) {
+      console.error(err);
+      message.error("Lỗi server");
+      dispatch(listsongSlice.actions.checkLoading(""));
+    }
   };
 
-  const handleNextSong = () => {
+  const handleNextSong = async () => {
     const list = showDownload ? offlineSongs : toggleListSong?.items;
     if (!list || list.length === 0) return;
     let nextIndex =
@@ -276,10 +314,33 @@ const Player = () => {
     // ONLINE
     dispatch(listsongSlice.actions.checkLoading(true));
 
-    axios.get(`${serverAPI}/api/song?id=${song?.encodeId}`).then((res) => {
-      dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
+    try {
+      if (song?.videoId) {
+        const res = await axios.get(
+          `${serverAPI}/api/audio?videoId=${song?.videoId}`
+        );
+        if (res.status !== 200) {
+          message.warning("Server bị chặn");
+          dispatch(listsongSlice.actions.checkLoading(""));
+          return;
+        }
+        dispatch(listsongSlice.actions.checkLoading(false));
+        dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
+        return;
+      }
+      const res = await axios.get(`${serverAPI}/api/song?id=${song?.encodeId}`);
+      if (res.data.msg !== "Success") {
+        message.warning("Server bị chặn");
+        dispatch(listsongSlice.actions.checkLoading(""));
+        return;
+      }
       dispatch(listsongSlice.actions.checkLoading(false));
-    });
+      dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
+    } catch (error) {
+      console.error(err);
+      message.error("Lỗi server");
+      dispatch(listsongSlice.actions.checkLoading(""));
+    }
   };
 
   const handleRepeatButton = () => {
@@ -440,6 +501,7 @@ const Player = () => {
           </p>
           <p className="text-[13px]">
             {pickSong?.artistsNames ||
+              pickSong?.channel ||
               toggleListSong?.items?.[0]?.artistsNames || (
                 <Skeleton height={20} />
               )}
@@ -517,7 +579,10 @@ const Player = () => {
                       <div
                         key={index}
                         className={`${
-                          activeSong?.encodeId === x?.encodeId && "activeSong"
+                          activeSong?.encodeId
+                            ? activeSong?.encodeId === x?.encodeId &&
+                              "activeSong"
+                            : activeSong?.videoId == x?.videoId && "activeSong"
                         } flex p-4 border-b border-border-color items-center cursor-pointer hover:bg-third-color `}
                         onClick={() => {
                           const { blob, thumbnailBlob, ...safex } = x;
@@ -557,65 +622,93 @@ const Player = () => {
                         <div>
                           <p className="font-bold line-clamp-1"> {x?.title}</p>
                           <p className="text-[13px] line-clamp-1 font-medium">
-                            {x?.artistsNames}/
+                            {x?.artistsNames}
                           </p>
                         </div>
                       </div>
                     );
                   })
-                : toggleListSong?.items?.map((x, index) => (
-                    <div
-                      className={`${
-                        activeSong?.encodeId === x?.encodeId && "activeSong"
-                      } flex p-4 border-b border-border-color items-center cursor-pointer hover:bg-third-color `}
-                      key={index}
-                      onClick={() => {
-                        dispatch(
-                          listsongSlice.actions.currentSongIndexChange(index)
-                        );
-                        dispatch(listsongSlice.actions.songChange(x));
-                        dispatch(listsongSlice.actions.activeSongChange(x));
-                        if (x.streamingStatus == 2) {
-                          info();
-                          return;
-                        }
-
-                        dispatch(listsongSlice.actions.checkLoading(true));
-                        axios
-                          .get(`${serverAPI}/api/song?id=${x?.encodeId}`)
-                          .then((res) => {
-                            res.data.msg !== "Success"
-                              ? (message.warning("Server bị chặn"),
+                : toggleListSong?.items?.map((x, index) => {
+                    return (
+                      <div
+                        className={`${
+                          activeSong?.encodeId
+                            ? activeSong?.encodeId === x?.encodeId &&
+                              "activeSong"
+                            : activeSong?.videoId == x?.videoId && "activeSong"
+                        } flex p-4 border-b border-border-color items-center cursor-pointer hover:bg-third-color `}
+                        key={index}
+                        onClick={async () => {
+                          dispatch(
+                            listsongSlice.actions.currentSongIndexChange(index)
+                          );
+                          dispatch(listsongSlice.actions.songChange(x));
+                          dispatch(listsongSlice.actions.activeSongChange(x));
+                          if (x.streamingStatus == 2) {
+                            info();
+                            return;
+                          }
+                          dispatch(listsongSlice.actions.checkLoading(true));
+                          try {
+                            if (x?.videoId) {
+                              const res = await axios.get(
+                                `${serverAPI}/api/audio?videoId=${x?.videoId}`
+                              );
+                              if (res.status !== 200) {
+                                message.warning("Server bị chặn");
                                 dispatch(
                                   listsongSlice.actions.checkLoading("")
-                                ))
-                              : (dispatch(
-                                  listsongSlice.actions.checkLoading(false)
-                                ),
-                                dispatch(
-                                  listsongSlice.actions.srcChange(
-                                    res?.data?.data?.[128]
-                                  )
-                                ));
-                          });
-                      }}
-                    >
-                      <div>
-                        <img
-                          src={x?.thumbnail}
-                          style={{ marginRight: 10 }}
-                          className="max-w-[60px]"
-                          alt=""
-                        />
+                                );
+                                return;
+                              }
+                              dispatch(
+                                listsongSlice.actions.checkLoading(false)
+                              );
+                              dispatch(
+                                listsongSlice.actions.srcChange(
+                                  res?.data?.audioUrl
+                                )
+                              );
+                              return;
+                            }
+                            const res = await axios.get(
+                              `${serverAPI}/api/song?id=${x?.encodeId}`
+                            );
+                            if (res.data.msg !== "Success") {
+                              message.warning("Server bị chặn");
+                              dispatch(listsongSlice.actions.checkLoading(""));
+                              return;
+                            }
+                            dispatch(listsongSlice.actions.checkLoading(false));
+                            dispatch(
+                              listsongSlice.actions.srcChange(
+                                res?.data?.data?.[128]
+                              )
+                            );
+                          } catch (error) {
+                            console.error(err);
+                            message.error("Lỗi server");
+                            dispatch(listsongSlice.actions.checkLoading(""));
+                          }
+                        }}
+                      >
+                        <div>
+                          <img
+                            src={x?.thumbnail}
+                            style={{ marginRight: 10 }}
+                            className="max-w-[60px]"
+                            alt=""
+                          />
+                        </div>
+                        <div>
+                          <p className="font-bold line-clamp-1"> {x?.title}</p>
+                          <p className="text-[13px] line-clamp-1 font-medium">
+                            {x?.artistsNames}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-bold line-clamp-1"> {x?.title}</p>
-                        <p className="text-[13px] line-clamp-1 font-medium">
-                          {x?.artistsNames}/
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
             </div>
           )}
           <button
@@ -663,7 +756,11 @@ const Player = () => {
             <input
               type="range"
               min="0"
-              max={pickSong?.duration || toggleListSong?.items?.[0]?.duration}
+              max={
+                typeof duration === "string"
+                  ? formatTimeToSecond(duration)
+                  : duration
+              }
               className="slider "
               value={currentTime}
               onInput={(e) => {

@@ -44,7 +44,7 @@ const SearchPage = () => {
     });
   };
 
-  const handleClickSong = (x, index) => {
+  const handleClickSong = async (x, index) => {
     if (x.streamingStatus == 2) {
       info();
       return;
@@ -54,14 +54,36 @@ const SearchPage = () => {
     dispatch(listsongSlice.actions.activeSongChange(x));
     // Click song hiển thị ra thông tin bài hát bên Player
     dispatch(listsongSlice.actions.songChange(x));
+    dispatch(listsongSlice.actions.listsongChange({ items: list }));
     dispatch(listsongSlice.actions.checkLoading(true));
-    axios.get(`${serverAPI}/api/song?id=${x?.encodeId}`).then((res) => {
-      res.data.msg !== "Success"
-        ? (message.warning("Server bị chặn"),
-          dispatch(listsongSlice.actions.checkLoading("")))
-        : (dispatch(listsongSlice.actions.checkLoading(false)),
-          dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128])));
-    });
+
+    try {
+      if (type === "youtube") {
+        const res = await axios.get(
+          `${serverAPI}/api/audio?videoId=${x?.videoId}`
+        );
+        if (res.status !== 200) {
+          message.warning("Server bị chặn");
+          dispatch(listsongSlice.actions.checkLoading(""));
+          return;
+        }
+        dispatch(listsongSlice.actions.checkLoading(false));
+        dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
+        return;
+      }
+      const res = await axios.get(`${serverAPI}/api/song?id=${x?.encodeId}`);
+      if (res.data.msg !== "Success") {
+        message.warning("Server bị chặn");
+        dispatch(listsongSlice.actions.checkLoading(""));
+        return;
+      }
+      dispatch(listsongSlice.actions.checkLoading(false));
+      dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
+    } catch (err) {
+      console.error(err);
+      message.error("Lỗi server");
+      dispatch(listsongSlice.actions.checkLoading(""));
+    }
   };
   useEffect(() => {
     if (!param?.keyword) return;
@@ -231,7 +253,9 @@ const SearchPage = () => {
                   <div
                     key={index}
                     className={`${
-                      activeSong?.encodeId === x?.encodeId && "activeSong"
+                      activeSong?.encodeId
+                        ? activeSong?.encodeId === x?.encodeId && "activeSong"
+                        : activeSong?.videoId == x?.videoId && "activeSong"
                     } flex justify-between  border-b border-b-border-color items-center  text-lighter-text-color font-semibold hover:bg-third-color`}
                     onClick={() => {
                       handleClickSong(x, index);
