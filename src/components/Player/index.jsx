@@ -211,9 +211,7 @@ const Player = () => {
 
     axios.get(`${serverAPI}/api/song?id=${song?.encodeId}`).then((res) => {
       if (res.data.msg !== "Success") {
-        message.warning(
-          "Server bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
-        );
+        message.warning("Server bị chặn");
         dispatch(listsongSlice.actions.checkLoading(false));
       } else {
         dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128]));
@@ -413,11 +411,6 @@ const Player = () => {
     return () => {
       audio.removeEventListener("loadedmetadata", updateMetadata);
       audio.removeEventListener("timeupdate", updatePosition);
-      navigator.mediaSession.setActionHandler("play", null);
-      navigator.mediaSession.setActionHandler("pause", null);
-      navigator.mediaSession.setActionHandler("nexttrack", null);
-      navigator.mediaSession.setActionHandler("previoustrack", null);
-      navigator.mediaSession.setActionHandler("seekto", null);
     };
   }, [pickSong, toggleListSong, currentSongIndex]);
 
@@ -592,9 +585,7 @@ const Player = () => {
                           .get(`${serverAPI}/api/song?id=${x?.encodeId}`)
                           .then((res) => {
                             res.data.msg !== "Success"
-                              ? (message.warning(
-                                  "Server bị chặn nhiều bài hát / Tìm bài E là không thể để thử :("
-                                ),
+                              ? (message.warning("Server bị chặn"),
                                 dispatch(
                                   listsongSlice.actions.checkLoading("")
                                 ))

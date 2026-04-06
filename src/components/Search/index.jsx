@@ -49,6 +49,7 @@ const SearchPage = () => {
       info();
       return;
     }
+
     dispatch(listsongSlice.actions.currentSongIndexChange(index));
     dispatch(listsongSlice.actions.activeSongChange(x));
     // Click song hiển thị ra thông tin bài hát bên Player
