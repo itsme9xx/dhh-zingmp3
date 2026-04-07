@@ -127,13 +127,15 @@ const ListDownload = () => {
                     {song?.title}
                   </p>
                   <p className="font-medium line-clamp-2 text-[14px]">
-                    {song?.artistsNames}
+                    {song?.artistsNames || song?.channel}
                   </p>
                 </div>
               </div>
               <div className=" w-[46%]">
                 <span className="font-medium text-[15px]">
-                  {formatTime(song.duration)}
+                  {typeof song.duration === "number"
+                    ? formatTime(song.duration)
+                    : song.duration}
                 </span>
               </div>
               <div

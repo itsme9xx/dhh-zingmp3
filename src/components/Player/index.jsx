@@ -59,7 +59,8 @@ const Player = () => {
   const showLyrics2 = useSelector((state) => state.player.showLyrics);
   const showDownload = useSelector((state) => state.player.showDownload);
   const [isDownloaded, setIsDownloaded] = useState(false);
-
+  const calledRef = useRef(false);
+  const detailListRef = useRef(false);
   const duration = pickSong?.duration ?? toggleListSong?.items?.[0]?.duration;
   const displayDuration =
     typeof duration === "number" ? formatTime(duration) : duration || "00:00";
@@ -83,8 +84,10 @@ const Player = () => {
   }, [showDownload]);
   useEffect(() => {
     const check = async () => {
-      if (pickSong?.encodeId) {
-        const result = await checkDownloaded(pickSong.encodeId);
+      if (pickSong?.encodeId || pickSong?.videoId) {
+        const result = await checkDownloaded(
+          pickSong.encodeId || pickSong?.videoId
+        );
         setIsDownloaded(result);
       }
     };
@@ -140,6 +143,8 @@ const Player = () => {
   }, [src1]);
 
   useEffect(() => {
+    if (detailListRef.current) return;
+    detailListRef.current = true;
     setIsLoading(true);
     axios
       .get(
@@ -167,7 +172,8 @@ const Player = () => {
 
   useEffect(() => {
     const id = toggleListSong?.items?.[0]?.encodeId;
-    if (!id) return;
+    if (!id || calledRef.current) return;
+    calledRef.current = true;
     axios.get(`${serverAPI}/api/song?id=${id}`).then((res) => {
       setPlaySong(res.data);
     });
@@ -354,20 +360,29 @@ const Player = () => {
 
   const handleDownload = async () => {
     const linkUrl = src1;
-    const response = await fetch(linkUrl);
+    let response;
+    if (pickSong?.videoId) {
+      response = await fetch(
+        `${serverAPI}/api/download?url=${encodeURIComponent(linkUrl)}`
+      );
+    } else {
+      response = await fetch(linkUrl);
+    }
+    message.warning("Đang Tải");
     const blob = await response.blob();
     const db = await dbPromise;
     const imageRes = await fetch(pickSong.thumbnail);
     const imageBlob = await imageRes.blob();
     await db.put("songs", {
-      encodeId: pickSong.encodeId,
-      title: pickSong.title,
-      thumbnailM: pickSong.thumbnail,
+      encodeId: pickSong.encodeId || pickSong.videoId,
+      title: pickSong?.title || null,
+      thumbnailM: pickSong?.thumbnail,
       thumbnailBlob: imageBlob,
-      artistsNames: pickSong.artistsNames,
+      artistsNames: pickSong?.artistsNames || null,
+      channel: pickSong?.channel || null,
       blob: blob,
-      album: pickSong.album.title,
-      duration: pickSong.duration,
+      album: pickSong?.album?.title || null,
+      duration: pickSong?.duration,
     });
     setIsDownloaded(true);
     message.success("Đã tải bài hát!");
@@ -411,6 +426,7 @@ const Player = () => {
 
     const updateMetadata = () => {
       const song = pickSong || toggleListSong?.items?.[0];
+      console.log("song", song);
       const imageUrl = song?.thumbnailBlob
         ? URL.createObjectURL(song?.thumbnailBlob)
         : song?.thumbnailM;
@@ -418,7 +434,7 @@ const Player = () => {
 
       navigator.mediaSession.metadata = new MediaMetadata({
         title: song?.title || "Unknown",
-        artist: song?.artistsNames || "Unknown",
+        artist: song?.artistsNames || song?.channel || "Unknown",
         album: song?.album?.title || "Unknown",
         artwork: [
           {
