@@ -62,15 +62,14 @@ const SearchPage = () => {
         const userAgent = navigator.userAgent;
         const isIphone = /iPhone|iPad|iPod/i.test(userAgent);
         if (isIphone) {
-          message.loading("Đang load nhạc, vui lòng chờ...", 6);
+          message.loading(
+            "Đang load nhạc, vui lòng chờ... Nếu load nhạc lỗi hãy tải nhạc về",
+            6
+          );
           const apiUrl = `${serverAPI}/api/audio?videoId=${x?.videoId}`;
-          dispatch(listsongSlice.actions.checkLoading(false));
           dispatch(listsongSlice.actions.srcChange(apiUrl));
         } else {
-          const hideLoading = message.loading(
-            "Đang load nhạc, vui lòng chờ...",
-            0
-          );
+          message.loading("Đang load nhạc, vui lòng chờ...", 0);
           const res = await axios.get(
             `${serverAPI}/api/audio?videoId=${x?.videoId}`
           );
@@ -80,8 +79,6 @@ const SearchPage = () => {
             dispatch(listsongSlice.actions.checkLoading(""));
             return;
           }
-          hideLoading();
-          message.success("Đã load xong");
           dispatch(listsongSlice.actions.checkLoading(false));
           dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
         }

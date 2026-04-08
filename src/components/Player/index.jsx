@@ -217,15 +217,14 @@ const Player = () => {
         const userAgent = navigator.userAgent;
         const isIphone = /iPhone|iPad|iPod/i.test(userAgent);
         if (isIphone) {
-          message.loading("Đang load nhạc, vui lòng chờ...", 6);
+          message.loading(
+            "Đang load nhạc, vui lòng chờ... Nếu load nhạc lỗi hãy tải nhạc về",
+            6
+          );
           const apiUrl = `${serverAPI}/api/audio?videoId=${song?.videoId}`;
-          dispatch(listsongSlice.actions.checkLoading(false));
           dispatch(listsongSlice.actions.srcChange(apiUrl));
         } else {
-          const hideLoading = message.loading(
-            "Đang load nhạc, vui lòng chờ...",
-            0
-          );
+          message.loading("Đang load nhạc, vui lòng chờ...", 0);
           const res = await axios.get(
             `${serverAPI}/api/audio?videoId=${song?.videoId}`
           );
@@ -234,8 +233,6 @@ const Player = () => {
             dispatch(listsongSlice.actions.checkLoading(""));
             return;
           }
-          hideLoading();
-          message.success("Đã load xong");
           dispatch(listsongSlice.actions.checkLoading(false));
           dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
         }
@@ -287,15 +284,14 @@ const Player = () => {
         const userAgent = navigator.userAgent;
         const isIphone = /iPhone|iPad|iPod/i.test(userAgent);
         if (isIphone) {
-          message.loading("Đang load nhạc, vui lòng chờ...", 6);
+          message.loading(
+            "Đang load nhạc, vui lòng chờ... Nếu load nhạc lỗi hãy tải nhạc về",
+            6
+          );
           const apiUrl = `${serverAPI}/api/audio?videoId=${song?.videoId}`;
-          dispatch(listsongSlice.actions.checkLoading(false));
           dispatch(listsongSlice.actions.srcChange(apiUrl));
         } else {
-          const hideLoading = message.loading(
-            "Đang load nhạc, vui lòng chờ...",
-            0
-          );
+          message.loading("Đang load nhạc, vui lòng chờ...", 0);
           const res = await axios.get(
             `${serverAPI}/api/audio?videoId=${song?.videoId}`
           );
@@ -304,8 +300,6 @@ const Player = () => {
             dispatch(listsongSlice.actions.checkLoading(""));
             return;
           }
-          hideLoading();
-          message.success("Đã load xong");
           dispatch(listsongSlice.actions.checkLoading(false));
           dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
         }
@@ -354,15 +348,14 @@ const Player = () => {
         const userAgent = navigator.userAgent;
         const isIphone = /iPhone|iPad|iPod/i.test(userAgent);
         if (isIphone) {
-          message.loading("Đang load nhạc, vui lòng chờ...", 6);
+          message.loading(
+            "Đang load nhạc, vui lòng chờ... Nếu load nhạc lỗi hãy tải nhạc về",
+            6
+          );
           const apiUrl = `${serverAPI}/api/audio?videoId=${song.videoId}`;
-          dispatch(listsongSlice.actions.checkLoading(false));
           dispatch(listsongSlice.actions.srcChange(apiUrl));
         } else {
-          const hideLoading = message.loading(
-            "Đang load nhạc, vui lòng chờ...",
-            0
-          );
+          message.loading("Đang load nhạc, vui lòng chờ...", 0);
           const res = await axios.get(
             `${serverAPI}/api/audio?videoId=${song?.videoId}`
           );
@@ -372,8 +365,6 @@ const Player = () => {
             dispatch(listsongSlice.actions.checkLoading(""));
             return;
           }
-          hideLoading();
-          message.success("Đã load xong");
           dispatch(listsongSlice.actions.checkLoading(false));
           dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
         }
@@ -864,6 +855,16 @@ const Player = () => {
           src={src1 ? src1 : playSong?.data?.[128]}
           onEnded={() => {
             showSuffle ? handleShuffleButton() : handleNextSong();
+          }}
+          onCanPlay={() => {
+            message.destroy();
+            message.success("Đã load xong !");
+            dispatch(listsongSlice.actions.checkLoading(false));
+          }}
+          onError={(e) => {
+            message.destroy();
+            message.error("Không thể tải nhạc, vui lòng thử lại!");
+            dispatch(listsongSlice.actions.checkLoading(false));
           }}
           loop={isLoop && "loop"}
           onTimeUpdate={(e) => {
