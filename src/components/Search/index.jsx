@@ -59,29 +59,27 @@ const SearchPage = () => {
 
     try {
       if (type === "youtube") {
-        const hideLoading = message.loading(
-          "Đang load nhạc, vui lòng chờ...",
-          0
-        );
-
-        const res = await axios.get(
-          `${serverAPI}/api/audio?videoId=${x?.videoId}`
-        );
-
-        if (res.status !== 200) {
-          message.warning("Server bị chặn");
-          dispatch(listsongSlice.actions.checkLoading(""));
-          return;
-        }
         const userAgent = navigator.userAgent;
         const isIphone = /iPhone|iPad|iPod/i.test(userAgent);
-        const apiUrl = `${serverAPI}/api/audio?videoId=${x?.videoId}`;
         if (isIphone) {
-          hideLoading();
-          message.success("Đã load xong");
+          message.loading("Đang load nhạc, vui lòng chờ...", 6);
+          const apiUrl = `${serverAPI}/api/audio?videoId=${x?.videoId}`;
           dispatch(listsongSlice.actions.checkLoading(false));
           dispatch(listsongSlice.actions.srcChange(apiUrl));
         } else {
+          const hideLoading = message.loading(
+            "Đang load nhạc, vui lòng chờ...",
+            0
+          );
+          const res = await axios.get(
+            `${serverAPI}/api/audio?videoId=${x?.videoId}`
+          );
+
+          if (res.status !== 200) {
+            message.warning("Server bị chặn");
+            dispatch(listsongSlice.actions.checkLoading(""));
+            return;
+          }
           hideLoading();
           message.success("Đã load xong");
           dispatch(listsongSlice.actions.checkLoading(false));
