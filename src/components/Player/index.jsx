@@ -214,6 +214,10 @@ const Player = () => {
     dispatch(listsongSlice.actions.checkLoading(true));
     try {
       if (song?.videoId) {
+        const hideLoading = message.loading(
+          "Đang load nhạc, vui lòng chờ...",
+          0
+        );
         const res = await axios.get(
           `${serverAPI}/api/audio?videoId=${song?.videoId}`
         );
@@ -226,9 +230,13 @@ const Player = () => {
         const isIphone = /iPhone|iPad|iPod/i.test(userAgent);
         const apiUrl = `${serverAPI}/api/audio?videoId=${song?.videoId}`;
         if (isIphone) {
+          hideLoading();
+          message.success("Đã load xong");
           dispatch(listsongSlice.actions.checkLoading(false));
           dispatch(listsongSlice.actions.srcChange(apiUrl));
         } else {
+          hideLoading();
+          message.success("Đã load xong");
           dispatch(listsongSlice.actions.checkLoading(false));
           dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
         }
@@ -277,6 +285,10 @@ const Player = () => {
 
     try {
       if (song?.videoId) {
+        const hideLoading = message.loading(
+          "Đang load nhạc, vui lòng chờ...",
+          0
+        );
         const res = await axios.get(
           `${serverAPI}/api/audio?videoId=${song?.videoId}`
         );
@@ -289,9 +301,13 @@ const Player = () => {
         const isIphone = /iPhone|iPad|iPod/i.test(userAgent);
         const apiUrl = `${serverAPI}/api/audio?videoId=${song?.videoId}`;
         if (isIphone) {
+          hideLoading();
+          message.success("Đã load xong");
           dispatch(listsongSlice.actions.checkLoading(false));
           dispatch(listsongSlice.actions.srcChange(apiUrl));
         } else {
+          hideLoading();
+          message.success("Đã load xong");
           dispatch(listsongSlice.actions.checkLoading(false));
           dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
         }
@@ -337,6 +353,10 @@ const Player = () => {
     dispatch(listsongSlice.actions.checkLoading(true));
     try {
       if (song?.videoId) {
+        const hideLoading = message.loading(
+          "Đang load nhạc, vui lòng chờ...",
+          0
+        );
         const res = await axios.get(
           `${serverAPI}/api/audio?videoId=${song?.videoId}`
         );
@@ -350,10 +370,15 @@ const Player = () => {
         const userAgent = navigator.userAgent;
         const isIphone = /iPhone|iPad|iPod/i.test(userAgent);
         const apiUrl = `${serverAPI}/api/audio?videoId=${song.videoId}`;
+
         if (isIphone) {
+          hideLoading();
+          message.success("Đã load xong");
           dispatch(listsongSlice.actions.checkLoading(false));
           dispatch(listsongSlice.actions.srcChange(apiUrl));
         } else {
+          hideLoading();
+          message.success("Đã load xong");
           dispatch(listsongSlice.actions.checkLoading(false));
           dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
         }
@@ -384,10 +409,7 @@ const Player = () => {
   };
 
   const handleDownload = async () => {
-    const hideLoading = message.loading(
-      "Đang tải nhạc từ YouTube, vui lòng chờ...",
-      0
-    );
+    const hideLoading = message.loading("Đang tải nhạc, vui lòng chờ...", 0);
 
     try {
       let response;
@@ -396,7 +418,6 @@ const Player = () => {
         response = await fetch(
           `${serverAPI}/api/download?videoId=${pickSong.videoId}`
         );
-        console.log("download");
       } else {
         response = await fetch(src1);
       }

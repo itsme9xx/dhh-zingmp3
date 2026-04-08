@@ -59,6 +59,11 @@ const SearchPage = () => {
 
     try {
       if (type === "youtube") {
+        const hideLoading = message.loading(
+          "Đang load nhạc, vui lòng chờ...",
+          0
+        );
+
         const res = await axios.get(
           `${serverAPI}/api/audio?videoId=${x?.videoId}`
         );
@@ -72,9 +77,13 @@ const SearchPage = () => {
         const isIphone = /iPhone|iPad|iPod/i.test(userAgent);
         const apiUrl = `${serverAPI}/api/audio?videoId=${x?.videoId}`;
         if (isIphone) {
+          hideLoading();
+          message.success("Đã load xong");
           dispatch(listsongSlice.actions.checkLoading(false));
           dispatch(listsongSlice.actions.srcChange(apiUrl));
         } else {
+          hideLoading();
+          message.success("Đã load xong");
           dispatch(listsongSlice.actions.checkLoading(false));
           dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
         }
