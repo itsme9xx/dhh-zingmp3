@@ -335,7 +335,6 @@ const Player = () => {
 
     // ONLINE
     dispatch(listsongSlice.actions.checkLoading(true));
-    console.log("safeSong", safeSong);
     try {
       if (song?.videoId) {
         const res = await axios.get(
@@ -385,33 +384,61 @@ const Player = () => {
   };
 
   const handleDownload = async () => {
-    const linkUrl = src1;
-    let response;
-    if (pickSong?.videoId) {
-      response = await fetch(
-        `${serverAPI}/api/download?url=${encodeURIComponent(linkUrl)}`
+    const hideLoading = message.loading(
+      "Đang tải nhạc từ YouTube, vui lòng chờ...",
+      0
+    );
+
+    try {
+      let response;
+
+      if (pickSong?.videoId) {
+        response = await fetch(
+          `${serverAPI}/api/download?videoId=${pickSong.videoId}`
+        );
+        console.log("download");
+      } else {
+        response = await fetch(src1);
+      }
+
+      if (!response.ok) {
+        throw new Error("Server lỗi");
+      }
+
+      const blob = await response.blob();
+
+      let imageBlob = null;
+      try {
+        const imageRes = await fetch(pickSong.thumbnail);
+        imageBlob = await imageRes.blob();
+      } catch (imgErr) {
+        console.error("Không tải được thumbnail:", imgErr);
+      }
+
+      // Lưu vào IndexedDB
+      const db = await dbPromise;
+      await db.put("songs", {
+        encodeId: pickSong.encodeId || pickSong.videoId,
+        title: pickSong?.title || "Không tiêu đề",
+        thumbnailM: pickSong?.thumbnail,
+        thumbnailBlob: imageBlob,
+        artistsNames: pickSong?.artistsNames || null,
+        channel: pickSong?.channel || null,
+        blob: blob,
+        album: pickSong?.album?.title || null,
+        duration: pickSong?.duration,
+      });
+
+      setIsDownloaded(true);
+      hideLoading();
+      message.success("Đã tải xong và lưu vào thư viện!");
+    } catch (err) {
+      hideLoading();
+      console.error("Download Error:", err);
+      message.error(
+        "Tải nhạc thất bại. Có thể do kết nối mạng hoặc server bị chặn."
       );
-    } else {
-      response = await fetch(linkUrl);
     }
-    message.warning("Đang Tải");
-    const blob = await response.blob();
-    const db = await dbPromise;
-    const imageRes = await fetch(pickSong.thumbnail);
-    const imageBlob = await imageRes.blob();
-    await db.put("songs", {
-      encodeId: pickSong.encodeId || pickSong.videoId,
-      title: pickSong?.title || null,
-      thumbnailM: pickSong?.thumbnail,
-      thumbnailBlob: imageBlob,
-      artistsNames: pickSong?.artistsNames || null,
-      channel: pickSong?.channel || null,
-      blob: blob,
-      album: pickSong?.album?.title || null,
-      duration: pickSong?.duration,
-    });
-    setIsDownloaded(true);
-    message.success("Đã tải bài hát!");
   };
   const PopUp = () => {
     return (
