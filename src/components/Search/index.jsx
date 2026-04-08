@@ -62,13 +62,22 @@ const SearchPage = () => {
         const res = await axios.get(
           `${serverAPI}/api/audio?videoId=${x?.videoId}`
         );
+
         if (res.status !== 200) {
           message.warning("Server bị chặn");
           dispatch(listsongSlice.actions.checkLoading(""));
           return;
         }
-        dispatch(listsongSlice.actions.checkLoading(false));
-        dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
+        const userAgent = navigator.userAgent;
+        const isIphone = /iPhone|iPad|iPod/i.test(userAgent);
+        const apiUrl = `${serverAPI}/api/audio?videoId=${x?.videoId}`;
+        if (isIphone) {
+          dispatch(listsongSlice.actions.checkLoading(false));
+          dispatch(listsongSlice.actions.srcChange(apiUrl));
+        } else {
+          dispatch(listsongSlice.actions.checkLoading(false));
+          dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
+        }
         return;
       }
       const res = await axios.get(`${serverAPI}/api/song?id=${x?.encodeId}`);
@@ -281,7 +290,7 @@ const SearchPage = () => {
                           {x?.title}
                         </p>
                         <p className="line-clamp-1 font-medium text-[14px]">
-                          {x?.artistsNames}
+                          {x?.artistsNames || x?.channel}
                         </p>
                       </div>
                     </div>

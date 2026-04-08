@@ -222,8 +222,16 @@ const Player = () => {
           dispatch(listsongSlice.actions.checkLoading(""));
           return;
         }
-        dispatch(listsongSlice.actions.checkLoading(false));
-        dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
+        const userAgent = navigator.userAgent;
+        const isIphone = /iPhone|iPad|iPod/i.test(userAgent);
+        const apiUrl = `${serverAPI}/api/audio?videoId=${song?.videoId}`;
+        if (isIphone) {
+          dispatch(listsongSlice.actions.checkLoading(false));
+          dispatch(listsongSlice.actions.srcChange(apiUrl));
+        } else {
+          dispatch(listsongSlice.actions.checkLoading(false));
+          dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
+        }
         return;
       }
       const res = await axios.get(`${serverAPI}/api/song?id=${song?.encodeId}`);
@@ -277,8 +285,16 @@ const Player = () => {
           dispatch(listsongSlice.actions.checkLoading(""));
           return;
         }
-        dispatch(listsongSlice.actions.checkLoading(false));
-        dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
+        const userAgent = navigator.userAgent;
+        const isIphone = /iPhone|iPad|iPod/i.test(userAgent);
+        const apiUrl = `${serverAPI}/api/audio?videoId=${song?.videoId}`;
+        if (isIphone) {
+          dispatch(listsongSlice.actions.checkLoading(false));
+          dispatch(listsongSlice.actions.srcChange(apiUrl));
+        } else {
+          dispatch(listsongSlice.actions.checkLoading(false));
+          dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
+        }
         return;
       }
       const res = await axios.get(`${serverAPI}/api/song?id=${song?.encodeId}`);
@@ -319,19 +335,29 @@ const Player = () => {
 
     // ONLINE
     dispatch(listsongSlice.actions.checkLoading(true));
-
+    console.log("safeSong", safeSong);
     try {
       if (song?.videoId) {
         const res = await axios.get(
           `${serverAPI}/api/audio?videoId=${song?.videoId}`
         );
+
         if (res.status !== 200) {
           message.warning("Server bị chặn");
           dispatch(listsongSlice.actions.checkLoading(""));
           return;
         }
-        dispatch(listsongSlice.actions.checkLoading(false));
-        dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
+
+        const userAgent = navigator.userAgent;
+        const isIphone = /iPhone|iPad|iPod/i.test(userAgent);
+        const apiUrl = `${serverAPI}/api/audio?videoId=${song.videoId}`;
+        if (isIphone) {
+          dispatch(listsongSlice.actions.checkLoading(false));
+          dispatch(listsongSlice.actions.srcChange(apiUrl));
+        } else {
+          dispatch(listsongSlice.actions.checkLoading(false));
+          dispatch(listsongSlice.actions.srcChange(res?.data?.audioUrl));
+        }
         return;
       }
       const res = await axios.get(`${serverAPI}/api/song?id=${song?.encodeId}`);
@@ -426,7 +452,6 @@ const Player = () => {
 
     const updateMetadata = () => {
       const song = pickSong || toggleListSong?.items?.[0];
-      console.log("song", song);
       const imageUrl = song?.thumbnailBlob
         ? URL.createObjectURL(song?.thumbnailBlob)
         : song?.thumbnailM;
@@ -527,7 +552,7 @@ const Player = () => {
       <div className="m-8 mt-4  ">
         <div className=" justify-between items-center  mb-8 -mx-8 cursor-pointer  text-xs flex ssm:hidden     ">
           <h2
-            className="bg-third-color py-2 px-2 rounded-lg hover:brightness-110"
+            className="bg-third-color py-2 px-2 rounded-lg hover:brightness-110 flex-shrink-0"
             onClick={() => {
               setShowLyrics(true);
               dispatch(playerSlice.actions.toggleLyrics(true));
@@ -535,21 +560,22 @@ const Player = () => {
           >
             Lời bài hát
           </h2>
-          <div className="">
-            <p className="font-bold">
+          <div className="flex-1 min-w-0 mx-4 text-center">
+            <p className="font-bold ">
               {pickSong?.title || toggleListSong?.items?.[0]?.title || (
                 <Skeleton height={20} style={{ marginBottom: 10 }} />
               )}
             </p>
             <p className="text-[13px]">
               {pickSong?.artistsNames ||
+                pickSong?.channel ||
                 toggleListSong?.items?.[0]?.artistsNames || (
                   <Skeleton height={20} />
                 )}
             </p>
           </div>
           <h2
-            className={`bg-third-color py-2 px-4 rounded-lg mt-2  ${
+            className={`bg-third-color py-2 px-4 rounded-lg mt-2 flex-shrink-0 ${
               isDownloaded
                 ? "opacity-50 cursor-not-allowed"
                 : "hover:brightness-110"
@@ -588,7 +614,7 @@ const Player = () => {
             />
           </div>
           {showList && (
-            <div className="absolute bottom-[310px] top-0 left-0 right-0 bg-secondary-color  overflow-y-scroll scrollbar-hide z-10    ">
+            <div className="absolute bottom-[310px] top-0 left-0 right-0 bg-secondary-color  overflow-y-scroll scrollbar-hide z-10 flex-shrink-0    ">
               {showDownload
                 ? offlineSongs.map((x, index) => {
                     return (
@@ -735,7 +761,7 @@ const Player = () => {
           >
             Danh Sách Phát
           </button>
-          <div className=" xl:hidden">
+          <div className=" flex-1 min-w-0 mx-4 text-center xl:hidden">
             <p className="font-bold">
               {pickSong?.title || toggleListSong?.items?.[0]?.title || (
                 <Skeleton height={20} style={{ marginBottom: 10 }} />
@@ -743,13 +769,14 @@ const Player = () => {
             </p>
             <p className="text-[13px]">
               {pickSong?.artistsNames ||
+                pickSong?.channel ||
                 toggleListSong?.items?.[0]?.artistsNames || (
                   <Skeleton height={20} />
                 )}
             </p>
           </div>
           <div
-            className="relative w-8 flex justify-center h-8 items-center hover:bg-third-color hover:rounded-full "
+            className="relative w-8 flex justify-center h-8 items-center hover:bg-third-color hover:rounded-full flex-shrink-0 "
             onClick={() => {
               handleShowSongButton();
             }}
@@ -833,10 +860,10 @@ const Player = () => {
                 ? dispatch(navbarSlice.actions.iconPlayChange(false))
                 : dispatch(navbarSlice.actions.iconPlayChange(true));
               isPlay ? audioRef.current.play() : audioRef.current.pause();
-              playSong.msg !== "Success" &&
-                !isDownloaded &&
-                // (
-                message.warning(playSong.msg);
+              // playSong.msg !== "Success" &&
+              // !isDownloaded &&
+              // (
+              // message.warning(playSong.msg);
               // dispatch(navbarSlice.actions.iconPlayChange(true)));
             }}
           >
