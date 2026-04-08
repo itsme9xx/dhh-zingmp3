@@ -63,7 +63,7 @@ const SearchPage = () => {
         const isIphone = /iPhone|iPad|iPod/i.test(userAgent);
         if (isIphone) {
           message.loading(
-            "Đang load nhạc, vui lòng chờ... Nếu load nhạc lỗi hãy tải nhạc về",
+            "Đang load nhạc, vui lòng chờ báo 2 lần load ... Nếu load nhạc lỗi hãy tải nhạc về",
             6
           );
           const apiUrl = `${serverAPI}/api/audio?videoId=${x?.videoId}`;

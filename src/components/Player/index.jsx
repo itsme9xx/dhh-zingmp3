@@ -218,7 +218,7 @@ const Player = () => {
         const isIphone = /iPhone|iPad|iPod/i.test(userAgent);
         if (isIphone) {
           message.loading(
-            "Đang load nhạc, vui lòng chờ... Nếu load nhạc lỗi hãy tải nhạc về",
+            "Đang load nhạc, vui lòng chờ báo 2 lần load ... Nếu load nhạc lỗi hãy tải nhạc về",
             6
           );
           const apiUrl = `${serverAPI}/api/audio?videoId=${song?.videoId}`;
@@ -285,7 +285,7 @@ const Player = () => {
         const isIphone = /iPhone|iPad|iPod/i.test(userAgent);
         if (isIphone) {
           message.loading(
-            "Đang load nhạc, vui lòng chờ... Nếu load nhạc lỗi hãy tải nhạc về",
+            "Đang load nhạc, vui lòng chờ báo 2 lần load ... Nếu load nhạc lỗi hãy tải nhạc về",
             6
           );
           const apiUrl = `${serverAPI}/api/audio?videoId=${song?.videoId}`;
@@ -349,7 +349,7 @@ const Player = () => {
         const isIphone = /iPhone|iPad|iPod/i.test(userAgent);
         if (isIphone) {
           message.loading(
-            "Đang load nhạc, vui lòng chờ... Nếu load nhạc lỗi hãy tải nhạc về",
+            "Đang load nhạc, vui lòng chờ báo 2 lần load ... Nếu load nhạc lỗi hãy tải nhạc về",
             6
           );
           const apiUrl = `${serverAPI}/api/audio?videoId=${song.videoId}`;
@@ -858,7 +858,7 @@ const Player = () => {
           }}
           onCanPlay={() => {
             message.destroy();
-            message.success("Đã load xong !");
+            message.success("Đã load nhạc xong !");
             dispatch(listsongSlice.actions.checkLoading(false));
           }}
           onError={(e) => {

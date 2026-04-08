@@ -42,6 +42,24 @@ class YoutubeController {
     }
   }
   async getAudio(req, res) {
+    let ytDlp, ffmpeg;
+
+    const cleanUp = () => {
+      console.log(`[System] Cleaning up processes for request...`);
+      if (ytDlp && !ytDlp.killed) ytDlp.kill("SIGKILL");
+      if (ffmpeg && !ffmpeg.killed) ffmpeg.kill("SIGKILL");
+
+      if (ytDlp) {
+        ytDlp.stdin?.destroy();
+        ytDlp.stdout?.destroy();
+        ytDlp.stderr?.destroy();
+      }
+      if (ffmpeg) {
+        ffmpeg.stdin?.destroy();
+        ffmpeg.stdout?.destroy();
+        ffmpeg.stderr?.destroy();
+      }
+    };
     try {
       const { videoId } = req.query;
       // 1. Validate videoId
@@ -94,6 +112,7 @@ class YoutubeController {
       ffmpeg.stdout.on("data", (chunk) => {
         audioBuffer = Buffer.concat([audioBuffer, chunk]);
       });
+
       ffmpeg.on("close", (code) => {
         if (code === 0 && audioBuffer.length > 0) {
           console.log(
@@ -107,18 +126,22 @@ class YoutubeController {
             "Cache-Control": "public, max-age=3600",
           });
           res.end(audioBuffer);
+          cleanUp();
         } else {
           if (!res.headersSent) res.status(500).send("Lỗi xử lý nhạc");
         }
+        cleanUp();
       });
 
       ytDlp.stdout.pipe(ffmpeg.stdin);
+      ytDlp.on("error", cleanUp);
+      ffmpeg.on("error", cleanUp);
       ytDlp.stderr.on("data", () => {});
       ffmpeg.stderr.on("data", () => {});
 
       req.on("close", () => {
-        ytDlp.kill("SIGKILL");
-        ffmpeg.kill("SIGKILL");
+        console.log(`[iOS] Request closed by client. Cleaning up...`);
+        req.on("close", cleanUp);
       });
     } catch (err) {
       console.error("Global getAudio Error:", err);
