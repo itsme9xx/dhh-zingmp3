@@ -31,7 +31,7 @@ const ListSong = () => {
     setIsLoading(true);
     axios
       .get(
-        `${serverAPI}/api/detailplaylist?id=${JSON.stringify(param.keyword)}`
+        `${serverAPI}/api/detailplaylist?id=${JSON.stringify(param.keyword)}`,
       )
       .then((res) => {
         setListSong(res.data.data);
@@ -55,7 +55,7 @@ const ListSong = () => {
     dispatch(listsongSlice.actions.checkLoading(true));
     axios.get(`${serverAPI}/api/song?id=${x?.encodeId}`).then((res) => {
       res.data.msg !== "Success"
-        ? (message.warning("Server bị chặn"),
+        ? (message.warning("Server bị chặn / Thử tìm ' E là không thể ' "),
           dispatch(listsongSlice.actions.checkLoading("")))
         : (dispatch(listsongSlice.actions.checkLoading(false)),
           dispatch(listsongSlice.actions.srcChange(res?.data?.data?.[128])));
