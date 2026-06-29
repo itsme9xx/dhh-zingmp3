@@ -39,7 +39,7 @@ const SearchPage = () => {
     axios.get(`${serverAPI}/api/video?id=${x.encodeId}`).then((res) => {
       navigate(`/video/${x.encodeId}`);
       dispatch(
-        searchSlice.actions.videoChange(res?.data?.data?.streaming?.mp4)
+        searchSlice.actions.videoChange(res?.data?.data?.streaming?.mp4),
       );
     });
   };
@@ -64,18 +64,18 @@ const SearchPage = () => {
         if (isIphone) {
           message.loading(
             "Đang load nhạc, vui lòng chờ báo 2 lần load ... Nếu load nhạc lỗi hãy tải nhạc về",
-            6
+            6,
           );
           const apiUrl = `${serverAPI}/api/audio?videoId=${x?.videoId}`;
           dispatch(listsongSlice.actions.srcChange(apiUrl));
         } else {
           message.loading("Đang load nhạc, vui lòng chờ...", 0);
           const res = await axios.get(
-            `${serverAPI}/api/audio?videoId=${x?.videoId}`
+            `${serverAPI}/api/audio?videoId=${x?.videoId}`,
           );
 
           if (res.status !== 200) {
-            message.warning("Server bị chặn");
+            message.warning("Server bị chặn / Thử tìm ' E là không thể ' ");
             dispatch(listsongSlice.actions.checkLoading(""));
             return;
           }
@@ -86,7 +86,7 @@ const SearchPage = () => {
       }
       const res = await axios.get(`${serverAPI}/api/song?id=${x?.encodeId}`);
       if (res.data.msg !== "Success") {
-        message.warning("Server bị chặn");
+        message.warning("Server bị chặn / Thử tìm ' E là không thể ' ");
         dispatch(listsongSlice.actions.checkLoading(""));
         return;
       }
@@ -124,7 +124,7 @@ const SearchPage = () => {
       setIsLoading(true);
       try {
         const res = await axios.get(
-          `${serverAPI}/api/youtube?keyword=${param.keyword}`
+          `${serverAPI}/api/youtube?keyword=${param.keyword}`,
         );
         setYoutubeSongs(res.data.data);
       } finally {

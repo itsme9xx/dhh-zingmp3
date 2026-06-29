@@ -51,7 +51,7 @@ const Player = () => {
   const isPlay = useSelector((state) => state.navbar.isPlay);
   const activeSong = useSelector((state) => state.listsong.activesong);
   const currentSongIndex = useSelector(
-    (state) => state.listsong.currentsongindex
+    (state) => state.listsong.currentsongindex,
   );
   const isLoop = useSelector((state) => state.player.loop);
   const volume = useSelector((state) => state.player.volume);
@@ -86,7 +86,7 @@ const Player = () => {
     const check = async () => {
       if (pickSong?.encodeId || pickSong?.videoId) {
         const result = await checkDownloaded(
-          pickSong.encodeId || pickSong?.videoId
+          pickSong.encodeId || pickSong?.videoId,
         );
         setIsDownloaded(result);
       }
@@ -152,15 +152,15 @@ const Player = () => {
           rendersongdefault
             ? rendersongdefault
             : localStorage.getItem("defaultSong")
-        }`
+        }`,
       )
       .then((res) => {
         dispatch(playerSlice.actions.showSongToday(res?.data?.data?.song));
         dispatch(listsongSlice.actions.listsongChange(res?.data?.data?.song));
         dispatch(
           listsongSlice.actions.activeSongChange(
-            res?.data?.data?.song?.items?.[0]
-          )
+            res?.data?.data?.song?.items?.[0],
+          ),
         );
         setIsLoading(false);
       });
@@ -219,17 +219,17 @@ const Player = () => {
         if (isIphone) {
           message.loading(
             "Đang load nhạc, vui lòng chờ báo 2 lần load ... Nếu load nhạc lỗi hãy tải nhạc về",
-            6
+            6,
           );
           const apiUrl = `${serverAPI}/api/audio?videoId=${song?.videoId}`;
           dispatch(listsongSlice.actions.srcChange(apiUrl));
         } else {
           message.loading("Đang load nhạc, vui lòng chờ...", 0);
           const res = await axios.get(
-            `${serverAPI}/api/audio?videoId=${song?.videoId}`
+            `${serverAPI}/api/audio?videoId=${song?.videoId}`,
           );
           if (res.status !== 200) {
-            message.warning("Server bị chặn");
+            message.warning("Server bị chặn / Thử tìm ' E là không thể ' ");
             dispatch(listsongSlice.actions.checkLoading(""));
             return;
           }
@@ -240,7 +240,7 @@ const Player = () => {
       }
       const res = await axios.get(`${serverAPI}/api/song?id=${song?.encodeId}`);
       if (res.data.msg !== "Success") {
-        message.warning("Server bị chặn");
+        message.warning("Server bị chặn / Thử tìm ' E là không thể ' ");
         dispatch(listsongSlice.actions.checkLoading(""));
         return;
       }
@@ -286,17 +286,17 @@ const Player = () => {
         if (isIphone) {
           message.loading(
             "Đang load nhạc, vui lòng chờ báo 2 lần load ... Nếu load nhạc lỗi hãy tải nhạc về",
-            6
+            6,
           );
           const apiUrl = `${serverAPI}/api/audio?videoId=${song?.videoId}`;
           dispatch(listsongSlice.actions.srcChange(apiUrl));
         } else {
           message.loading("Đang load nhạc, vui lòng chờ...", 0);
           const res = await axios.get(
-            `${serverAPI}/api/audio?videoId=${song?.videoId}`
+            `${serverAPI}/api/audio?videoId=${song?.videoId}`,
           );
           if (res.status !== 200) {
-            message.warning("Server bị chặn");
+            message.warning("Server bị chặn / Thử tìm ' E là không thể ' ");
             dispatch(listsongSlice.actions.checkLoading(""));
             return;
           }
@@ -307,7 +307,7 @@ const Player = () => {
       }
       const res = await axios.get(`${serverAPI}/api/song?id=${song?.encodeId}`);
       if (res.data.msg !== "Success") {
-        message.warning("Server bị chặn");
+        message.warning("Server bị chặn / Thử tìm ' E là không thể ' ");
         dispatch(listsongSlice.actions.checkLoading(""));
         return;
       }
@@ -350,18 +350,18 @@ const Player = () => {
         if (isIphone) {
           message.loading(
             "Đang load nhạc, vui lòng chờ báo 2 lần load ... Nếu load nhạc lỗi hãy tải nhạc về",
-            6
+            6,
           );
           const apiUrl = `${serverAPI}/api/audio?videoId=${song.videoId}`;
           dispatch(listsongSlice.actions.srcChange(apiUrl));
         } else {
           message.loading("Đang load nhạc, vui lòng chờ...", 0);
           const res = await axios.get(
-            `${serverAPI}/api/audio?videoId=${song?.videoId}`
+            `${serverAPI}/api/audio?videoId=${song?.videoId}`,
           );
 
           if (res.status !== 200) {
-            message.warning("Server bị chặn");
+            message.warning("Server bị chặn / Thử tìm ' E là không thể ' ");
             dispatch(listsongSlice.actions.checkLoading(""));
             return;
           }
@@ -372,7 +372,7 @@ const Player = () => {
       }
       const res = await axios.get(`${serverAPI}/api/song?id=${song?.encodeId}`);
       if (res.data.msg !== "Success") {
-        message.warning("Server bị chặn");
+        message.warning("Server bị chặn / Thử tìm ' E là không thể ' ");
         dispatch(listsongSlice.actions.checkLoading(""));
         return;
       }
@@ -402,7 +402,7 @@ const Player = () => {
 
       if (pickSong?.videoId) {
         response = await fetch(
-          `${serverAPI}/api/download?videoId=${pickSong.videoId}`
+          `${serverAPI}/api/download?videoId=${pickSong.videoId}`,
         );
       } else {
         response = await fetch(src1);
@@ -443,7 +443,7 @@ const Player = () => {
       hideLoading();
       console.error("Download Error:", err);
       message.error(
-        "Tải nhạc thất bại. Có thể do kết nối mạng hoặc server bị chặn."
+        "Tải nhạc thất bại. Có thể do kết nối mạng hoặc Server bị chặn / Thử tìm ' E là không thể ' .",
       );
     }
   };
@@ -663,10 +663,10 @@ const Player = () => {
                         onClick={() => {
                           const { blob, thumbnailBlob, ...safex } = x;
                           dispatch(
-                            listsongSlice.actions.currentSongIndexChange(index)
+                            listsongSlice.actions.currentSongIndexChange(index),
                           );
                           dispatch(
-                            listsongSlice.actions.activeSongChange(safex)
+                            listsongSlice.actions.activeSongChange(safex),
                           );
                           dispatch(listsongSlice.actions.songChange(safex));
                           dispatch(listsongSlice.actions.listsongChange(safex));
@@ -681,7 +681,7 @@ const Player = () => {
                             setTimeout(() => {
                               dispatch(listsongSlice.actions.srcChange(url));
                               dispatch(
-                                listsongSlice.actions.checkLoading(false)
+                                listsongSlice.actions.checkLoading(false),
                               );
                             }, 50);
                           }
@@ -716,7 +716,7 @@ const Player = () => {
                         key={index}
                         onClick={async () => {
                           dispatch(
-                            listsongSlice.actions.currentSongIndexChange(index)
+                            listsongSlice.actions.currentSongIndexChange(index),
                           );
                           dispatch(listsongSlice.actions.songChange(x));
                           dispatch(listsongSlice.actions.activeSongChange(x));
@@ -728,38 +728,42 @@ const Player = () => {
                           try {
                             if (x?.videoId) {
                               const res = await axios.get(
-                                `${serverAPI}/api/audio?videoId=${x?.videoId}`
+                                `${serverAPI}/api/audio?videoId=${x?.videoId}`,
                               );
                               if (res.status !== 200) {
-                                message.warning("Server bị chặn");
+                                message.warning(
+                                  "Server bị chặn / Thử tìm ' E là không thể ' ",
+                                );
                                 dispatch(
-                                  listsongSlice.actions.checkLoading("")
+                                  listsongSlice.actions.checkLoading(""),
                                 );
                                 return;
                               }
                               dispatch(
-                                listsongSlice.actions.checkLoading(false)
+                                listsongSlice.actions.checkLoading(false),
                               );
                               dispatch(
                                 listsongSlice.actions.srcChange(
-                                  res?.data?.audioUrl
-                                )
+                                  res?.data?.audioUrl,
+                                ),
                               );
                               return;
                             }
                             const res = await axios.get(
-                              `${serverAPI}/api/song?id=${x?.encodeId}`
+                              `${serverAPI}/api/song?id=${x?.encodeId}`,
                             );
                             if (res.data.msg !== "Success") {
-                              message.warning("Server bị chặn");
+                              message.warning(
+                                "Server bị chặn / Thử tìm ' E là không thể ' ",
+                              );
                               dispatch(listsongSlice.actions.checkLoading(""));
                               return;
                             }
                             dispatch(listsongSlice.actions.checkLoading(false));
                             dispatch(
                               listsongSlice.actions.srcChange(
-                                res?.data?.data?.[128]
-                              )
+                                res?.data?.data?.[128],
+                              ),
                             );
                           } catch (error) {
                             console.error(err);
